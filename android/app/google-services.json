@@ -1,0 +1,165 @@
+{
+  "project_info": {
+    "project_number": "1005394126485",
+    "firebase_url": "https://movil-ya-d19c0-default-rtdb.firebaseio.com",
+    "project_id": "movil-ya-d19c0",
+    "storage_bucket": "movil-ya-d19c0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005394126485:android:b8316ef7468e5873eadd9c",
+        "android_client_info": {
+          "package_name": "com.goflow.billcoder.driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOOnMuX_F3PvR-35hpHZWDDK-bweq5jys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005394126485-7sibs57og6geb52erd1d0q4bkbd0ejo4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.goflow.taxi.rider",
+                "app_store_id": "6670756426"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005394126485:android:d5e06d83ee51b0e6eadd9c",
+        "android_client_info": {
+          "package_name": "com.goflow.billcoder.rider"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOOnMuX_F3PvR-35hpHZWDDK-bweq5jys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005394126485-7sibs57og6geb52erd1d0q4bkbd0ejo4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.goflow.taxi.rider",
+                "app_store_id": "6670756426"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005394126485:android:b772dc43ac920a3deadd9c",
+        "android_client_info": {
+          "package_name": "com.goflow.taxi.rider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1005394126485-4lu33smpecfccpb2m6i8vosc0b1mmqcc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goflow.taxi.rider",
+            "certificate_hash": "4d6086b7c5f9ce167eaf74e02ef8d55f676a5d82"
+          }
+        },
+        {
+          "client_id": "1005394126485-uu8gm6tmb0fnmnlnsc5mqi0j4kj381ri.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goflow.taxi.rider",
+            "certificate_hash": "723c5e46c04a28852e89c6d7be26ca439a9fd4dd"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOOnMuX_F3PvR-35hpHZWDDK-bweq5jys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005394126485-7sibs57og6geb52erd1d0q4bkbd0ejo4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.goflow.taxi.rider",
+                "app_store_id": "6670756426"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005394126485:android:b1f9ceaa73255949eadd9c",
+        "android_client_info": {
+          "package_name": "com.goflow.billcoder.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1005394126485-bc5ajqt29icnn4s42tscb9am7qvrqf4n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goflow.billcoder.driver",
+            "certificate_hash": "723c5e46c04a28852e89c6d7be26ca439a9fd4dd"
+          }
+        },
+        {
+          "client_id": "1005394126485-u9jhpvf35n5t9nqm30korvn91eam13ep.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goflow.billcoder.driver",
+            "certificate_hash": "b2ff6ea9553ba5cacf4cbc3890940abc97d643a5"
+          }
+        },
+        {
+          "client_id": "1005394126485-v5ms8reqapo20uq1c825m381pkgh8h5g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goflow.billcoder.driver",
+            "certificate_hash": "dfd269145b207735fa15f86e0a34b4221813ebb9"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOOnMuX_F3PvR-35hpHZWDDK-bweq5jys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005394126485-7sibs57og6geb52erd1d0q4bkbd0ejo4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.goflow.taxi.rider",
+                "app_store_id": "6670756426"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

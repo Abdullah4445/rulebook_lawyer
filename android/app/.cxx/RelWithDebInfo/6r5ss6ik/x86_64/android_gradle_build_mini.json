@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/bilalsaeed/Downloads/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/bilalsaeed/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/bilalsaeed/Downloads/FlutterProjects/GoFlowApps/driver/android/app/.cxx/RelWithDebInfo/6r5ss6ik/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/bilalsaeed/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/bilalsaeed/Downloads/FlutterProjects/GoFlowApps/driver/android/app/.cxx/RelWithDebInfo/6r5ss6ik/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}
