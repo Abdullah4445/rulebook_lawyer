@@ -242,4 +242,12 @@ const Map<String, String> enUS = {
   'Please enter valid offer rate': 'Please enter valid offer rate',
   'You have to minimum ': 'You have to minimum ',
   ' wallet amount to Accept Order and place a bid':' wallet amount to Accept Order and place a bid',
+
+  // Ride Statuses
+  'Ride Placed': 'Ride Placed',    // Or "Ride Requested", "Order Placed"
+  'Ride Active': 'Ride Active',
+  'Ride InProgress': 'Ride In Progress', // Standard capitalization for "In Progress"
+  'Ride Complete': 'Ride Completed', // Or "Ride Finished"
+  'Ride Canceled': 'Ride Canceled',  // Or "Ride Cancelled" (UK English)
+
 };

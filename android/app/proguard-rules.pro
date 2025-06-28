@@ -15,7 +15,7 @@
 -keep class com.google.firebase.messaging.RemoteMessage { *; }
 
 # Prevent Firebase Messaging Service from being removed
--keep class com.goflow.billcoder.driver.services.MyFirebaseMessagingService { *; }
+-keep class com.goflowdriver.taxi.driver.services.MyFirebaseMessagingService { *; }
 -keep class * extends com.google.firebase.messaging.FirebaseMessagingService { *; }
 
 # Keep Firebase annotations

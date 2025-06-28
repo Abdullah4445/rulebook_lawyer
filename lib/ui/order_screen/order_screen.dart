@@ -140,7 +140,7 @@ class OrderScreen extends StatelessWidget {
                                                             Expanded(
                                                                 child: Text(
                                                                     orderModel.status
-                                                                        .toString(),
+                                                                        .toString().tr,
                                                                     style: GoogleFonts
                                                                         .poppins(
                                                                             color: Colors
