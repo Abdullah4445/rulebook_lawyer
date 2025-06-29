@@ -85,11 +85,17 @@ class ActiveIntercityOrderScreen extends StatelessWidget {
                                         } else {
                                           if (orderModel.status == Constant.rideInProgress) {
                                             Utils.redirectMap(
+                                                curName: orderModel.sourceLocationName!,
+                                                curLat: orderModel.sourceLocationLAtLng!.latitude!,
+                                                curLon: orderModel.sourceLocationLAtLng!.longitude!,
                                                 latitude: orderModel.destinationLocationLAtLng!.latitude!,
                                                 longLatitude: orderModel.destinationLocationLAtLng!.longitude!,
                                                 name: orderModel.destinationLocationName.toString());
                                           } else {
                                             Utils.redirectMap(
+                                                curName: orderModel.sourceLocationName!,
+                                                curLat: orderModel.sourceLocationLAtLng!.latitude!,
+                                                curLon: orderModel.sourceLocationLAtLng!.longitude!,
                                                 latitude: orderModel.sourceLocationLAtLng!.latitude!,
                                                 longLatitude: orderModel.sourceLocationLAtLng!.longitude!,
                                                 name: orderModel.destinationLocationName.toString());

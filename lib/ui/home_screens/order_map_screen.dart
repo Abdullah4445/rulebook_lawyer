@@ -224,6 +224,7 @@ class OrderMapScreen extends StatelessWidget {
                                             const SizedBox(
                                               height: 10,
                                             ),
+
                                             Visibility(
                                               visible: controller.orderModel.value
                                                       .service!.offerRate ==

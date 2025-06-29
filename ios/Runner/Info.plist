@@ -114,5 +114,9 @@
         <string>cstr6suwn9.skadnetwork</string>
       </dict>
     </array>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>comgooglemaps</string>
+    </array>
 </dict>
 </plist>

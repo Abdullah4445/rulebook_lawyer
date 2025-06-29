@@ -84,20 +84,54 @@ class Utils {
   }
 
   static redirectMap(
-      {required String name,
+      {required String curName,
+      required String name,
+      required double curLat,
+      required curLon,
       required double latitude,
       required double longLatitude}) async {
     if (Constant.mapType == "google") {
-      bool? isAvailable = await MapLauncher.isMapAvailable(MapType.google);
-      if (isAvailable == true) {
+
+      bool? isGoogleAvailable = await MapLauncher.isMapAvailable(MapType.google);
+      if (isGoogleAvailable == true) {
+        print("In google maps");
+        print("My source Lat: $curLat");
+        print("My source Lon: $curLon");
+
+
+        print("My desti Lat: $latitude");
+        print("My desti Lon: $longLatitude");
         await MapLauncher.showDirections(
           mapType: MapType.google,
           directionsMode: DirectionsMode.driving,
+          origin: Coords(curLat, curLon),
+          originTitle: curName,
           destinationTitle: name,
           destination: Coords(latitude, longLatitude),
         );
       } else {
-        ShowToastDialog.showToast("Google map is not installed");
+        bool? isAppleAvailable = await MapLauncher.isMapAvailable(MapType.apple);
+        if (isAppleAvailable == true) {
+          print("In Apple maps");
+          print("My source Lat: $curLat");
+          print("My source Lon: $curLon");
+
+
+          print("My desti Lat: $latitude");
+          print("My desti Lon: $longLatitude");
+
+          await MapLauncher.showDirections(
+            mapType: MapType.apple,
+            directionsMode: DirectionsMode.driving,
+            origin: Coords(curLat, curLon),
+            originTitle: curName,
+            destinationTitle: name,
+            destination: Coords(latitude, longLatitude),
+          );
+        } else {
+          ShowToastDialog.showToast(
+              "No supported map apps are installed. Either Install google ");
+        }
       }
     } else if (Constant.mapType == "googleGo") {
       bool? isAvailable = await MapLauncher.isMapAvailable(MapType.googleGo);
@@ -203,10 +237,10 @@ class MyZoneModel {
 
   MyZoneModel(
       {required this.area,
-        required this.currency,
-        required this.id,
-        required this.name,
-        required this.language});
+      required this.currency,
+      required this.id,
+      required this.name,
+      required this.language});
 
   factory MyZoneModel.fromJson(Map<String, dynamic> json) {
     // Convert Firestore GeoPoint list to a List<LatLng>
@@ -223,7 +257,9 @@ class MyZoneModel {
     }).toList();
 
     return MyZoneModel(
-      name: json['name'][0]['name'].toString().isEmpty?json['name'][1]['name']:json['name'][0]['name'],
+      name: json['name'][0]['name'].toString().isEmpty
+          ? json['name'][1]['name']
+          : json['name'][0]['name'],
       id: json['id'],
       area: area,
       currency: json['currency'] ?? 'en',
@@ -239,11 +275,11 @@ bool isPointInPolygon(MyLatLng point, List<MyLatLng> polygon) {
   for (int j = 0; j < polygon.length; j++) {
     int i = (j + 1) % polygon.length;
     if (((polygon[j].longitude > point.longitude) !=
-        (polygon[i].longitude > point.longitude)) &&
+            (polygon[i].longitude > point.longitude)) &&
         (point.latitude <
             (polygon[i].latitude - polygon[j].latitude) *
-                (point.longitude - polygon[j].longitude) /
-                (polygon[i].longitude - polygon[j].longitude) +
+                    (point.longitude - polygon[j].longitude) /
+                    (polygon[i].longitude - polygon[j].longitude) +
                 polygon[j].latitude)) {
       intersectCount++;
     }
@@ -280,26 +316,25 @@ Future<MyZoneModel?> getZoneForPosition(Position position) async {
   return null;
 }
 
-
 /// Call this function after the current location is obtained.
 /// It fetches the best zone based on the location and updates the app language.
 Future<void> updateAppLanguageBasedOnLocation(Position currentPosition) async {
   MyZoneModel? zone = await getZoneForPosition(currentPosition);
   if (zone != null) {
-
     myCurrencyId = zone.currency;
     String langCode = zone.language;
     Locale newLocale = Locale(langCode);
     Get.updateLocale(newLocale);
     LocalizationService.locale = newLocale;
     GlobalSettingController().getCurrentCurrencyAndLanguage();
-
   } else {
     print("No matching zone found for the current location. Using default language.");
   }
 }
-String myCurrencyId  = '';
-String myLanguageId  = '';
+
+String myCurrencyId = '';
+String myLanguageId = '';
+
 class MyLocationLatLng {
   double? latitude;
   double? longitude;

@@ -69,6 +69,9 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                 }
                               } else {
                                 Utils.redirectMap(
+                                    curName: orderModel.sourceLocationName!,
+                                    curLat: orderModel.sourceLocationLAtLng!.latitude!,
+                                    curLon: orderModel.sourceLocationLAtLng!.longitude!,
                                     latitude: orderModel.destinationLocationLAtLng!.latitude!,
                                     longLatitude: orderModel.destinationLocationLAtLng!.longitude!,
                                     name: orderModel.destinationLocationName.toString());

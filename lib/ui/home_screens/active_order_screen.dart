@@ -70,13 +70,19 @@ class ActiveOrderScreen extends StatelessWidget {
                             } else {
                               if (orderModel.status == Constant.rideInProgress) {
                                 Utils.redirectMap(
+                                    curName: orderModel.sourceLocationName!,
+                                    curLat: orderModel.sourceLocationLAtLng!.latitude!,
+                                    curLon: orderModel.sourceLocationLAtLng!.longitude!,
                                     latitude: orderModel.destinationLocationLAtLng!.latitude!,
                                     longLatitude: orderModel.destinationLocationLAtLng!.longitude!,
                                     name: orderModel.destinationLocationName.toString());
                               } else {
                                 Utils.redirectMap(
-                                    latitude: orderModel.sourceLocationLAtLng!.latitude!,
-                                    longLatitude: orderModel.sourceLocationLAtLng!.longitude!,
+                                    curName: orderModel.sourceLocationName!,
+                                    curLat: orderModel.sourceLocationLAtLng!.latitude!,
+                                    curLon: orderModel.sourceLocationLAtLng!.longitude!,
+                                    latitude: orderModel.destinationLocationLAtLng!.latitude!,
+                                    longLatitude: orderModel.destinationLocationLAtLng!.longitude!,
                                     name: orderModel.destinationLocationName.toString());
                               }
                             }
