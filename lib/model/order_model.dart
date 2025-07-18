@@ -38,38 +38,48 @@ class OrderModel {
   ZoneModel? zone;
   String? zoneId;
 
-  OrderModel(
-      {this.position,
-        this.serviceId,
-        this.paymentType,
-        this.sourceLocationName,
-        this.destinationLocationName,
-        this.sourceLocationLAtLng,
-        this.destinationLocationLAtLng,
-        this.id,
-        this.userId,
-        this.distance,
-        this.distanceType,
-        this.status,
-        this.driverId,
-        this.otp,
-        this.offerRate,
-        this.finalRate,
-        this.paymentStatus,
-        this.createdDate,
-        this.updateDate,
-        this.taxList,
-        this.coupon,
-        this.someOneElse,
-        this.service,
-        this.adminCommission,
-        this.zone,this.zoneId});
+  // ✅ New fields for live tracking logic
+  GeoPoint? driverLocation;
+  bool? notifyUserIfDriverIsNotMovingEvenRideActive;
+  bool? customerIsWatchingLiveTracking;
+
+  OrderModel({
+    this.position,
+    this.serviceId,
+    this.paymentType,
+    this.sourceLocationName,
+    this.destinationLocationName,
+    this.sourceLocationLAtLng,
+    this.destinationLocationLAtLng,
+    this.id,
+    this.userId,
+    this.distance,
+    this.distanceType,
+    this.status,
+    this.driverId,
+    this.otp,
+    this.offerRate,
+    this.finalRate,
+    this.paymentStatus,
+    this.createdDate,
+    this.updateDate,
+    this.taxList,
+    this.coupon,
+    this.someOneElse,
+    this.service,
+    this.adminCommission,
+    this.zone,
+    this.zoneId,
+    this.driverLocation,
+    this.notifyUserIfDriverIsNotMovingEvenRideActive,
+    this.customerIsWatchingLiveTracking,
+  });
 
   OrderModel.fromJson(Map<String, dynamic> json) {
     serviceId = json['serviceId'];
     sourceLocationName = json['sourceLocationName'];
-    paymentType = json['paymentType'];
     destinationLocationName = json['destinationLocationName'];
+    paymentType = json['paymentType'];
     sourceLocationLAtLng = json['sourceLocationLAtLng'] != null ? LocationLatLng.fromJson(json['sourceLocationLAtLng']) : null;
     destinationLocationLAtLng = json['destinationLocationLAtLng'] != null ? LocationLatLng.fromJson(json['destinationLocationLAtLng']) : null;
     coupon = json['coupon'] != null ? CouponModel.fromJson(json['coupon']) : null;
@@ -93,6 +103,12 @@ class OrderModel {
     adminCommission = json['adminCommission'] != null ? AdminCommission.fromJson(json['adminCommission']) : null;
     zone = json['zone'] != null ? ZoneModel.fromJson(json['zone']) : null;
     zoneId = json['zoneId'];
+
+    // ✅ New fields
+    driverLocation = json['driverLocation'];
+    notifyUserIfDriverIsNotMovingEvenRideActive = json['notifyUserIfDriverIsNotMovingEvenRideActive'];
+    customerIsWatchingLiveTracking = json['customerIsWatchingLiveTracking'];
+
     if (json['taxList'] != null) {
       taxList = <TaxModel>[];
       json['taxList'].forEach((v) {
@@ -103,34 +119,13 @@ class OrderModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+
     data['serviceId'] = serviceId;
     data['sourceLocationName'] = sourceLocationName;
     data['destinationLocationName'] = destinationLocationName;
-    if (sourceLocationLAtLng != null) {
-      data['sourceLocationLAtLng'] = sourceLocationLAtLng!.toJson();
-    }
-    if (coupon != null) {
-      data['coupon'] = coupon!.toJson();
-    }
-    if (someOneElse != null) {
-      data['someOneElse'] = someOneElse!.toJson();
-    }
-    if (destinationLocationLAtLng != null) {
-      data['destinationLocationLAtLng'] = destinationLocationLAtLng!.toJson();
-    }
-    if (service != null) {
-      data['service'] = service!.toJson();
-    }
-    if (adminCommission != null) {
-      data['adminCommission'] = adminCommission!.toJson();
-    }
-    if (zone != null) {
-      data['zone'] = zone!.toJson();
-    }
-    data['zoneId'] = zoneId;
+    data['paymentType'] = paymentType;
     data['id'] = id;
     data['userId'] = userId;
-    data['paymentType'] = paymentType;
     data['offerRate'] = offerRate;
     data['finalRate'] = finalRate;
     data['distance'] = distance;
@@ -143,12 +138,27 @@ class OrderModel {
     data['acceptedDriverId'] = acceptedDriverId;
     data['rejectedDriverId'] = rejectedDriverId;
     data['paymentStatus'] = paymentStatus;
-    if (taxList != null) {
-      data['taxList'] = taxList!.map((v) => v.toJson()).toList();
+    data['zoneId'] = zoneId;
+
+    if (sourceLocationLAtLng != null) data['sourceLocationLAtLng'] = sourceLocationLAtLng!.toJson();
+    if (destinationLocationLAtLng != null) data['destinationLocationLAtLng'] = destinationLocationLAtLng!.toJson();
+    if (coupon != null) data['coupon'] = coupon!.toJson();
+    if (someOneElse != null) data['someOneElse'] = someOneElse!.toJson();
+    if (service != null) data['service'] = service!.toJson();
+    if (adminCommission != null) data['adminCommission'] = adminCommission!.toJson();
+    if (zone != null) data['zone'] = zone!.toJson();
+    if (taxList != null) data['taxList'] = taxList!.map((v) => v.toJson()).toList();
+    if (position != null) data['position'] = position!.toJson();
+
+    // ✅ Add new fields
+    if (driverLocation != null) data['driverLocation'] = driverLocation;
+    if (notifyUserIfDriverIsNotMovingEvenRideActive != null) {
+      data['notifyUserIfDriverIsNotMovingEvenRideActive'] = notifyUserIfDriverIsNotMovingEvenRideActive;
     }
-    if (position != null) {
-      data['position'] = position!.toJson();
+    if (customerIsWatchingLiveTracking != null) {
+      data['customerIsWatchingLiveTracking'] = customerIsWatchingLiveTracking;
     }
+
     return data;
   }
 }

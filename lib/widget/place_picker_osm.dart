@@ -35,7 +35,7 @@ class _LocationPickerState extends State<LocationPicker> {
       if (mapController.listenerMapSingleTapping.value != null) {
         GeoPoint position = mapController.listenerMapSingleTapping.value!;
         addMarker(position);
-        place = await Nominatim.reverseSearch(
+        place = await Nominatim(userAgent: 'Driver Position Search').reverseSearch(
           lat: position.latitude,
           lon: position.longitude,
           zoom: 14,
@@ -65,7 +65,7 @@ class _LocationPickerState extends State<LocationPicker> {
           _markers.add(position);
         });
 
-        place = await Nominatim.reverseSearch(
+        place = await Nominatim(userAgent: 'Driver Position Search').reverseSearch(
           lat: position.latitude,
           lon: position.longitude,
           zoom: 14,
@@ -89,7 +89,7 @@ class _LocationPickerState extends State<LocationPicker> {
         );
         await addMarker(selectedLocation!);
         mapController.moveTo(selectedLocation!, animate: true);
-        place = await Nominatim.reverseSearch(
+        place = await Nominatim(userAgent: 'Driver Position Search').reverseSearch(
           lat: selectedLocation!.latitude,
           lon: selectedLocation!.longitude,
           zoom: 14,

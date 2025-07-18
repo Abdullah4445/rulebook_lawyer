@@ -58,6 +58,9 @@ class ActiveOrderScreen extends StatelessWidget {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         OrderModel orderModel = OrderModel.fromJson(snapshot.data!.docs[index].data() as Map<String, dynamic>);
+                        if ((orderModel.status == Constant.rideInProgress || orderModel.status == Constant.rideActive)) {
+                          controller.startLocationUpdates(orderModel);
+                        }
                         return InkWell(
                           onTap: () {
                             if (Constant.mapType == "inappmap") {
@@ -119,6 +122,26 @@ class ActiveOrderScreen extends StatelessWidget {
                                       padding: EdgeInsets.symmetric(vertical: 5),
                                       child: Divider(),
                                     ),
+                                    ButtonThem.buildBorderButton(
+                                      context,
+                                      title: "Show Route to Customer".tr,
+                                      btnHeight: 44,
+                                      iconVisibility: false,
+                                      onPress: () async {
+                                        Get.to(
+                                          const LiveTrackingScreen(),
+                                          arguments: {
+                                            "driverLatLng": Constant.currentLocation,
+                                            "customerLatLng": orderModel.sourceLocationLAtLng,
+                                            "type": "routeOnly",
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 5),
+                                      child: Divider(),
+                                    ),
                                     LocationView(
                                       sourceLocation: orderModel.sourceLocationName.toString(),
                                       destinationLocation: orderModel.destinationLocationName.toString(),
@@ -137,6 +160,8 @@ class ActiveOrderScreen extends StatelessWidget {
                                                   iconVisibility: false,
                                                   onPress: () async {
                                                     orderModel.status = Constant.rideComplete;
+
+                                                    controller.stopLocationUpdates();
 
                                                     await FireStoreUtils.getCustomer(orderModel.userId.toString()).then((value) async {
                                                       if (value != null) {

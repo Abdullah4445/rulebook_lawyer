@@ -60,27 +60,35 @@ class LoginController extends GetxController {
     });
   }
 
+
+
   Future<UserCredential?> signInWithGoogle() async {
-    await GoogleSignIn().signOut();
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      await GoogleSignIn.instance.signOut();
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      final GoogleSignInAccount? googleUser = await GoogleSignIn.instance.authenticate();
 
-      // Create a new credential
+      if (googleUser == null) {
+        debugPrint("Google Sign-In cancelled by user.");
+        return null;
+      }
+
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+      // Create a new credential using only the idToken for Firebase Authentication
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        idToken: googleAuth.idToken,
+        // accessToken: googleAuth.accessToken, // REMOVE THIS LINE
       );
 
-      // Once signed in, return the UserCredential
       return await FirebaseAuth.instance.signInWithCredential(credential);
+    } on GoogleSignInException catch (e) {
+      debugPrint("Google Sign In error: code: ${e.code.name} description:${e.description} details:${e.details}");
+      return null;
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("Unexpected Google Sign-In error: $e");
+      return null;
     }
-    return null;
-    // Trigger the authentication flow
   }
 
   Future<Map<String, dynamic>?> signInWithApple() async {

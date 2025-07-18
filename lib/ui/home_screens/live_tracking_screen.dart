@@ -70,7 +70,7 @@ class LiveTrackingScreen extends StatelessWidget {
                   })
               : Obx(
                   () => GoogleMap(
-                    myLocationEnabled: true,
+                    myLocationEnabled: false,
                     myLocationButtonEnabled: true,
                     mapType: MapType.terrain,
                     zoomControlsEnabled: false,
