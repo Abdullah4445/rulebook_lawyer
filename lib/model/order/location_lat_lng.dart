@@ -1,18 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class LocationLatLng {
   double? latitude;
   double? longitude;
 
   LocationLatLng({this.latitude, this.longitude});
 
-  LocationLatLng.fromJson(Map<String, dynamic> json) {
-    latitude = json['latitude'];
-    longitude = json['longitude'];
+  factory LocationLatLng.fromJson(Map<String, dynamic> json) {
+    return LocationLatLng(
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+    );
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['latitude'] = latitude;
-    data['longitude'] = longitude;
-    return data;
+  factory LocationLatLng.fromGeoPoint(GeoPoint point) {
+    return LocationLatLng(
+      latitude: point.latitude,
+      longitude: point.longitude,
+    );
   }
+
+
+  Map<String, dynamic> toJson() => {
+    'latitude': latitude,
+    'longitude': longitude,
+  };
 }

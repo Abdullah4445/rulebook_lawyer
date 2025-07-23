@@ -120,8 +120,8 @@ class LoginScreen extends StatelessWidget {
                             children: [
                               const Expanded(
                                   child: Divider(
-                                height: 1,
-                              )),
+                                    height: 1,
+                                  )),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20),
                                 child: Text(
@@ -131,8 +131,8 @@ class LoginScreen extends StatelessWidget {
                               ),
                               const Expanded(
                                   child: Divider(
-                                height: 1,
-                              )),
+                                    height: 1,
+                                  )),
                             ],
                           ),
                         ),
@@ -169,7 +169,7 @@ class LoginScreen extends StatelessWidget {
                                       userModel.fcmToken = token;
                                       await FireStoreUtils.updateDriverUser(userModel);
                                       await FireStoreUtils.getDriverProfile(FirebaseAuth.instance.currentUser!.uid).then(
-                                        (value) {
+                                            (value) {
                                           if (value != null) {
                                             DriverUserModel userModel = value;
                                             bool isPlanExpire = false;
@@ -197,7 +197,7 @@ class LoginScreen extends StatelessWidget {
                                             //     Get.offAll(const SubscriptionListScreen(), arguments: {"isShow": true});
                                             //   }
                                             // } else {
-                                              Get.offAll(const DashBoardScreen());
+                                            Get.offAll(const DashBoardScreen());
                                             // }
                                           }
                                         },
@@ -258,7 +258,7 @@ class LoginScreen extends StatelessWidget {
                                       FireStoreUtils.userExitOrNot(userCredential.user!.uid).then((userExit) async {
                                         if (userExit == true) {
                                           await FireStoreUtils.getDriverProfile(FirebaseAuth.instance.currentUser!.uid).then(
-                                            (value) {
+                                                (value) {
                                               if (value != null) {
                                                 DriverUserModel userModel = value;
                                                 bool isPlanExpire = false;

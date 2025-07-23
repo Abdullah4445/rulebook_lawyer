@@ -226,9 +226,7 @@ class OrderMapScreen extends StatelessWidget {
                                             ),
 
                                             Visibility(
-                                              visible: controller.orderModel.value
-                                                      .service!.offerRate ==
-                                                  true,
+                                              visible: controller.orderModel.value.service?.offerRate == true,
                                               child: Padding(
                                                 padding: const EdgeInsets.all(8.0),
                                                 child: Row(
@@ -321,7 +319,7 @@ class OrderMapScreen extends StatelessWidget {
                                             ),
                                             Visibility(
                                               visible: controller.orderModel.value
-                                                      .service!.offerRate ==
+                                                      .service?.offerRate ==
                                                   true,
                                               child: TextFieldThem
                                                   .buildTextFiledWithPrefixIcon(
@@ -362,7 +360,7 @@ class OrderMapScreen extends StatelessWidget {
                                                     double.parse(controller
                                                             .newAmount.value
                                                             .toString()) >
-                                                        0) {
+                                                        -1) {
                                                   if (controller.driverModel.value
                                                           .subscriptionTotalOrders ==
                                                       "-1") {

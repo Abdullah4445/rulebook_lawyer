@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +58,15 @@ class ActiveOrderScreen extends StatelessWidget {
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
+                        print("BILAL Saeed");
+                       Map<String, dynamic> data = snapshot.data!.docs[index].data() as  Map<String, dynamic> ;
+                        print(data['sourceLocationName']);
+                        print(data['sourceLocationLAtLng']);
                         OrderModel orderModel = OrderModel.fromJson(snapshot.data!.docs[index].data() as Map<String, dynamic>);
+                        print('-----');
+                        print(orderModel.sourceLocationLAtLng?.latitude.toString());
+                        print(orderModel.sourceLocationLAtLng?.longitude.toString());
+
                         if ((orderModel.status == Constant.rideInProgress || orderModel.status == Constant.rideActive)) {
                           controller.startLocationUpdates(orderModel);
                         }
@@ -128,14 +137,31 @@ class ActiveOrderScreen extends StatelessWidget {
                                       btnHeight: 44,
                                       iconVisibility: false,
                                       onPress: () async {
+                                        // print("My order details are: ");
+                                        // print( orderModel.toJson());
+
                                         Get.to(
                                           const LiveTrackingScreen(),
                                           arguments: {
-                                            "driverLatLng": Constant.currentLocation,
-                                            "customerLatLng": orderModel.sourceLocationLAtLng,
+                                            "driverLatLng": LatLng(
+                                              Constant.currentLocation?.latitude ?? 0.0,
+                                              Constant.currentLocation?.longitude ?? 0.0,
+                                            ),
+                                            "customerLatLng": LatLng(
+                                              orderModel.sourceLocationLAtLng?.latitude ?? 0.0,
+                                              orderModel.sourceLocationLAtLng?.longitude ?? 0.0,
+                                            ),
                                             "type": "routeOnly",
                                           },
                                         );
+                                        // Get.to(
+                                        //   const LiveTrackingScreen(),
+                                        //   arguments: {
+                                        //     "driverLatLng": Constant.currentLocation,
+                                        //     "customerLatLng": orderModel.sourceLocationLAtLng,
+                                        //     "type": "routeOnly",
+                                        //   },
+                                        // );
                                       },
                                     ),
                                     const Padding(

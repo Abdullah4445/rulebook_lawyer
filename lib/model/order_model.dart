@@ -42,6 +42,8 @@ class OrderModel {
   GeoPoint? driverLocation;
   bool? notifyUserIfDriverIsNotMovingEvenRideActive;
   bool? customerIsWatchingLiveTracking;
+  String? customerName;
+  String? phoneNumber;
 
   OrderModel({
     this.position,
@@ -76,12 +78,67 @@ class OrderModel {
   });
 
   OrderModel.fromJson(Map<String, dynamic> json) {
+
+    print("DEBUG: Unmapped fields: ${json.keys.where((k) => ![
+      'serviceId',
+      'sourceLocationName',
+      'destinationLocationName',
+      'paymentType',
+      'customerName',
+      'phoneNumber',
+      'sourceLocationLAtLng',
+      'destinationLocationLAtLng',
+      'coupon',
+      'someOneElse',
+      'id',
+      'userId',
+      'offerRate',
+      'finalRate',
+      'distance',
+      'distanceType',
+      'status',
+      'driverId',
+      'otp',
+      'createdDate',
+      'updateDate',
+      'acceptedDriverId',
+      'rejectedDriverId',
+      'paymentStatus',
+      'position',
+      'service',
+      'adminCommission',
+      'zone',
+      'zoneId',
+      'driverLocation',
+      'notifyUserIfDriverIsNotMovingEvenRideActive',
+      'customerIsWatchingLiveTracking',
+      'taxList',
+    ].contains(k)).toList()}");
+
+
+
     serviceId = json['serviceId'];
     sourceLocationName = json['sourceLocationName'];
     destinationLocationName = json['destinationLocationName'];
     paymentType = json['paymentType'];
-    sourceLocationLAtLng = json['sourceLocationLAtLng'] != null ? LocationLatLng.fromJson(json['sourceLocationLAtLng']) : null;
-    destinationLocationLAtLng = json['destinationLocationLAtLng'] != null ? LocationLatLng.fromJson(json['destinationLocationLAtLng']) : null;
+
+    customerName = json['customerName'];
+    phoneNumber = json['phoneNumber'];
+
+    sourceLocationLAtLng = json['sourceLocationLAtLng'] != null
+        ? LocationLatLng(
+      latitude: json['sourceLocationLAtLng']['latitude'],
+      longitude:json['sourceLocationLAtLng']['longitude'],
+    )
+        : null;
+
+    destinationLocationLAtLng = json['destinationLocationLatLng'] != null
+        ? LocationLatLng(
+      latitude: json['destinationLocationLAtLng']['latitude'],
+      longitude: json['destinationLocationLAtLng']['longitude'],
+    )
+        : null;
+
     coupon = json['coupon'] != null ? CouponModel.fromJson(json['coupon']) : null;
     someOneElse = json['someOneElse'] != null ? ContactModel.fromJson(json['someOneElse']) : null;
     id = json['id'];
@@ -115,6 +172,8 @@ class OrderModel {
         taxList!.add(TaxModel.fromJson(v));
       });
     }
+
+
   }
 
   Map<String, dynamic> toJson() {

@@ -248,6 +248,7 @@ class Constant {
 
   static double amountCalculate(String amount, String distance) {
     double finalAmount = 0.0;
+    print(distance);
     finalAmount = double.parse(amount) * double.parse(distance);
     return finalAmount;
   }

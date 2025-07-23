@@ -125,8 +125,10 @@ class UserView extends StatelessWidget {
                                   const SizedBox(
                                     width: 5,
                                   ),
-                                  Text("${(double.parse(distance.toString())).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} $distanceType",
-                                      style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
+                                  Text(
+                                    "${double.tryParse(distance?.toString() ?? '0')?.toStringAsFixed(Constant.currencyModel?.decimalDigits ?? 2)} $distanceType",
+                                    style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                                  )
                                 ],
                               ),
                               Row(

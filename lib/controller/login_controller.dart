@@ -64,27 +64,28 @@ class LoginController extends GetxController {
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      await GoogleSignIn.instance.signOut();
 
-      final GoogleSignInAccount? googleUser = await GoogleSignIn.instance.authenticate();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn().catchError((error) {
+        debugPrint("catchError--->$error");
+        ShowToastDialog.closeLoader();
+        ShowToastDialog.showToast("Something went wrong");
+        return null;
+      });
 
       if (googleUser == null) {
         debugPrint("Google Sign-In cancelled by user.");
         return null;
       }
 
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
       // Create a new credential using only the idToken for Firebase Authentication
       final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-        // accessToken: googleAuth.accessToken, // REMOVE THIS LINE
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
       );
 
       return await FirebaseAuth.instance.signInWithCredential(credential);
-    } on GoogleSignInException catch (e) {
-      debugPrint("Google Sign In error: code: ${e.code.name} description:${e.description} details:${e.details}");
-      return null;
     } catch (e) {
       debugPrint("Unexpected Google Sign-In error: $e");
       return null;

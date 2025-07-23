@@ -362,13 +362,17 @@ class FireStoreUtils {
   Stream<List<OrderModel>> getOrders(DriverUserModel driverUserModel, double? latitude, double? longLatitude) async* {
     getNearestOrderRequestController = StreamController<List<OrderModel>>.broadcast();
     List<OrderModel> ordersList = [];
+    print("Current Driver details are:::😇:");
+    print(driverUserModel.serviceId);
+    print(driverUserModel.zoneIds);
+    print(Constant.ridePlaced);
+
     Query<Map<String, dynamic>> query = fireStore
         .collection(CollectionName.orders)
         .where('serviceId', isEqualTo: driverUserModel.serviceId)
         .where('zoneId', whereIn: driverUserModel.zoneIds)
         .where('status', isEqualTo: Constant.ridePlaced);
-    print("Service id: ${driverUserModel.serviceId}");
-    print("Zone id: ${driverUserModel.zoneIds}");
+    print("Docs Found: ${await query.get().then((value) => value.docs.map((value){print("My value: ${value.data()}");}))}");
 
 
     GeoFirePoint center = Geoflutterfire().point(latitude: latitude ?? 0.0, longitude: longLatitude ?? 0.0);

@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -68,6 +65,17 @@ class DefaultFirebaseOptions {
     androidClientId: '1005394126485-4lu33smpecfccpb2m6i8vosc0b1mmqcc.apps.googleusercontent.com',
     iosClientId: '1005394126485-t8qa1pnr40di5enprj14k9dtbd1no8ft.apps.googleusercontent.com',
     iosBundleId: 'com.goflow.billcoder.driver',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCoW-5DuAoFyd93JilOtjmQvP2DdBWFAPw',
+    appId: '1:1005394126485:web:46573473de000d36eadd9c',
+    messagingSenderId: '1005394126485',
+    projectId: 'movil-ya-d19c0',
+    authDomain: 'movil-ya-d19c0.firebaseapp.com',
+    databaseURL: 'https://movil-ya-d19c0-default-rtdb.firebaseio.com',
+    storageBucket: 'movil-ya-d19c0.firebasestorage.app',
+    measurementId: 'G-LFX3PSVED5',
   );
 
 }

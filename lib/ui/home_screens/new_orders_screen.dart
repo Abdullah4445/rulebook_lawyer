@@ -52,20 +52,39 @@ class NewOrderScreen extends StatelessWidget {
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               OrderModel orderModel = snapshot.data![index];
-                              String amount;
-                              if (Constant.distanceType == "Km") {
-                                amount = Constant.amountCalculate(
-                                        orderModel.service!.kmCharge.toString(),
-                                        orderModel.distance.toString())
-                                    .toStringAsFixed(
-                                        Constant.currencyModel!.decimalDigits!);
-                              } else {
-                                amount = Constant.amountCalculate(
-                                        orderModel.service!.kmCharge.toString(),
-                                        orderModel.distance.toString())
-                                    .toStringAsFixed(
-                                        Constant.currencyModel!.decimalDigits!);
-                              }
+                              print("My data is: ${orderModel.toJson()}");
+
+                              // Safely extract values or use fallback
+                              final kmCharge = orderModel.service?.kmCharge ?? 0.0;
+                              final distance = orderModel.distance ?? 0.0;
+                              final decimals = Constant.currencyModel?.decimalDigits ?? 2;
+
+                              // Now it's safe to parse
+
+                              print("orderModel: $orderModel");
+                              print("orderModel.service: ${orderModel.service}");
+                              print("orderModel.service.kmCharge: ${orderModel.service?.kmCharge}");
+                              print("orderModel.distance: ${orderModel.distance}");
+                              print("Constant.currencyModel: ${Constant.currencyModel}");
+                              print("Constant.currencyModel.decimalDigits: ${Constant.currencyModel?.decimalDigits}");
+                              final amount = Constant.amountCalculate(
+                                kmCharge.toString(),
+                                distance.toString(),
+                              ).toStringAsFixed(decimals);
+
+                                // amount = Constant.amountCalculate(
+                                //         orderModel.service!.kmCharge.toString(),
+                                //         orderModel.distance.toString())
+                                //     .toStringAsFixed(
+                                //         Constant.currencyModel!.decimalDigits!);
+                              // } else {
+                              //   amount = Constant.amountCalculate(
+                              //           orderModel.service!.kmCharge.toString(),
+                              //           orderModel.distance.toString())
+                              //       .toStringAsFixed(
+                              //           Constant.currencyModel!.decimalDigits!);
+                              // }
+
                               return Column(
                                 children: [
 
@@ -110,6 +129,7 @@ class NewOrderScreen extends StatelessWidget {
                                               vertical: 10, horizontal: 10),
                                           child: Column(
                                             children: [
+
                                               UserView(
                                                 userId: orderModel.userId,
                                                 amount: orderModel.offerRate,
@@ -149,7 +169,10 @@ class NewOrderScreen extends StatelessWidget {
                                                             horizontal: 10, vertical: 10),
                                                         child: Center(
                                                           child: Text(
-                                                            'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${double.parse(orderModel.distance.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.distanceType}',
+                                                            'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${((orderModel.distance.toString()))}',
+
+
+                              // 'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${double.parse(orderModel.distance.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.distanceType}',
                                                             style: GoogleFonts.poppins(
                                                                 fontWeight: FontWeight.w500,
                                                                 color: Colors.black),

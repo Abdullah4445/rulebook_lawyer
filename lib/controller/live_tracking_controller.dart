@@ -20,11 +20,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class LiveTrackingController extends GetxController {
   GoogleMapController? mapController;
 
+
   @override
   void onInit() {
     if (Constant.selectedMapType == 'osm') {
+      print("Is osm");
       ShowToastDialog.showLoader("Please wait");
       mapOsmController = MapController(initPosition: GeoPoint(latitude: 20.9153, longitude: -100.7439), useExternalTracking: false); //OSM
+    }else{
+      print("Not osm");
     }
     addMarkerSetup();
     Future.delayed(Duration.zero, () {
@@ -89,13 +93,19 @@ class LiveTrackingController extends GetxController {
 
 
   getArgument() async {
+    print("In argmuent");
     dynamic argumentData = Get.arguments;
     if (argumentData != null) {
+      print("In argmuent 2");
       type.value = argumentData['type'];
       if (type.value == "routeOnly") {
         Future.delayed(Duration(milliseconds: 300), () async {
-          LocationLatLng driverLatLng = argumentData['driverLatLng'];
-          LocationLatLng customerLatLng = argumentData['customerLatLng'];
+          LatLng driverLatLng = argumentData['driverLatLng'];
+         LatLng customerLatLng = argumentData['customerLatLng'];
+
+          print("My details are: $driverLatLng");
+          print("My details are Customer: $customerLatLng");
+
 
           getPolyline(
             sourceLatitude: driverLatLng.latitude,
@@ -232,6 +242,9 @@ class LiveTrackingController extends GetxController {
         });
       }
     }
+    else{
+      print("In argmuent 2");
+    }
     isLoading.value = false;
     update();
   }
@@ -241,6 +254,9 @@ class LiveTrackingController extends GetxController {
   BitmapDescriptor? driverIcon;
 
   void getPolyline({required double? sourceLatitude, required double? sourceLongitude, required double? destinationLatitude, required double? destinationLongitude}) async {
+    print('🔎 Routing from: ($sourceLatitude, $sourceLongitude)');
+    print('🔎 To: ($destinationLatitude, $destinationLongitude)');
+
     if (sourceLatitude != null && sourceLongitude != null && destinationLatitude != null && destinationLongitude != null) {
       List<LatLng> polylineCoordinates = [];
       PolylineRequest polylineRequest = PolylineRequest(
