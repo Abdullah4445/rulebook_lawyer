@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/model/language_name.dart';
+
+import 'language_name.dart';
 
 class ZoneModel {
   List<GeoPoint>? area;
@@ -15,7 +16,14 @@ class ZoneModel {
     if (json['area'] != null) {
       area = <GeoPoint>[];
       json['area'].forEach((v) {
-        area!.add(v);
+        // Here's the change: check if 'v' is a Map and create a GeoPoint from it.
+        // This handles cases where data might be coming from different sources (e.g., Firestore vs. local JSON)
+        if (v is Map<String, dynamic>) {
+          area!.add(GeoPoint(v['latitude'] as double, v['longitude'] as double));
+        } else if (v is GeoPoint) {
+          // This case handles data coming directly from Firestore which might already be a GeoPoint
+          area!.add(v);
+        }
       });
     }
 
@@ -35,7 +43,13 @@ class ZoneModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     if (area != null) {
-      data['area'] = area!.map((v) => v).toList();
+      // Correctly serialize GeoPoint back to a Map with latitude and longitude
+      data['area'] = area!
+          .map((v) => {
+                'latitude': v.latitude,
+                'longitude': v.longitude,
+              })
+          .toList();
     }
     if (name != null) {
       data['name'] = name!.map((v) => v.toJson()).toList();

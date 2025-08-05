@@ -235,8 +235,18 @@ exports.createRideFromWebhook = functions.https.onRequest(async (req, res) => {
       userId: authUser.uid,
       createdDate: admin.firestore.FieldValue.serverTimestamp(),
       updateDate: null,
-      sourceLocationLatLng: geoPoint,
-      destinationLocationLatLng: new admin.firestore.GeoPoint(data.destination.latitude, data.destination.longitude),
+      // Save as a map for client-side consumption
+      sourceLocationLatLng: {
+          latitude: sourceLat,
+          longitude: sourceLng
+      },
+      // Save as a map for client-side consumption
+      destinationLocationLatLng: {
+          latitude: data.destination.latitude,
+          longitude: data.destination.longitude
+      },
+//      sourceLocationLatLng: geoPoint,
+//      destinationLocationLatLng: new admin.firestore.GeoPoint(data.destination.latitude, data.destination.longitude),
       sourceLocationName: "Source via WhatsApp",
       destinationLocationName: "Destination via WhatsApp",
       status: "Ride Placed",

@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'base.dart';
 
-class GeoFireCollectionRef
-    extends BaseGeoFireCollectionRef<Map<String, dynamic>> {
+class GeoFireCollectionRef extends BaseGeoFireCollectionRef<Map<String, dynamic>> {
   GeoFireCollectionRef(super.collectionReference);
 
   Stream<List<DocumentSnapshot<Map<String, dynamic>>>> within({
@@ -54,12 +53,29 @@ class GeoFireCollectionRef
   }) {
     // split and fetch geoPoint from the nested Map
     final fieldList = field.split('.');
-    Map<dynamic, dynamic>? geoPointField = snapData[fieldList[0]];
+    dynamic geoPointField = snapData[fieldList[0]];
+
     if (fieldList.length > 1) {
       for (int i = 1; i < fieldList.length; i++) {
         geoPointField = geoPointField?[fieldList[i]];
       }
     }
-    return geoPointField?['geopoint'] as GeoPoint?;
+
+    final dynamic geopoint = geoPointField?['geopoint'];
+
+    if (geopoint == null) return null;
+
+    if (geopoint is GeoPoint) {
+      return geopoint;
+    } else if (geopoint is Map<String, dynamic>) {
+      final lat = geopoint['latitude'];
+      final lng = geopoint['longitude'];
+      if (lat is num && lng is num) {
+        return GeoPoint(lat.toDouble(), lng.toDouble());
+      }
+    }
+
+    print("⚠️ Unexpected format in geopointFromMap: $geopoint");
+    return null;
   }
 }

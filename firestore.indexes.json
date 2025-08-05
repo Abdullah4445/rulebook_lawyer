@@ -1123,19 +1123,19 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "destinationLocationLAtLng.latitude",
+          "fieldPath": "destinationLocationLatLng.latitude",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "destinationLocationLAtLng.longitude",
+          "fieldPath": "destinationLocationLatLng.longitude",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "sourceLocationLAtLng.latitude",
+          "fieldPath": "sourceLocationLatLng.latitude",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "sourceLocationLAtLng.longitude",
+          "fieldPath": "sourceLocationLatLng.longitude",
           "order": "ASCENDING"
         },
         {

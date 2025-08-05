@@ -40,7 +40,10 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                   .collection(CollectionName.ordersIntercity)
                   .where('driverId', isEqualTo: FireStoreUtils.getCurrentUid())
                   .where('intercityServiceId', isEqualTo: "Kn2VEnPI3ikF58uK8YqY")
-                  .where('status', whereIn: [Constant.rideInProgress, Constant.rideActive]).snapshots(),
+                  .where('status', whereIn: [
+                Constant.rideInProgress,
+                Constant.rideActive
+              ]).snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return Text('Something went wrong'.tr);
@@ -57,12 +60,14 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          InterCityOrderModel orderModel = InterCityOrderModel.fromJson(snapshot.data!.docs[index].data() as Map<String, dynamic>);
+                          InterCityOrderModel orderModel = InterCityOrderModel.fromJson(
+                              snapshot.data!.docs[index].data() as Map<String, dynamic>);
                           return InkWell(
                             onTap: () {
                               if (Constant.mapType == "inappmap") {
-                                if (orderModel.status == Constant.rideActive || orderModel.status == Constant.rideInProgress) {
-                                  Get.to(const LiveTrackingScreen(), arguments: {
+                                if (orderModel.status == Constant.rideActive ||
+                                    orderModel.status == Constant.rideInProgress) {
+                                  Get.to(LiveTrackingScreen(), arguments: {
                                     "interCityOrderModel": orderModel,
                                     "type": "interCityOrderModel",
                                   });
@@ -70,10 +75,12 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                               } else {
                                 Utils.redirectMap(
                                     curName: orderModel.sourceLocationName!,
-                                    curLat: orderModel.sourceLocationLAtLng!.latitude!,
-                                    curLon: orderModel.sourceLocationLAtLng!.longitude!,
-                                    latitude: orderModel.destinationLocationLAtLng!.latitude!,
-                                    longLatitude: orderModel.destinationLocationLAtLng!.longitude!,
+                                    curLat: orderModel.sourceLocationLatLng!.latitude!,
+                                    curLon: orderModel.sourceLocationLatLng!.longitude!,
+                                    latitude:
+                                        orderModel.destinationLocationLatLng!.latitude!,
+                                    longLatitude:
+                                        orderModel.destinationLocationLatLng!.longitude!,
                                     name: orderModel.destinationLocationName.toString());
                               }
                             },
@@ -81,21 +88,30 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                               padding: const EdgeInsets.all(8.0),
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: themeChange.getThem() ? AppColors.darkContainerBackground : AppColors.containerBackground,
-                                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                  border: Border.all(color: themeChange.getThem() ? AppColors.darkContainerBorder : AppColors.containerBorder, width: 0.5),
+                                  color: themeChange.getThem()
+                                      ? AppColors.darkContainerBackground
+                                      : AppColors.containerBackground,
+                                  borderRadius:
+                                      const BorderRadius.all(Radius.circular(10)),
+                                  border: Border.all(
+                                      color: themeChange.getThem()
+                                          ? AppColors.darkContainerBorder
+                                          : AppColors.containerBorder,
+                                      width: 0.5),
                                   boxShadow: themeChange.getThem()
                                       ? null
                                       : [
                                           BoxShadow(
                                             color: Colors.grey.withOpacity(0.5),
                                             blurRadius: 8,
-                                            offset: const Offset(0, 2), // changes position of shadow
+                                            offset: const Offset(
+                                                0, 2), // changes position of shadow
                                           ),
                                         ],
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 10),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -111,7 +127,13 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                       Row(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text(Constant.amountShow(amount: orderModel.offerRate.toString()), style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18)),
+                                          Text(
+                                              Constant.amountShow(
+                                                  amount:
+                                                      orderModel.offerRate.toString()),
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18)),
                                           // Text(" For ${orderModel.numberOfPassenger} Person".tr, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18)),
                                         ],
                                       ),
@@ -124,20 +146,35 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                             child: Row(
                                               children: [
                                                 Container(
-                                                  decoration: BoxDecoration(color: Colors.grey.withOpacity(0.30), borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                                  decoration: BoxDecoration(
+                                                      color:
+                                                          Colors.grey.withOpacity(0.30),
+                                                      borderRadius:
+                                                          const BorderRadius.all(
+                                                              Radius.circular(5))),
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                                    child: Text(orderModel.paymentType.toString()),
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 10, vertical: 4),
+                                                    child: Text(orderModel.paymentType
+                                                        .toString()),
                                                   ),
                                                 ),
                                                 const SizedBox(
                                                   width: 10,
                                                 ),
                                                 Container(
-                                                  decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.30), borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                                  decoration: BoxDecoration(
+                                                      color: AppColors.primary
+                                                          .withOpacity(0.30),
+                                                      borderRadius:
+                                                          const BorderRadius.all(
+                                                              Radius.circular(5))),
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                                    child: Text(Constant.localizationName(orderModel.intercityService!.name)),
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 10, vertical: 4),
+                                                    child: Text(Constant.localizationName(
+                                                        orderModel
+                                                            .intercityService!.name)),
                                                   ),
                                                 ),
                                               ],
@@ -145,9 +182,10 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                           ),
                                           InkWell(
                                               onTap: () {
-                                                Get.to(const ParcelDetailsScreen(), arguments: {
-                                                  "orderModel": orderModel,
-                                                });
+                                                Get.to(const ParcelDetailsScreen(),
+                                                    arguments: {
+                                                      "orderModel": orderModel,
+                                                    });
                                               },
                                               child: Text(
                                                 "View details".tr,
@@ -164,33 +202,48 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                           width: 10,
                                         ),
                                         Text(
-                                          Constant.localizationName(orderModel.freightVehicle!.name),
-                                          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
+                                          Constant.localizationName(
+                                              orderModel.freightVehicle!.name),
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 16, fontWeight: FontWeight.w600),
                                         )
                                       ]),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(vertical: 14),
                                         child: Container(
                                           decoration: BoxDecoration(
-                                              color: themeChange.getThem() ? AppColors.darkGray : AppColors.gray, borderRadius: const BorderRadius.all(Radius.circular(10))),
+                                              color: themeChange.getThem()
+                                                  ? AppColors.darkGray
+                                                  : AppColors.gray,
+                                              borderRadius: const BorderRadius.all(
+                                                  Radius.circular(10))),
                                           child: Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 12),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: [
-                                                  Text(orderModel.whenDates.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                                                  Text(orderModel.whenDates.toString(),
+                                                      style: GoogleFonts.poppins(
+                                                          fontWeight: FontWeight.w600)),
                                                   const SizedBox(
                                                     width: 10,
                                                   ),
-                                                  Text(orderModel.whenTime.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                                                  Text(orderModel.whenTime.toString(),
+                                                      style: GoogleFonts.poppins(
+                                                          fontWeight: FontWeight.w600)),
                                                 ],
                                               )),
                                         ),
                                       ),
                                       LocationView(
-                                        sourceLocation: orderModel.sourceLocationName.toString(),
-                                        destinationLocation: orderModel.destinationLocationName.toString(),
+                                        sourceLocation:
+                                            orderModel.sourceLocationName.toString(),
+                                        destinationLocation:
+                                            orderModel.destinationLocationName.toString(),
                                       ),
                                       const SizedBox(
                                         height: 10,
@@ -198,31 +251,52 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                       Row(
                                         children: [
                                           Expanded(
-                                            child: orderModel.status == Constant.rideInProgress
+                                            child: orderModel.status ==
+                                                    Constant.rideInProgress
                                                 ? ButtonThem.buildBorderButton(
                                                     context,
                                                     title: "Complete Order".tr,
                                                     btnHeight: 44,
                                                     iconVisibility: false,
                                                     onPress: () async {
-                                                      orderModel.status = Constant.rideComplete;
+                                                      orderModel.status =
+                                                          Constant.rideComplete;
 
-                                                      await FireStoreUtils.getCustomer(orderModel.userId.toString()).then((value) async {
+                                                      await FireStoreUtils.getCustomer(
+                                                              orderModel.userId
+                                                                  .toString())
+                                                          .then((value) async {
                                                         if (value != null) {
-                                                          Map<String, dynamic> playLoad = <String, dynamic>{"type": "intercity_order_complete", "orderId": orderModel.id};
+                                                          Map<String, dynamic> playLoad =
+                                                              <String, dynamic>{
+                                                            "type":
+                                                                "intercity_order_complete",
+                                                            "orderId": orderModel.id
+                                                          };
 
-                                                          await SendNotification.sendOneNotification(
-                                                              token: value.fcmToken.toString(),
-                                                              title: 'Order complete!'.tr,
-                                                              body: 'Please complete your payment.'.tr,
-                                                              payload: playLoad);
+                                                          await SendNotification
+                                                              .sendOneNotification(
+                                                                  token: value.fcmToken
+                                                                      .toString(),
+                                                                  title: 'Order complete!'
+                                                                      .tr,
+                                                                  body:
+                                                                      'Please complete your payment.'
+                                                                          .tr,
+                                                                  payload: playLoad);
                                                         }
                                                       });
 
-                                                      await FireStoreUtils.setInterCityOrder(orderModel).then((value) {
+                                                      await FireStoreUtils
+                                                              .setInterCityOrder(
+                                                                  orderModel)
+                                                          .then((value) {
                                                         if (value == true) {
-                                                          ShowToastDialog.showToast("Order Complete successfully".tr);
-                                                          controller.homeController.selectedIndex.value = 3;
+                                                          ShowToastDialog.showToast(
+                                                              "Order Complete successfully"
+                                                                  .tr);
+                                                          controller.homeController
+                                                              .selectedIndex.value = 3;
                                                         }
                                                       });
                                                     },
@@ -233,7 +307,14 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                                     btnHeight: 44,
                                                     iconVisibility: false,
                                                     onPress: () async {
-                                                      showDialog(context: context, builder: (BuildContext context) => otpDialog(context, controller, orderModel));
+                                                      showDialog(
+                                                          context: context,
+                                                          builder:
+                                                              (BuildContext context) =>
+                                                                  otpDialog(
+                                                                      context,
+                                                                      controller,
+                                                                      orderModel));
                                                     },
                                                   ),
                                           ),
@@ -244,14 +325,21 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                             children: [
                                               InkWell(
                                                 onTap: () async {
-                                                  UserModel? customer = await FireStoreUtils.getCustomer(orderModel.userId.toString());
-                                                  DriverUserModel? driver = await FireStoreUtils.getDriverProfile(orderModel.driverId.toString());
+                                                  UserModel? customer =
+                                                      await FireStoreUtils.getCustomer(
+                                                          orderModel.userId.toString());
+                                                  DriverUserModel? driver =
+                                                      await FireStoreUtils
+                                                          .getDriverProfile(orderModel
+                                                              .driverId
+                                                              .toString());
 
                                                   Get.to(ChatScreens(
                                                     driverId: driver!.id,
                                                     customerId: customer!.id,
                                                     customerName: customer.fullName,
-                                                    customerProfileImage: customer.profilePic,
+                                                    customerProfileImage:
+                                                        customer.profilePic,
                                                     driverName: driver.fullName,
                                                     driverProfileImage: driver.profilePic,
                                                     orderId: orderModel.id,
@@ -262,8 +350,15 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                                   height: 44,
                                                   width: 44,
                                                   decoration: BoxDecoration(
-                                                      color: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary, borderRadius: BorderRadius.circular(5)),
-                                                  child: Icon(Icons.chat, color: themeChange.getThem() ? Colors.black : Colors.white),
+                                                      color: themeChange.getThem()
+                                                          ? AppColors.darkModePrimary
+                                                          : AppColors.primary,
+                                                      borderRadius:
+                                                          BorderRadius.circular(5)),
+                                                  child: Icon(Icons.chat,
+                                                      color: themeChange.getThem()
+                                                          ? Colors.black
+                                                          : Colors.white),
                                                 ),
                                               ),
                                               const SizedBox(
@@ -271,15 +366,25 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                               ),
                                               InkWell(
                                                 onTap: () async {
-                                                  UserModel? customer = await FireStoreUtils.getCustomer(orderModel.userId.toString());
-                                                  Constant.makePhoneCall("${customer!.countryCode}${customer.phoneNumber}");
+                                                  UserModel? customer =
+                                                      await FireStoreUtils.getCustomer(
+                                                          orderModel.userId.toString());
+                                                  Constant.makePhoneCall(
+                                                      "${customer!.countryCode}${customer.phoneNumber}");
                                                 },
                                                 child: Container(
                                                   height: 44,
                                                   width: 44,
                                                   decoration: BoxDecoration(
-                                                      color: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary, borderRadius: BorderRadius.circular(5)),
-                                                  child: Icon(Icons.call, color: themeChange.getThem() ? Colors.black : Colors.white),
+                                                      color: themeChange.getThem()
+                                                          ? AppColors.darkModePrimary
+                                                          : AppColors.primary,
+                                                      borderRadius:
+                                                          BorderRadius.circular(5)),
+                                                  child: Icon(Icons.call,
+                                                      color: themeChange.getThem()
+                                                          ? Colors.black
+                                                          : Colors.white),
                                                 ),
                                               )
                                             ],
@@ -299,11 +404,13 @@ class ActiveFreightOrderScreen extends StatelessWidget {
         });
   }
 
-  otpDialog(BuildContext context, ActiveInterCityOrderController controller, InterCityOrderModel orderModel) {
+  otpDialog(BuildContext context, ActiveInterCityOrderController controller,
+      InterCityOrderModel orderModel) {
     final themeChange = Provider.of<DarkThemeProvider>(context);
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)), //this right here
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0)), //this right here
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
         child: Column(
@@ -313,7 +420,9 @@ class ActiveFreightOrderScreen extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Text("OTP verify from customer".tr, style: GoogleFonts.poppins(fontWeight: FontWeight.w600,color: Colors.black)),
+            Text("OTP verify from customer".tr,
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600, color: Colors.black)),
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: PinCodeTextField(
@@ -323,12 +432,24 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                 pinTheme: PinTheme(
                   fieldHeight: 40,
                   fieldWidth: 40,
-                  activeColor: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder,
-                  selectedColor: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder,
-                  inactiveColor: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder,
-                  activeFillColor: themeChange.getThem() ? AppColors.darkTextField : AppColors.textField,
-                  inactiveFillColor: themeChange.getThem() ? AppColors.darkTextField : AppColors.textField,
-                  selectedFillColor: themeChange.getThem() ? AppColors.darkTextField : AppColors.textField,
+                  activeColor: themeChange.getThem()
+                      ? AppColors.darkTextFieldBorder
+                      : AppColors.textFieldBorder,
+                  selectedColor: themeChange.getThem()
+                      ? AppColors.darkTextFieldBorder
+                      : AppColors.textFieldBorder,
+                  inactiveColor: themeChange.getThem()
+                      ? AppColors.darkTextFieldBorder
+                      : AppColors.textFieldBorder,
+                  activeFillColor: themeChange.getThem()
+                      ? AppColors.darkTextField
+                      : AppColors.textField,
+                  inactiveFillColor: themeChange.getThem()
+                      ? AppColors.darkTextField
+                      : AppColors.textField,
+                  selectedFillColor: themeChange.getThem()
+                      ? AppColors.darkTextField
+                      : AppColors.textField,
                   shape: PinCodeFieldShape.box,
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -348,12 +469,15 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                 ShowToastDialog.showLoader("Please wait...".tr);
                 orderModel.status = Constant.rideInProgress;
 
-                await FireStoreUtils.getCustomer(orderModel.userId.toString()).then((value) async {
+                await FireStoreUtils.getCustomer(orderModel.userId.toString())
+                    .then((value) async {
                   if (value != null) {
                     await SendNotification.sendOneNotification(
                         token: value.fcmToken.toString(),
                         title: 'Ride Started'.tr,
-                        body: 'The ride has officially started. Please follow the designated route to the destination.'.tr,
+                        body:
+                            'The ride has officially started. Please follow the designated route to the destination.'
+                                .tr,
                         payload: {});
                   }
                 });

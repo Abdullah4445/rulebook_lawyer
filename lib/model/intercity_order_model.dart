@@ -16,8 +16,8 @@ class InterCityOrderModel {
   String? destinationCity;
   String? destinationLocationName;
   String? paymentType;
-  LocationLatLng? sourceLocationLAtLng;
-  LocationLatLng? destinationLocationLAtLng;
+  LocationLatLng? sourceLocationLatLng;
+  LocationLatLng? destinationLocationLatLng;
   String? id;
   String? intercityServiceId;
   String? userId;
@@ -59,8 +59,8 @@ class InterCityOrderModel {
         this.sourceCity,
         this.destinationLocationName,
         this.destinationCity,
-        this.sourceLocationLAtLng,
-        this.destinationLocationLAtLng,
+        this.sourceLocationLatLng,
+        this.destinationLocationLatLng,
         this.id,
         this.userId,
         this.distance,
@@ -92,8 +92,8 @@ class InterCityOrderModel {
     paymentType = json['paymentType'];
     destinationLocationName = json['destinationLocationName'];
     destinationCity = json['destinationCity'];
-    sourceLocationLAtLng = json['sourceLocationLAtLng'] != null ? LocationLatLng.fromJson(json['sourceLocationLAtLng']) : null;
-    destinationLocationLAtLng = json['destinationLocationLAtLng'] != null ? LocationLatLng.fromJson(json['destinationLocationLAtLng']) : null;
+    sourceLocationLatLng = json['sourceLocationLatLng'] != null ? LocationLatLng.fromJson(json['sourceLocationLatLng']) : null;
+    destinationLocationLatLng = json['destinationLocationLatLng'] != null ? LocationLatLng.fromJson(json['destinationLocationLatLng']) : null;
     coupon = json['coupon'] != null ? CouponModel.fromJson(json['coupon']) : null;
     freightVehicle = json['freightVehicle'] != null ? FreightVehicle.fromJson(json['freightVehicle']) : null;
     intercityService = json['intercityService'] != null ? IntercityServiceModel.fromJson(json['intercityService']) : null;
@@ -138,8 +138,8 @@ class InterCityOrderModel {
     data['sourceCity'] = sourceCity;
     data['destinationLocationName'] = destinationLocationName;
     data['destinationCity'] = destinationCity;
-    if (sourceLocationLAtLng != null) {
-      data['sourceLocationLAtLng'] = sourceLocationLAtLng!.toJson();
+    if (sourceLocationLatLng != null) {
+      data['sourceLocationLatLng'] = sourceLocationLatLng!.toJson();
     }
     if (coupon != null) {
       data['coupon'] = coupon!.toJson();
@@ -153,8 +153,8 @@ class InterCityOrderModel {
     if (someOneElse != null) {
       data['someOneElse'] = someOneElse!.toJson();
     }
-    if (destinationLocationLAtLng != null) {
-      data['destinationLocationLAtLng'] = destinationLocationLAtLng!.toJson();
+    if (destinationLocationLatLng != null) {
+      data['destinationLocationLatLng'] = destinationLocationLatLng!.toJson();
     }
     if (zone != null) {
       data['zone'] = zone!.toJson();

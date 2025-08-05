@@ -136,12 +136,12 @@ class OrderMapController extends GetxController {
   PolylinePoints polylinePoints = PolylinePoints();
 
   void getPolyline() async {
-    if (orderModel.value.sourceLocationLAtLng != null && orderModel.value.destinationLocationLAtLng != null) {
+    if (orderModel.value.sourceLocationLatLng != null && orderModel.value.destinationLocationLatLng != null) {
       movePosition();
       List<LatLng> polylineCoordinates = [];
       PolylineRequest polylineRequest = PolylineRequest(
-        origin: PointLatLng(orderModel.value.sourceLocationLAtLng!.latitude ?? 0.0, orderModel.value.sourceLocationLAtLng!.longitude ?? 0.0),
-        destination: PointLatLng(orderModel.value.destinationLocationLAtLng!.latitude ?? 0.0, orderModel.value.destinationLocationLAtLng!.longitude ?? 0.0),
+        origin: PointLatLng(orderModel.value.sourceLocationLatLng!.latitude ?? 0.0, orderModel.value.sourceLocationLatLng!.longitude ?? 0.0),
+        destination: PointLatLng(orderModel.value.destinationLocationLatLng!.latitude ?? 0.0, orderModel.value.destinationLocationLatLng!.longitude ?? 0.0),
         mode: TravelMode.driving,
       );
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
@@ -156,8 +156,8 @@ class OrderMapController extends GetxController {
         print(result.errorMessage.toString());
       }
       _addPolyLine(polylineCoordinates);
-      addMarker(LatLng(orderModel.value.sourceLocationLAtLng!.latitude ?? 0.0, orderModel.value.sourceLocationLAtLng!.longitude ?? 0.0), "Source", departureIcon);
-      addMarker(LatLng(orderModel.value.destinationLocationLAtLng!.latitude ?? 0.0, orderModel.value.destinationLocationLAtLng!.longitude ?? 0.0), "Destination", destinationIcon);
+      addMarker(LatLng(orderModel.value.sourceLocationLatLng!.latitude ?? 0.0, orderModel.value.sourceLocationLatLng!.longitude ?? 0.0), "Source", departureIcon);
+      addMarker(LatLng(orderModel.value.destinationLocationLatLng!.latitude ?? 0.0, orderModel.value.destinationLocationLatLng!.longitude ?? 0.0), "Destination", destinationIcon);
     }
   }
 
@@ -165,16 +165,16 @@ class OrderMapController extends GetxController {
 
   movePosition() async {
     double distance = double.parse((prefix.Geolocator.distanceBetween(
-              orderModel.value.sourceLocationLAtLng!.latitude ?? 0.0,
-              orderModel.value.sourceLocationLAtLng!.longitude ?? 0.0,
-              orderModel.value.destinationLocationLAtLng!.latitude ?? 0.0,
-              orderModel.value.destinationLocationLAtLng!.longitude ?? 0.0,
+              orderModel.value.sourceLocationLatLng!.latitude ?? 0.0,
+              orderModel.value.sourceLocationLatLng!.longitude ?? 0.0,
+              orderModel.value.destinationLocationLatLng!.latitude ?? 0.0,
+              orderModel.value.destinationLocationLatLng!.longitude ?? 0.0,
             ) /
             1609.32)
         .toString());
     LatLng center = LatLng(
-      (orderModel.value.sourceLocationLAtLng!.latitude! + orderModel.value.destinationLocationLAtLng!.latitude!) / 2,
-      (orderModel.value.sourceLocationLAtLng!.longitude! + orderModel.value.destinationLocationLAtLng!.longitude!) / 2,
+      (orderModel.value.sourceLocationLatLng!.latitude! + orderModel.value.destinationLocationLatLng!.latitude!) / 2,
+      (orderModel.value.sourceLocationLatLng!.longitude! + orderModel.value.destinationLocationLatLng!.longitude!) / 2,
     );
 
     double radiusElevated = (distance / 2) + ((distance / 2) / 2);
@@ -211,15 +211,15 @@ class OrderMapController extends GetxController {
 
   void getOSMPolyline(themeChange) async {
     try {
-      if (orderModel.value.sourceLocationLAtLng != null && orderModel.value.destinationLocationLAtLng != null) {
+      if (orderModel.value.sourceLocationLatLng != null && orderModel.value.destinationLocationLatLng != null) {
         setOsmMarker(
-          departure: GeoPoint(latitude: orderModel.value.sourceLocationLAtLng?.latitude ?? 0.0, longitude: orderModel.value.sourceLocationLAtLng?.longitude ?? 0.0),
-          destination: GeoPoint(latitude: orderModel.value.destinationLocationLAtLng?.latitude ?? 0.0, longitude: orderModel.value.destinationLocationLAtLng?.longitude ?? 0.0),
+          departure: GeoPoint(latitude: orderModel.value.sourceLocationLatLng?.latitude ?? 0.0, longitude: orderModel.value.sourceLocationLatLng?.longitude ?? 0.0),
+          destination: GeoPoint(latitude: orderModel.value.destinationLocationLatLng?.latitude ?? 0.0, longitude: orderModel.value.destinationLocationLatLng?.longitude ?? 0.0),
         );
         await mapOsmController!.removeLastRoad();
         roadInfo.value = await mapOsmController!.drawRoad(
-          GeoPoint(latitude: orderModel.value.sourceLocationLAtLng?.latitude ?? 0, longitude: orderModel.value.sourceLocationLAtLng?.longitude ?? 0),
-          GeoPoint(latitude: orderModel.value.destinationLocationLAtLng?.latitude ?? 0, longitude: orderModel.value.destinationLocationLAtLng?.longitude ?? 0),
+          GeoPoint(latitude: orderModel.value.sourceLocationLatLng?.latitude ?? 0, longitude: orderModel.value.sourceLocationLatLng?.longitude ?? 0),
+          GeoPoint(latitude: orderModel.value.destinationLocationLatLng?.latitude ?? 0, longitude: orderModel.value.destinationLocationLatLng?.longitude ?? 0),
           roadType: RoadType.car,
           roadOption: RoadOption(
             roadWidth: 15,
@@ -229,8 +229,8 @@ class OrderMapController extends GetxController {
         );
 
         updateCameraLocation(
-            source: GeoPoint(latitude: orderModel.value.sourceLocationLAtLng?.latitude ?? 0, longitude: orderModel.value.sourceLocationLAtLng?.longitude ?? 0),
-            destination: GeoPoint(latitude: orderModel.value.destinationLocationLAtLng?.latitude ?? 0, longitude: orderModel.value.destinationLocationLAtLng?.longitude ?? 0));
+            source: GeoPoint(latitude: orderModel.value.sourceLocationLatLng?.latitude ?? 0, longitude: orderModel.value.sourceLocationLatLng?.longitude ?? 0),
+            destination: GeoPoint(latitude: orderModel.value.destinationLocationLatLng?.latitude ?? 0, longitude: orderModel.value.destinationLocationLatLng?.longitude ?? 0));
       }
     } catch (e) {
       print('Error: $e');
