@@ -1,15 +1,14 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/model/order/location_lat_lng.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:get/get.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:math';
 
 import '../controller/global_setting_conroller.dart';
 import '../services/localization_service.dart';
@@ -91,13 +90,11 @@ class Utils {
       required double latitude,
       required double longLatitude}) async {
     if (Constant.mapType == "google") {
-
       bool? isGoogleAvailable = await MapLauncher.isMapAvailable(MapType.google);
       if (isGoogleAvailable == true) {
         print("In google maps");
         print("My source Lat: $curLat");
         print("My source Lon: $curLon");
-
 
         print("My desti Lat: $latitude");
         print("My desti Lon: $longLatitude");
@@ -116,7 +113,6 @@ class Utils {
           print("My source Lat: $curLat");
           print("My source Lon: $curLon");
 
-
           print("My desti Lat: $latitude");
           print("My desti Lon: $longLatitude");
 
@@ -130,7 +126,8 @@ class Utils {
           );
         } else {
           ShowToastDialog.showToast(
-              "No supported map apps are installed. Either Install google ");
+                  "No supported map apps are installed. Either Install google ")
+              .tr;
         }
       }
     } else if (Constant.mapType == "googleGo") {
@@ -143,7 +140,7 @@ class Utils {
           destination: Coords(latitude, longLatitude),
         );
       } else {
-        ShowToastDialog.showToast("Google Go map is not installed");
+        ShowToastDialog.showToast("Google Go map is not installed").tr;
       }
     } else if (Constant.mapType == "waze") {
       bool? isAvailable = await MapLauncher.isMapAvailable(MapType.waze);
@@ -155,7 +152,7 @@ class Utils {
           destination: Coords(latitude, longLatitude),
         );
       } else {
-        ShowToastDialog.showToast("Waze is not installed");
+        ShowToastDialog.showToast("Waze is not installed").tr;
       }
     } else if (Constant.mapType == "mapswithme") {
       bool? isAvailable = await MapLauncher.isMapAvailable(MapType.mapswithme);
@@ -167,7 +164,7 @@ class Utils {
           destination: Coords(latitude, longLatitude),
         );
       } else {
-        ShowToastDialog.showToast("Mapswithme is not installed");
+        ShowToastDialog.showToast("Mapswithme is not installed").tr;
       }
     } else if (Constant.mapType == "yandexNavi") {
       bool? isAvailable = await MapLauncher.isMapAvailable(MapType.yandexNavi);
@@ -179,7 +176,7 @@ class Utils {
           destination: Coords(latitude, longLatitude),
         );
       } else {
-        ShowToastDialog.showToast("YandexNavi is not installed");
+        ShowToastDialog.showToast("YandexNavi is not installed").tr;
       }
     } else if (Constant.mapType == "yandexMaps") {
       bool? isAvailable = await MapLauncher.isMapAvailable(MapType.yandexMaps);
@@ -191,7 +188,7 @@ class Utils {
           destination: Coords(latitude, longLatitude),
         );
       } else {
-        ShowToastDialog.showToast("yandexMaps map is not installed");
+        ShowToastDialog.showToast("yandexMaps map is not installed").tr;
       }
     }
   }

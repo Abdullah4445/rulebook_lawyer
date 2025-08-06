@@ -1,10 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/send_notification.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/controller/freight_controller.dart';
 import 'package:driver/model/intercity_order_model.dart';
-import 'package:driver/model/order/driverId_accept_reject.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/themes/button_them.dart';
 import 'package:driver/themes/responsive.dart';
@@ -37,10 +34,13 @@ class NewOrderFreightScreen extends StatelessWidget {
               ? Constant.loader(context)
               : controller.driverModel.value.isOnline == false
                   ? Center(
-                      child: Text("You are Now offline so you can't get nearest order.".tr),
+                      child:
+                          Text("You are Now offline so you can't get nearest order.".tr),
                     )
                   : StreamBuilder<List<InterCityOrderModel>>(
-                      stream: FireStoreUtils().getFreightOrders(Constant.currentLocation!.latitude, Constant.currentLocation!.longitude),
+                      stream: FireStoreUtils().getFreightOrders(
+                          Constant.currentLocation!.latitude,
+                          Constant.currentLocation!.longitude),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return Constant.loader(context);
@@ -58,23 +58,36 @@ class NewOrderFreightScreen extends StatelessWidget {
                               InterCityOrderModel orderModel = snapshot.data![index];
                               String amount;
                               if (Constant.distanceType == "Km") {
-                                amount = Constant.amountCalculate(orderModel.freightVehicle!.kmCharge.toString(), orderModel.distance.toString())
-                                    .toStringAsFixed(Constant.currencyModel!.decimalDigits!);
+                                amount = Constant.amountCalculate(
+                                        orderModel.freightVehicle!.kmCharge.toString(),
+                                        orderModel.distance.toString())
+                                    .toStringAsFixed(
+                                        Constant.currencyModel!.decimalDigits!);
                               } else {
-                                amount = Constant.amountCalculate(orderModel.freightVehicle!.kmCharge.toString(), orderModel.distance.toString())
-                                    .toStringAsFixed(Constant.currencyModel!.decimalDigits!);
+                                amount = Constant.amountCalculate(
+                                        orderModel.freightVehicle!.kmCharge.toString(),
+                                        orderModel.distance.toString())
+                                    .toStringAsFixed(
+                                        Constant.currencyModel!.decimalDigits!);
                               }
 
                               return InkWell(
                                 onTap: () {
-                                  if (orderModel.acceptedDriverId != null && orderModel.acceptedDriverId!.contains(FireStoreUtils.getCurrentUid())) {
+                                  if (orderModel.acceptedDriverId != null &&
+                                      orderModel.acceptedDriverId!
+                                          .contains(FireStoreUtils.getCurrentUid())) {
                                     ShowToastDialog.showToast("Ride already accepted".tr);
                                   } else {
-                                    controller.newAmount.value = orderModel.offerRate.toString();
-                                    controller.enterOfferRateController.value.text = orderModel.offerRate.toString();
-                                    DateTime start = DateFormat("HH:mm").parse(orderModel.whenTime.toString());
+                                    controller.newAmount.value =
+                                        orderModel.offerRate.toString();
+                                    controller.enterOfferRateController.value.text =
+                                        orderModel.offerRate.toString();
+                                    DateTime start = DateFormat("HH:mm")
+                                        .parse(orderModel.whenTime.toString());
                                     controller.suggestedTime = start;
-                                    controller.suggestedTimeController.value.text = DateFormat("hh:mm aa").format(controller.suggestedTime!);
+                                    controller.suggestedTimeController.value.text =
+                                        DateFormat("hh:mm aa")
+                                            .format(controller.suggestedTime!);
                                     offerAcceptDialog(context, controller, orderModel);
                                   }
                                 },
@@ -82,21 +95,30 @@ class NewOrderFreightScreen extends StatelessWidget {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: themeChange.getThem() ? AppColors.darkContainerBackground : AppColors.containerBackground,
-                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                      border: Border.all(color: themeChange.getThem() ? AppColors.darkContainerBorder : AppColors.containerBorder, width: 0.5),
+                                      color: themeChange.getThem()
+                                          ? AppColors.darkContainerBackground
+                                          : AppColors.containerBackground,
+                                      borderRadius:
+                                          const BorderRadius.all(Radius.circular(10)),
+                                      border: Border.all(
+                                          color: themeChange.getThem()
+                                              ? AppColors.darkContainerBorder
+                                              : AppColors.containerBorder,
+                                          width: 0.5),
                                       boxShadow: themeChange.getThem()
                                           ? null
                                           : [
                                               BoxShadow(
                                                 color: Colors.grey.withOpacity(0.5),
                                                 blurRadius: 8,
-                                                offset: const Offset(0, 2), // changes position of shadow
+                                                offset: const Offset(
+                                                    0, 2), // changes position of shadow
                                               ),
                                             ],
                                     ),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 10),
                                       child: Column(
                                         children: [
                                           UserView(
@@ -111,7 +133,9 @@ class NewOrderFreightScreen extends StatelessWidget {
                                           Align(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
-                                              Constant.amountShow(amount: orderModel.offerRate.toString()),
+                                              Constant.amountShow(
+                                                  amount:
+                                                      orderModel.offerRate.toString()),
                                               style: GoogleFonts.poppins(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 18,
@@ -128,21 +152,41 @@ class NewOrderFreightScreen extends StatelessWidget {
                                                 child: Row(
                                                   children: [
                                                     Container(
-                                                      decoration: BoxDecoration(color: Colors.grey.withOpacity(0.30), borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.grey
+                                                              .withOpacity(0.30),
+                                                          borderRadius:
+                                                              const BorderRadius.all(
+                                                                  Radius.circular(5))),
                                                       child: Padding(
-                                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                                        child: Text(orderModel.paymentType.toString()),
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 4),
+                                                        child: Text(orderModel.paymentType
+                                                            .toString()),
                                                       ),
                                                     ),
                                                     const SizedBox(
                                                       width: 10,
                                                     ),
                                                     Container(
-                                                      decoration:
-                                                          BoxDecoration(color: AppColors.primary.withOpacity(0.30), borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                                      decoration: BoxDecoration(
+                                                          color: AppColors.primary
+                                                              .withOpacity(0.30),
+                                                          borderRadius:
+                                                              const BorderRadius.all(
+                                                                  Radius.circular(5))),
                                                       child: Padding(
-                                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                                        child: Text(Constant.localizationName(orderModel.intercityService!.name)),
+                                                        padding:
+                                                            const EdgeInsets.symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 4),
+                                                        child: Text(
+                                                            Constant.localizationName(
+                                                                orderModel
+                                                                    .intercityService!
+                                                                    .name)),
                                                       ),
                                                     ),
                                                   ],
@@ -150,9 +194,10 @@ class NewOrderFreightScreen extends StatelessWidget {
                                               ),
                                               InkWell(
                                                   onTap: () {
-                                                    Get.to(const ParcelDetailsScreen(), arguments: {
-                                                      "orderModel": orderModel,
-                                                    });
+                                                    Get.to(const ParcelDetailsScreen(),
+                                                        arguments: {
+                                                          "orderModel": orderModel,
+                                                        });
                                                   },
                                                   child: Text(
                                                     "View details".tr,
@@ -169,33 +214,54 @@ class NewOrderFreightScreen extends StatelessWidget {
                                               width: 10,
                                             ),
                                             Text(
-                                              Constant.localizationName(orderModel.freightVehicle!.name),
-                                              style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
+                                              Constant.localizationName(
+                                                  orderModel.freightVehicle!.name),
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
                                             )
                                           ]),
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(vertical: 14),
+                                            padding:
+                                                const EdgeInsets.symmetric(vertical: 14),
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                  color: themeChange.getThem() ? AppColors.darkGray : AppColors.gray, borderRadius: const BorderRadius.all(Radius.circular(10))),
+                                                  color: themeChange.getThem()
+                                                      ? AppColors.darkGray
+                                                      : AppColors.gray,
+                                                  borderRadius: const BorderRadius.all(
+                                                      Radius.circular(10))),
                                               child: Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                                                  padding: const EdgeInsets.symmetric(
+                                                      horizontal: 10, vertical: 12),
                                                   child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.center,
                                                     children: [
-                                                      Text(orderModel.whenDates.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                                                      Text(
+                                                          orderModel.whenDates.toString(),
+                                                          style: GoogleFonts.poppins(
+                                                              fontWeight:
+                                                                  FontWeight.w600)),
                                                       const SizedBox(
                                                         width: 10,
                                                       ),
-                                                      Text(orderModel.whenTime.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                                                      Text(orderModel.whenTime.toString(),
+                                                          style: GoogleFonts.poppins(
+                                                              fontWeight:
+                                                                  FontWeight.w600)),
                                                     ],
                                                   )),
                                             ),
                                           ),
                                           LocationView(
-                                            sourceLocation: orderModel.sourceLocationName.toString(),
-                                            destinationLocation: orderModel.destinationLocationName.toString(),
+                                            sourceLocation:
+                                                orderModel.sourceLocationName.toString(),
+                                            destinationLocation: orderModel
+                                                .destinationLocationName
+                                                .toString(),
                                           ),
                                           Column(
                                             children: [
@@ -203,19 +269,27 @@ class NewOrderFreightScreen extends StatelessWidget {
                                                 height: 10,
                                               ),
                                               Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 10, vertical: 5),
                                                 child: Container(
                                                   width: Responsive.width(100, context),
                                                   decoration: BoxDecoration(
-                                                      color: themeChange.getThem() ? AppColors.darkGray : AppColors.gray,
-                                                      borderRadius: const BorderRadius.all(Radius.circular(10))),
+                                                      color: themeChange.getThem()
+                                                          ? AppColors.darkGray
+                                                          : AppColors.gray,
+                                                      borderRadius:
+                                                          const BorderRadius.all(
+                                                              Radius.circular(10))),
                                                   child: Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                      padding: const EdgeInsets.symmetric(
+                                                          horizontal: 10, vertical: 10),
                                                       child: Center(
                                                         child: Text(
                                                           'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${double.parse(orderModel.distance.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.distanceType}'
                                                               .tr,
-                                                          style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                                                          style: GoogleFonts.poppins(
+                                                              fontWeight:
+                                                                  FontWeight.w500),
                                                         ),
                                                       )),
                                                 ),
@@ -235,7 +309,8 @@ class NewOrderFreightScreen extends StatelessWidget {
         });
   }
 
-  offerAcceptDialog(BuildContext context, FreightController controller, InterCityOrderModel orderModel) {
+  offerAcceptDialog(BuildContext context, FreightController controller,
+      InterCityOrderModel orderModel) {
     return showModalBottomSheet(
         context: context,
         isDismissible: false,
@@ -243,8 +318,10 @@ class NewOrderFreightScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         builder: (context) {
           return Container(
-            decoration:
-                BoxDecoration(color: Theme.of(context).colorScheme.background, borderRadius: const BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15))),
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.background,
+                borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(15), topLeft: Radius.circular(15))),
             child: StatefulBuilder(builder: (context, setState) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
@@ -267,7 +344,8 @@ class NewOrderFreightScreen extends StatelessWidget {
                         ),
                         LocationView(
                           sourceLocation: orderModel.sourceLocationName.toString(),
-                          destinationLocation: orderModel.destinationLocationName.toString(),
+                          destinationLocation:
+                              orderModel.destinationLocationName.toString(),
                         ),
                         const SizedBox(
                           height: 10,
@@ -283,17 +361,25 @@ class NewOrderFreightScreen extends StatelessWidget {
                                 InkWell(
                                   onTap: () {
                                     if (double.parse(controller.newAmount.value) >= 10) {
-                                      controller.newAmount.value = (double.parse(controller.newAmount.value) - 10).toString();
+                                      controller.newAmount.value =
+                                          (double.parse(controller.newAmount.value) - 10)
+                                              .toString();
 
-                                      controller.enterOfferRateController.value.text = controller.newAmount.value;
+                                      controller.enterOfferRateController.value.text =
+                                          controller.newAmount.value;
                                     } else {
                                       controller.newAmount.value = "0";
                                     }
                                   },
                                   child: Container(
-                                    decoration: BoxDecoration(border: Border.all(color: AppColors.textFieldBorder), borderRadius: const BorderRadius.all(Radius.circular(30))),
+                                    decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: AppColors.textFieldBorder),
+                                        borderRadius:
+                                            const BorderRadius.all(Radius.circular(30))),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 30, vertical: 10),
                                       child: Text(
                                         "- 10",
                                         style: GoogleFonts.poppins(),
@@ -304,7 +390,10 @@ class NewOrderFreightScreen extends StatelessWidget {
                                 const SizedBox(
                                   width: 20,
                                 ),
-                                Text(Constant.amountShow(amount: controller.newAmount.toString()), style: GoogleFonts.poppins()),
+                                Text(
+                                    Constant.amountShow(
+                                        amount: controller.newAmount.toString()),
+                                    style: GoogleFonts.poppins()),
                                 const SizedBox(
                                   width: 20,
                                 ),
@@ -313,8 +402,12 @@ class NewOrderFreightScreen extends StatelessWidget {
                                   title: "+ 10",
                                   btnWidthRatio: 0.22,
                                   onPress: () {
-                                    controller.newAmount.value = (double.parse(controller.newAmount.value) + 10).toStringAsFixed(Constant.currencyModel!.decimalDigits!);
-                                    controller.enterOfferRateController.value.text = controller.newAmount.value;
+                                    controller.newAmount.value =
+                                        (double.parse(controller.newAmount.value) + 10)
+                                            .toStringAsFixed(
+                                                Constant.currencyModel!.decimalDigits!);
+                                    controller.enterOfferRateController.value.text =
+                                        controller.newAmount.value;
                                   },
                                 ),
                               ],
@@ -330,7 +423,8 @@ class NewOrderFreightScreen extends StatelessWidget {
                             context,
                             hintText: "Enter Fare rate".tr,
                             controller: controller.enterOfferRateController.value,
-                            keyBoardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                            keyBoardType: const TextInputType.numberWithOptions(
+                                decimal: true, signed: false),
                             onChanged: (value) {
                               if (value.isEmpty) {
                                 controller.newAmount.value = "0.0";
@@ -349,30 +443,50 @@ class NewOrderFreightScreen extends StatelessWidget {
                         ),
                         ButtonThem.buildButton(
                           context,
-                          title: "Accept fare on ${Constant.amountShow(amount: controller.newAmount.value)}".tr,
+                          title:
+                              "Accept fare on ${Constant.amountShow(amount: controller.newAmount.value)}"
+                                  .tr,
                           onPress: () async {
-                            if (controller.newAmount.value.isNotEmpty && double.parse(controller.newAmount.value.toString()) > 0) {
-                              if (controller.driverModel.value.subscriptionTotalOrders == "-1") {
+                            if (controller.newAmount.value.isNotEmpty &&
+                                double.parse(controller.newAmount.value.toString()) > 0) {
+                              if (controller.driverModel.value.subscriptionTotalOrders ==
+                                  "-1") {
                                 controller.acceptOrder(orderModel);
                               } else {
-                                if (Constant.isSubscriptionModelApplied == false && Constant.adminCommission!.isEnabled == false) {
+                                if (Constant.isSubscriptionModelApplied == false &&
+                                    Constant.adminCommission!.isEnabled == false) {
                                   controller.acceptOrder(orderModel);
                                 } else {
-                                  if ((controller.driverModel.value.subscriptionExpiryDate != null &&
-                                          controller.driverModel.value.subscriptionExpiryDate!.toDate().isBefore(DateTime.now()) == false) ||
-                                      controller.driverModel.value.subscriptionPlan?.expiryDay == '-1') {
-                                    if (controller.driverModel.value.subscriptionTotalOrders != '0') {
+                                  if ((controller.driverModel.value
+                                                  .subscriptionExpiryDate !=
+                                              null &&
+                                          controller.driverModel.value
+                                                  .subscriptionExpiryDate!
+                                                  .toDate()
+                                                  .isBefore(DateTime.now()) ==
+                                              false) ||
+                                      controller.driverModel.value.subscriptionPlan
+                                              ?.expiryDay ==
+                                          '-1') {
+                                    if (controller
+                                            .driverModel.value.subscriptionTotalOrders !=
+                                        '0') {
                                       controller.acceptOrder(orderModel);
                                     } else {
-                                      ShowToastDialog.showToast("Your order limit has reached their maximum order capacity. Please subscribe another subscription");
+                                      ShowToastDialog.showToast(
+                                          "Your order limit has reached their maximum order capacity. Please subscribe another subscription"
+                                              .tr);
                                     }
                                   } else {
-                                    ShowToastDialog.showToast("Your order limit has reached their maximum order capacity. Please subscribe another subscription");
+                                    ShowToastDialog.showToast(
+                                        "Your order limit has reached their maximum order capacity. Please subscribe another subscription"
+                                            .tr);
                                   }
                                 }
                               }
                             } else {
-                              ShowToastDialog.showToast("Please enter valid offer rate".tr);
+                              ShowToastDialog.showToast(
+                                  "Please enter valid offer rate".tr);
                             }
                           },
                         ),

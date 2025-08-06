@@ -1,24 +1,18 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
+
 import 'package:app_settings/app_settings.dart';
 import 'package:crypto/crypto.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/ui/auth_screen/otp_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:open_settings_plus/core/open_settings_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:geolocator/geolocator.dart';
 
 import '../utils/utils.dart';
 
@@ -29,7 +23,7 @@ class LoginController extends GetxController {
   Rx<GlobalKey<FormState>> formKey = GlobalKey<FormState>().obs;
 
   sendCode() async {
-    ShowToastDialog.showLoader("Please wait");
+    ShowToastDialog.showLoader("Please wait".tr);
     await FirebaseAuth.instance
         .verifyPhoneNumber(
       phoneNumber: countryCode + phoneNumberController.value.text,
@@ -38,7 +32,7 @@ class LoginController extends GetxController {
         debugPrint("FirebaseAuthException--->${e.message}");
         ShowToastDialog.closeLoader();
         if (e.code == 'invalid-phone-number') {
-          ShowToastDialog.showToast("The provided phone number is not valid.");
+          ShowToastDialog.showToast("The provided phone number is not valid.".tr);
         } else {
           ShowToastDialog.showToast(e.message);
         }
@@ -56,16 +50,15 @@ class LoginController extends GetxController {
         .catchError((error) {
       debugPrint("catchError--->$error");
       ShowToastDialog.closeLoader();
-      ShowToastDialog.showToast("You have try many time please send otp after some time");
+      ShowToastDialog.showToast(
+          "You have try many time please send otp after some time".tr);
     });
   }
 
-
-
   Future<UserCredential?> signInWithGoogle() async {
     try {
-
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn().catchError((error) {
+      final GoogleSignInAccount? googleUser =
+          await GoogleSignIn().signIn().catchError((error) {
         debugPrint("catchError--->$error");
         ShowToastDialog.closeLoader();
         ShowToastDialog.showToast("Something went wrong");
@@ -95,8 +88,8 @@ class LoginController extends GetxController {
   Future<Map<String, dynamic>?> signInWithApple() async {
     try {
       // Request credential for the currently signed in Apple account.
-      AuthorizationCredentialAppleID appleCredential = await SignInWithApple
-          .getAppleIDCredential(
+      AuthorizationCredentialAppleID appleCredential =
+          await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
@@ -111,8 +104,8 @@ class LoginController extends GetxController {
 
       // Sign in the user with Firebase. If the nonce we generated earlier does
       // not match the nonce in `appleCredential.identityToken`, sign in will fail.
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(
-          oauthCredential);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(oauthCredential);
       return {"appleCredential": appleCredential, "userCredential": userCredential};
     } catch (e) {
       debugPrint(e.toString());
@@ -137,6 +130,7 @@ class LoginController extends GetxController {
     Position? currentPosition = await Utils.determinePosition();
     await updateAppLanguageBasedOnLocation(currentPosition!);
   }
+
   @override
   void onInit() {
     super.onInit();
@@ -145,9 +139,7 @@ class LoginController extends GetxController {
   }
 
   Future<void> _checkPermissions() async {
-
-       // await _requestPermissions();
-
+    // await _requestPermissions();
   }
 
   Future<void> _requestPermissions() async {
@@ -186,10 +178,10 @@ class LoginController extends GetxController {
     // }
 
     // Guide user to enable WRITE_SETTINGS manually
-    Fluttertoast.showToast(msg: "Please enable Locations and WRITE_SETTINGS manually if not allowed");
+    Fluttertoast.showToast(
+        msg: "Please enable Locations and WRITE_SETTINGS manually if not allowed");
     await AppSettings.openAppSettings(type: AppSettingsType.settings);
   }
-
 
 //
 // Location location = Location();

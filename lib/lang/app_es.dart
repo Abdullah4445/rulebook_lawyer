@@ -2,7 +2,8 @@ const Map<String, String> esES = {
   'GoRide': 'GoRide',
   'privacy_policy': "Política de privacidad",
   "Sign up": "Registrarse",
-  "Create your account to start using GoRide": "Crea tu cuenta para empezar a usar GoRide",
+  "Create your account to start using GoRide":
+      "Crea tu cuenta para empezar a usar GoRide",
   'Full name': 'Nombre completo',
   "Phone number": "Número de teléfono",
   'Email': 'Correo electrónico',
@@ -13,7 +14,8 @@ const Map<String, String> esES = {
   "Please enter valid email": "Por favor, introduce un correo válido",
   "Please wait": "Por favor espera",
   "Login": "Iniciar sesión",
-  "Welcome Back! We are happy to have \n you back": "¡Bienvenido de nuevo! Nos alegra tenerte \n de vuelta",
+  "Welcome Back! We are happy to have \n you back":
+      "¡Bienvenido de nuevo! Nos alegra tenerte \n de vuelta",
   "Next": "Siguiente",
   "OR": "O",
   "Login with google": "Iniciar sesión con Google",
@@ -74,29 +76,34 @@ const Map<String, String> esES = {
   "Please wait...": "Por favor espera...",
   'Ride Started': 'Viaje iniciado',
   'The ride has officially started. Please follow the designated route to the destination.':
-  'El viaje ha comenzado oficialmente. Por favor, sigue la ruta designada hasta el destino.',
+      'El viaje ha comenzado oficialmente. Por favor, sigue la ruta designada hasta el destino.',
   "Customer pickup successfully": "Cliente recogido con éxito",
   "OTP Invalid": "OTP inválido",
   "Cargo Load successfully": "Carga recogida con éxito",
-  "You have to minimum  wallet amount to Accept Order and place a bid": "Debes tener un saldo mínimo en la billetera para aceptar el pedido y hacer una oferta",
+  "You have to minimum  wallet amount to Accept Order and place a bid":
+      "Debes tener un saldo mínimo en la billetera para aceptar el pedido y hacer una oferta",
   'New': 'Nuevo',
   'Accepted': 'Aceptado',
   'Active': 'Activo',
   "Map view": "Vista de mapa",
-  "You are Now offline so you can't get nearest order.": "Estás desconectado, por lo que no puedes recibir pedidos cercanos.",
+  "You are Now offline so you can't get nearest order.":
+      "Estás desconectado, por lo que no puedes recibir pedidos cercanos.",
   "New Rides Not found": "No se encontraron viajes nuevos",
   "Recommended Price is": "El precio recomendado es",
   "Approx distanc": "Distancia aproximada",
   "Enter Fare rate": "Introduce la tarifa",
   "Accept fare on": "Aceptar tarifa en",
   'New Driver Bid': 'Nueva oferta de conductor',
-  'Driver has offered for your journey.🚗': 'Un conductor ha hecho una oferta para tu viaje.🚗',
+  'Driver has offered for your journey.🚗':
+      'Un conductor ha hecho una oferta para tu viaje.🚗',
   "Ride Accepted": "Viaje aceptado",
-  "You have to minimum wallet amount to Accept Order and place a bid": "Debes tener un saldo mínimo en la billetera para aceptar el pedido y hacer una oferta",
+  "You have to minimum wallet amount to Accept Order and place a bid":
+      "Debes tener un saldo mínimo en la billetera para aceptar el pedido y hacer una oferta",
   " For Person": " Por persona",
   "View details": "Ver detalles",
   "No active ride found": "No se encontró viaje activo",
-  "Intercity/Outstation feature is disable for": "La función Interurbano/Fuera de estación está deshabilitada para",
+  "Intercity/Outstation feature is disable for":
+      "La función Interurbano/Fuera de estación está deshabilitada para",
   'From': 'Desde',
   'To': 'Hacia',
   'Confirm': 'Confirmar',
@@ -117,8 +124,10 @@ const Map<String, String> esES = {
   "Back side of": "Parte trasera de",
   "Done": "Hecho",
   "Please enter document number": "Por favor, introduce el número del documento",
-  "Please upload front side of document.": "Por favor, sube la parte frontal del documento.",
-  "Please upload back side of document.": "Por favor, sube la parte trasera del documento.",
+  "Please upload front side of document.":
+      "Por favor, sube la parte frontal del documento.",
+  "Please upload back side of document.":
+      "Por favor, sube la parte trasera del documento.",
   "Please wait..": "Por favor espera..",
   "Please Select": "Por favor selecciona",
   "Camera": "Cámara",
@@ -136,7 +145,7 @@ const Map<String, String> esES = {
   "Payable amount": "Monto a pagar",
   "Admin Commission": "Comisión del administrador",
   "Note : Admin commission will be debited from your wallet balance. \n Admin commission will apply on Ride Amount minus Discount(if applicable).":
-  "Nota: la comisión del administrador se descontará de tu saldo. \n Se aplicará sobre el importe del viaje menos el descuento (si aplica).",
+      "Nota: la comisión del administrador se descontará de tu saldo. \n Se aplicará sobre el importe del viaje menos el descuento (si aplica).",
   "No Ride found": "No se encontró viaje",
   "Review": "Reseña",
   "Payment completed": "Pago completado",
@@ -148,7 +157,8 @@ const Map<String, String> esES = {
   "wallet": "billetera",
   "Admin commission debited": "Comisión del administrador debitada",
   'Cash Payment confirmed': 'Pago en efectivo confirmado',
-  'Driver has confirmed your cash payment': 'El conductor ha confirmado tu pago en efectivo',
+  'Driver has confirmed your cash payment':
+      'El conductor ha confirmado tu pago en efectivo',
   "Payment Confirm successfully": "Pago confirmado con éxito",
   "Update Profile": "Actualizar perfil",
   "Profile update successfully": "Perfil actualizado con éxito",
@@ -165,7 +175,8 @@ const Map<String, String> esES = {
   "OK": "OK",
   "Account delete": "Cuenta eliminada",
   "Please contact to administrator": "Por favor, contacta al administrador",
-  "Are you sure want to delete Account.": "¿Estás seguro de que deseas eliminar la cuenta?",
+  "Are you sure want to delete Account.":
+      "¿Estás seguro de que deseas eliminar la cuenta?",
   "Privacy Policy": "Política de privacidad",
   "Terms and Conditions": "Términos y condiciones",
   'Vehicle Number': 'Número del vehículo',
@@ -185,19 +196,21 @@ const Map<String, String> esES = {
   'Zone list': 'Lista de zonas',
   "Information update successfully": "Información actualizada con éxito",
   "You can not change once you select one service type if you want to change please contact to administrator ":
-  "No puedes cambiar el tipo de servicio una vez seleccionado. Si deseas cambiarlo, contacta al administrador",
+      "No puedes cambiar el tipo de servicio una vez seleccionado. Si deseas cambiarlo, contacta al administrador",
   "Total Balance": "Saldo total",
   "Topup Wallet": "Recargar billetera",
   "No transaction found": "No se encontraron transacciones",
   "withdraw": "retirar",
   "Insufficient balance": "Saldo insuficiente",
-  "Your bank details is not available.Please add bank details": "Tus datos bancarios no están disponibles. Por favor, agrégalos",
+  "Your bank details is not available.Please add bank details":
+      "Tus datos bancarios no están disponibles. Por favor, agrégalos",
   "Withdrawal history": "Historial de retiros",
   "Add Topup Amount": "Agregar monto de recarga",
   'Enter Amount': 'Introduce el monto',
   "Select Payment Option": "Seleccionar opción de pago",
   "Topup": "Recargar",
-  "Something went wrong, please contact admin.": "Algo salió mal, por favor contacta al administrador.",
+  "Something went wrong, please contact admin.":
+      "Algo salió mal, por favor contacta al administrador.",
   "Please select payment method": "Por favor, selecciona un método de pago",
   "Please enter amount": "Por favor, introduce un monto",
   "Transaction Details": "Detalles de la transacción",
@@ -209,12 +222,14 @@ const Map<String, String> esES = {
   "Amount to Withdraw": "Monto a retirar",
   'Notes': 'Notas',
   "Withdrawal": "Retiro",
-  "Withdraw amount must be greater or equal to": "El monto del retiro debe ser mayor o igual a",
+  "Withdraw amount must be greater or equal to":
+      "El monto del retiro debe ser mayor o igual a",
   "Request sent to admin": "Solicitud enviada al administrador",
   'Online': 'En línea',
   'Offline': 'Desconectado',
   'Information': 'Información',
-  'To start earning with GoRide you need to fill in your personal information': 'Para empezar a ganar con GoRide, necesitas completar tu información personal',
+  'To start earning with GoRide you need to fill in your personal information':
+      'Para empezar a ganar con GoRide, necesitas completar tu información personal',
   'No': 'No',
   'skip': 'omitir',
   'Yes': 'Sí',
@@ -245,6 +260,49 @@ const Map<String, String> esES = {
   'Ride InProgress': 'Viaje en curso', // Corrected key for "InProgress"
   'Ride Completed': 'Viaje completado', // Or 'Viaje finalizado'
   'Ride Canceled': 'Viaje cancelado',
+  'Show Route to Customer': 'Mostrar Ruta al Cliente',
+  "System Alert Window permission denied":
+      "Permiso de ventana de alerta del sistema denegado",
+  'Battery Optimization permission denied': 'Permiso de optimización de batería denegado',
+  'Notification permission denied': 'Permiso de notificación denegado',
 
-  ' wallet amount to Accept Order and place a bid':' de saldo en la billetera para aceptar el pedido y hacer una oferta',
+  ' wallet amount to Accept Order and place a bid':
+      ' de saldo en la billetera para aceptar el pedido y hacer una oferta',
+  "Your order limit has reached their maximum order capacity. Please subscribe another subscription":
+      "Tu límite de pedidos ha alcanzado su capacidad máxima. Por favor, suscríbete a otra suscripción.",
+  "The provided phone number is not valid.": "Número de teléfono no válido.",
+  "You have try many time please send otp after some time":
+      "Has intentado demasiadas veces. Por favor, solicita el OTP de nuevo más tarde.",
+
+  'driver_arrived_title': '¡Conductor ha llegado!',
+  'driver_arrived_body': 'Tu conductor ha llegado a tu ubicación de recogida.',
+  'notification_sent': 'Notificación enviada',
+  'customer_notified_successfully': 'El cliente ha sido notificado con éxito.',
+  'error': 'Error',
+  'customer_not_found': 'Cliente no encontrado o falta el token FCM.',
+  'failed_to_send_notification': 'Error al enviar la notificación:',
+  'please_wait_seconds': 'Por favor espera {seconds} segundos...',
+  'notify_customer_button': 'Notificar al cliente que ha llegado al punto de recogida',
+  'Location services are disabled.': 'Los servicios de ubicación están desactivados.',
+  'Location permissions are denied': 'Los permisos de ubicación están denegados',
+  'Location permissions are permanently denied, we cannot request permissions.':
+      'Los permisos de ubicación están denegados permanentemente, no se pueden solicitar.',
+  'Location Not Available': 'Ubicación no disponible',
+  'No supported map apps are installed. Either Install google':
+      'No hay aplicaciones de mapas compatibles instaladas. Instala Google Maps',
+  'Google Go map is not installed': 'Google Go no está instalado',
+  'Waze is not installed': 'Waze no está instalado',
+  'Mapswithme is not installed': 'Mapswithme no está instalado',
+  'YandexNavi is not installed': 'YandexNavi no está instalado',
+  'yandexMaps map is not installed': 'YandexMaps no está instalado',
+  'Requesting background location permission...':
+      'Solicitando permiso de ubicación en segundo plano...',
+  'Background location permission granted.':
+      'Permiso de ubicación en segundo plano concedido.',
+  'Background location permission denied.':
+      'Permiso de ubicación en segundo plano denegado.',
+  'Background location permission permanently denied.':
+      'Permiso de ubicación en segundo plano denegado permanentemente.',
+  'No matching zone found for the current location. Using default language.':
+      'No se encontró una zona que coincida con la ubicación actual. Usando el idioma predeterminado.',
 };

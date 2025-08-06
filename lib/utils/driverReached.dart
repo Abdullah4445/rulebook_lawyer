@@ -56,25 +56,24 @@ class _NotifyCustomerButtonState extends State<NotifyCustomerButton> {
 
         await SendNotification.sendOneNotification(
           token: customer.fcmToken.toString(),
-          title: '🚖 Driver Arrived!',
-          body: 'Your driver has reached your pickup location.',
+          title: 'driver_arrived_title'.tr,
+          body: 'driver_arrived_body'.tr,
           payload: payload,
         );
 
         Get.snackbar(
-          'Notification Sent',
-          'Customer has been notified successfully.',
+          'notification_sent'.tr,
+          'customer_notified_successfully'.tr,
           backgroundColor: Colors.green.shade50,
           colorText: Colors.black,
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 3),
         );
-
         _startCooldown();
       } else {
         Get.snackbar(
-          'Error',
-          'Customer not found or missing FCM token.',
+          'error'.tr,
+          'customer_not_found'.tr,
           backgroundColor: Colors.red.shade50,
           colorText: Colors.redAccent,
           snackPosition: SnackPosition.BOTTOM,
@@ -82,8 +81,8 @@ class _NotifyCustomerButtonState extends State<NotifyCustomerButton> {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to send notification: $e',
+        'error'.tr,
+        '${'failed_to_send_notification'.tr} $e',
         backgroundColor: Colors.red.shade50,
         colorText: Colors.redAccent,
         snackPosition: SnackPosition.BOTTOM,
@@ -98,8 +97,8 @@ class _NotifyCustomerButtonState extends State<NotifyCustomerButton> {
       icon: const Icon(Icons.notifications_active_rounded, color: Colors.white),
       label: Text(
         _isCooldown
-            ? 'Please wait $_secondsRemaining seconds...'
-            : 'Notify Customer that you have reached the Source Destination',
+            ? 'please_wait_seconds'.trParams({'seconds': '$_secondsRemaining'})
+            : 'notify_customer_button'.tr,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 16,
@@ -113,7 +112,6 @@ class _NotifyCustomerButtonState extends State<NotifyCustomerButton> {
           borderRadius: BorderRadius.circular(12),
         ),
         elevation: 4,
-        disabledBackgroundColor: Colors.grey, // Optional: grey out during cooldown
       ),
     );
   }

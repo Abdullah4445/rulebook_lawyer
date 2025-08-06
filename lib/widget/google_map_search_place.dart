@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/model/place_picker_model.dart';
@@ -7,9 +8,9 @@ import 'package:driver/utils/DarkThemeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:http/http.dart' as http;
 
 class GoogleMapSearchPlacesApi extends StatefulWidget {
   const GoogleMapSearchPlacesApi({super.key});
@@ -44,7 +45,8 @@ class GoogleMapSearchPlacesApiState extends State<GoogleMapSearchPlacesApi> {
   void getSuggestion(String input) async {
     try {
       String baseURL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
-      String request = '$baseURL?input=$input&key=${Constant.mapAPIKey}&sessiontoken=$_sessionToken';
+      String request =
+          '$baseURL?input=$input&key=${Constant.mapAPIKey}&sessiontoken=$_sessionToken';
       var response = await http.get(Uri.parse(request));
       if (response.statusCode == 200) {
         setState(() {
@@ -109,37 +111,61 @@ class GoogleMapSearchPlacesApiState extends State<GoogleMapSearchPlacesApi> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             TextFormField(
-                validator: (value) => value != null && value.isNotEmpty ? null : 'Required',
+                validator: (value) =>
+                    value != null && value.isNotEmpty ? null : 'Required',
                 keyboardType: TextInputType.text,
                 textCapitalization: TextCapitalization.sentences,
                 controller: _controller,
                 textAlign: TextAlign.start,
-                style: GoogleFonts.poppins(color: themeChange.getThem() ? Colors.white : Colors.black),
+                style: GoogleFonts.poppins(
+                    color: themeChange.getThem() ? Colors.white : Colors.black),
                 decoration: InputDecoration(
                     isDense: true,
                     filled: true,
-                    fillColor: themeChange.getThem() ? AppColors.darkTextField : AppColors.textField,
+                    fillColor: themeChange.getThem()
+                        ? AppColors.darkTextField
+                        : AppColors.textField,
                     contentPadding: const EdgeInsets.symmetric(vertical: 12),
                     prefixIcon: const Icon(Icons.map),
                     disabledBorder: OutlineInputBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(4)),
-                      borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder, width: 1),
+                      borderSide: BorderSide(
+                          color: themeChange.getThem()
+                              ? AppColors.darkTextFieldBorder
+                              : AppColors.textFieldBorder,
+                          width: 1),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(4)),
-                      borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder, width: 1),
+                      borderSide: BorderSide(
+                          color: themeChange.getThem()
+                              ? AppColors.darkTextFieldBorder
+                              : AppColors.textFieldBorder,
+                          width: 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(4)),
-                      borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder, width: 1),
+                      borderSide: BorderSide(
+                          color: themeChange.getThem()
+                              ? AppColors.darkTextFieldBorder
+                              : AppColors.textFieldBorder,
+                          width: 1),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(4)),
-                      borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder, width: 1),
+                      borderSide: BorderSide(
+                          color: themeChange.getThem()
+                              ? AppColors.darkTextFieldBorder
+                              : AppColors.textFieldBorder,
+                          width: 1),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(4)),
-                      borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder, width: 1),
+                      borderSide: BorderSide(
+                          color: themeChange.getThem()
+                              ? AppColors.darkTextFieldBorder
+                              : AppColors.textFieldBorder,
+                          width: 1),
                     ),
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.cancel),
@@ -156,7 +182,7 @@ class GoogleMapSearchPlacesApiState extends State<GoogleMapSearchPlacesApi> {
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () async {
-                      ShowToastDialog.showLoader("Please wait");
+                      ShowToastDialog.showLoader("Please wait").tr;
                       await getLatLang(_placeList[index]["place_id"]).then((value) {
                         if (value != null) {
                           ShowToastDialog.closeLoader();
