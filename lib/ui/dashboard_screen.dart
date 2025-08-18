@@ -70,7 +70,7 @@ class DashBoardScreen extends StatelessWidget {
                               ),
                               GestureDetector(
                                 onTap: () async {
-                                  ShowToastDialog.showLoader("Please wait").tr;
+                                  ShowToastDialog.showLoader("Please wait".tr);
                                   if (driverModel.documentVerification == false &&
                                       Constant.isVerifyDocument == true) {
                                     ShowToastDialog.closeLoader();

@@ -1,15 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/send_notification.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/controller/order_map_controller.dart';
-import 'package:driver/model/order/driverId_accept_reject.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/themes/button_them.dart';
 import 'package:driver/themes/responsive.dart';
 import 'package:driver/themes/text_field_them.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
-import 'package:driver/utils/fire_store_utils.dart';
 import 'package:driver/widget/location_view.dart';
 import 'package:driver/widget/user_view.dart';
 import 'package:flutter/material.dart';
@@ -224,9 +220,10 @@ class OrderMapScreen extends StatelessWidget {
                                             const SizedBox(
                                               height: 10,
                                             ),
-
                                             Visibility(
-                                              visible: controller.orderModel.value.service?.offerRate == true,
+                                              visible: controller.orderModel.value.service
+                                                      ?.offerRate ==
+                                                  true,
                                               child: Padding(
                                                 padding: const EdgeInsets.all(8.0),
                                                 child: Row(
@@ -235,8 +232,35 @@ class OrderMapScreen extends StatelessWidget {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
                                                   children: [
-                                                    InkWell(
-                                                      onTap: () {
+                                                    // InkWell(
+                                                    //
+                                                    //   child: Container(
+                                                    //     decoration: BoxDecoration(
+                                                    //         border: Border.all(
+                                                    //             color: AppColors
+                                                    //                 .textFieldBorder),
+                                                    //         borderRadius:
+                                                    //             const BorderRadius.all(
+                                                    //                 Radius.circular(6))),
+                                                    //     child: Padding(
+                                                    //       padding:
+                                                    //           const EdgeInsets.symmetric(
+                                                    //               horizontal: 10,
+                                                    //               vertical: 10),
+                                                    //       child: Text(
+                                                    //         "- 500",
+                                                    //         style: GoogleFonts.poppins(
+                                                    //             color: Colors.black),
+                                                    //       ),
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
+
+                                                    ButtonThem.roundButton(
+                                                      context,
+                                                      title: "- 500",
+                                                      btnWidthRatio: 0.23,
+                                                      onPress: () {
                                                         if (double.parse(controller
                                                                 .newAmount.value) >=
                                                             10) {
@@ -244,7 +268,7 @@ class OrderMapScreen extends StatelessWidget {
                                                               (double.parse(controller
                                                                           .newAmount
                                                                           .value) -
-                                                                      10)
+                                                                      500)
                                                                   .toString();
 
                                                           controller
@@ -257,27 +281,8 @@ class OrderMapScreen extends StatelessWidget {
                                                               "0";
                                                         }
                                                       },
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                            border: Border.all(
-                                                                color: AppColors
-                                                                    .textFieldBorder),
-                                                            borderRadius:
-                                                                const BorderRadius.all(
-                                                                    Radius.circular(30))),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets.symmetric(
-                                                                  horizontal: 30,
-                                                                  vertical: 10),
-                                                          child: Text(
-                                                            "- 10",
-                                                            style: GoogleFonts.poppins(
-                                                                color: Colors.black),
-                                                          ),
-                                                        ),
-                                                      ),
                                                     ),
+
                                                     const SizedBox(
                                                       width: 20,
                                                     ),
@@ -292,14 +297,14 @@ class OrderMapScreen extends StatelessWidget {
                                                     ),
                                                     ButtonThem.roundButton(
                                                       context,
-                                                      title: "+ 10",
-                                                      btnWidthRatio: 0.22,
+                                                      title: "+ 500",
+                                                      btnWidthRatio: 0.23,
                                                       onPress: () {
                                                         controller.newAmount.value =
                                                             (double.parse(controller
                                                                         .newAmount
                                                                         .value) +
-                                                                    10)
+                                                                    500)
                                                                 .toStringAsFixed(Constant
                                                                     .currencyModel!
                                                                     .decimalDigits!);
@@ -318,8 +323,8 @@ class OrderMapScreen extends StatelessWidget {
                                               height: 10,
                                             ),
                                             Visibility(
-                                              visible: controller.orderModel.value
-                                                      .service?.offerRate ==
+                                              visible: controller.orderModel.value.service
+                                                      ?.offerRate ==
                                                   true,
                                               child: TextFieldThem
                                                   .buildTextFiledWithPrefixIcon(
