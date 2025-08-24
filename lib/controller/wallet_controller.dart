@@ -1,35 +1,33 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/model/bank_details_model.dart';
-import 'package:driver/model/payment_model.dart';
-import 'package:driver/model/wallet_transaction_model.dart';
-import 'package:driver/payment/midtrans_screen.dart';
-import 'package:driver/payment/orangePayScreen.dart';
-import 'package:driver/payment/xenditModel.dart';
-import 'package:driver/payment/xenditScreen.dart';
-import 'package:driver/utils/fire_store_utils.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:epayco_dart/data/models/api_responses/tc_transaction.dart';
-import 'package:flutter_paypal/flutter_paypal.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:get/get.dart';
-import 'package:driver/payment/getPaytmTxtToken.dart';
-import 'package:flutter/services.dart';
-
 import 'dart:convert';
-import 'dart:io';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:math' as maths;
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
+import 'package:driver/model/bank_details_model.dart';
+import 'package:driver/model/driver_user_model.dart';
+import 'package:driver/model/payment_model.dart';
 import 'package:driver/model/stripe_failed_model.dart';
+import 'package:driver/model/wallet_transaction_model.dart';
 import 'package:driver/payment/MercadoPagoScreen.dart';
 import 'package:driver/payment/PayFastScreen.dart';
+import 'package:driver/payment/getPaytmTxtToken.dart';
+import 'package:driver/payment/midtrans_screen.dart';
+import 'package:driver/payment/orangePayScreen.dart';
 import 'package:driver/payment/paystack/pay_stack_screen.dart';
 import 'package:driver/payment/paystack/pay_stack_url_model.dart';
 import 'package:driver/payment/paystack/paystack_url_genrater.dart';
+import 'package:driver/payment/xenditModel.dart';
+import 'package:driver/payment/xenditScreen.dart';
 import 'package:driver/themes/app_colors.dart';
+import 'package:driver/utils/fire_store_utils.dart';
+import 'package:epayco_dart/data/models/api_responses/tc_transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_paypal/flutter_paypal.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
@@ -111,14 +109,15 @@ class WalletController extends GetxController {
 
     await FireStoreUtils.setWalletTransaction(transactionModel).then((value) async {
       if (value == true) {
-        await FireStoreUtils.updatedDriverWallet(amount: amountController.value.text).then((value) {
+        await FireStoreUtils.updatedDriverWallet(amount: amountController.value.text)
+            .then((value) {
           getUser();
           getTraction();
         });
       }
     });
 
-    ShowToastDialog.showToast("Amount added in your wallet.");
+    ShowToastDialog.showToast("Amount added in your wallet.".tr);
   }
 
   // Strip
@@ -128,7 +127,7 @@ class WalletController extends GetxController {
       Map<String, dynamic>? paymentIntentData = await createStripeIntent(amount: amount);
       if (paymentIntentData!.containsKey("error")) {
         // Get.back();
-        ShowToastDialog.showToast("Something went wrong, please contact admin.");
+        ShowToastDialog.showToast("Something went wrong, please contact admin.".tr);
       } else {
         await Stripe.instance.initPaymentSheet(
             paymentSheetParameters: SetupPaymentSheetParameters(
@@ -158,7 +157,7 @@ class WalletController extends GetxController {
     try {
       await Stripe.instance.presentPaymentSheet().then((value) {
         // Get.back();
-        ShowToastDialog.showToast("Payment successfully");
+        ShowToastDialog.showToast("Payment successfully".tr);
         walletTopUp();
       });
     } on StripeException catch (e) {
@@ -187,8 +186,13 @@ class WalletController extends GetxController {
       };
       log(paymentModel.value.strip!.stripeSecret.toString());
       var stripeSecret = paymentModel.value.strip!.stripeSecret;
-      var response = await http.post(Uri.parse('https://api.stripe.com/v1/payment_intents'),
-          body: body, headers: {'Authorization': 'Bearer $stripeSecret', 'Content-Type': 'application/x-www-form-urlencoded'});
+      var response = await http.post(
+          Uri.parse('https://api.stripe.com/v1/payment_intents'),
+          body: body,
+          headers: {
+            'Authorization': 'Bearer $stripeSecret',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          });
 
       return jsonDecode(response.body);
     } catch (e) {
@@ -232,14 +236,14 @@ class WalletController extends GetxController {
       final data = jsonDecode(response.body);
       Get.to(MercadoPagoScreen(initialURl: data['init_point']))!.then((value) {
         if (value) {
-          ShowToastDialog.showToast("Payment Successful!!");
+          ShowToastDialog.showToast("Payment Successful!".tr);
           walletTopUp();
         } else {
-          ShowToastDialog.showToast("Payment UnSuccessful!!");
+          ShowToastDialog.showToast("Payment UnSuccessful!".tr);
         }
       });
     } else {
-      ShowToastDialog.showToast("Something went wrong, please contact admin.");
+      ShowToastDialog.showToast("Something went wrong, please contact admin.".tr);
       print('Error creating preference: ${response.body}');
       return null;
     }
@@ -268,15 +272,15 @@ class WalletController extends GetxController {
             note: "Contact us for any questions on your order.",
             onSuccess: (Map params) async {
               walletTopUp();
-              ShowToastDialog.showToast("Payment Successful!!");
+              ShowToastDialog.showToast("Payment Successful!".tr);
             },
             onError: (error) {
               Get.back();
-              ShowToastDialog.showToast("Payment UnSuccessful!!");
+              ShowToastDialog.showToast("Payment UnSuccessful!".tr);
             },
             onCancel: (params) {
               Get.back();
-              ShowToastDialog.showToast("Payment UnSuccessful!!");
+              ShowToastDialog.showToast("Payment UnSuccessful!".tr);
             }),
       ),
     );
@@ -285,7 +289,10 @@ class WalletController extends GetxController {
   ///PayStack Payment Method
   payStackPayment(String totalAmount) async {
     await PayStackURLGen.payStackURLGen(
-        amount: (double.parse(totalAmount) * 100).toString(), currency: "NGN", secretKey: paymentModel.value.payStack!.secretKey.toString(), userModel: driverUserModel.value)
+            amount: (double.parse(totalAmount) * 100).toString(),
+            currency: "NGN",
+            secretKey: paymentModel.value.payStack!.secretKey.toString(),
+            userModel: driverUserModel.value)
         .then((value) async {
       if (value != null && value.toString().isNotEmpty) {
         PayStackUrlModel payStackModel = value;
@@ -298,20 +305,21 @@ class WalletController extends GetxController {
         ))!
             .then((value) {
           if (value) {
-            ShowToastDialog.showToast("Payment Successful!!");
+            ShowToastDialog.showToast("Payment Successful!".tr);
             walletTopUp();
           } else {
-            ShowToastDialog.showToast("Payment UnSuccessful!!");
+            ShowToastDialog.showToast("Payment UnSuccessful!".tr);
           }
         });
       } else {
-        ShowToastDialog.showToast("Something went wrong, please contact admin.");
+        ShowToastDialog.showToast("Something went wrong, please contact admin.".tr);
       }
     });
   }
 
   //flutter wave Payment Method
-  flutterWaveInitiatePayment({required BuildContext context, required String amount}) async {
+  flutterWaveInitiatePayment(
+      {required BuildContext context, required String amount}) async {
     final url = Uri.parse('https://api.flutterwave.com/v3/payments');
     final headers = {
       'Authorization': 'Bearer ${paymentModel.value.flutterWave!.secretKey}',
@@ -341,14 +349,14 @@ class WalletController extends GetxController {
       final data = jsonDecode(response.body);
       Get.to(MercadoPagoScreen(initialURl: data['data']['link']))!.then((value) {
         if (value) {
-          ShowToastDialog.showToast("Payment Successful!!");
+          ShowToastDialog.showToast("Payment Successful!".tr);
           walletTopUp();
         } else {
-          ShowToastDialog.showToast("Payment UnSuccessful!!");
+          ShowToastDialog.showToast("Payment UnSuccessful!".tr);
         }
       });
     } else {
-      ShowToastDialog.showToast("Something went wrong, please contact admin.");
+      ShowToastDialog.showToast("Something went wrong, please contact admin.".tr);
       print('Payment initialization failed: ${response.body}');
       return null;
     }
@@ -369,15 +377,20 @@ class WalletController extends GetxController {
 
   // payFast
   payFastPayment({required BuildContext context, required String amount}) {
-    PayStackURLGen.getPayHTML(payFastSettingData: paymentModel.value.payfast!, amount: amount.toString(), userModel: driverUserModel.value).then((String? value) async {
-      bool isDone = await Get.to(PayFastScreen(htmlData: value!, payFastSettingData: paymentModel.value.payfast!));
+    PayStackURLGen.getPayHTML(
+            payFastSettingData: paymentModel.value.payfast!,
+            amount: amount.toString(),
+            userModel: driverUserModel.value)
+        .then((String? value) async {
+      bool isDone = await Get.to(PayFastScreen(
+          htmlData: value!, payFastSettingData: paymentModel.value.payfast!));
       if (isDone) {
         // Get.back();
-        ShowToastDialog.showToast("Payment successfully");
+        ShowToastDialog.showToast("Payment successfully".tr);
         walletTopUp();
       } else {
         Get.back();
-        ShowToastDialog.showToast("Payment Failed");
+        ShowToastDialog.showToast("Payment Failed".tr);
       }
     });
   }
@@ -399,26 +412,39 @@ class WalletController extends GetxController {
         });
 
     final data = jsonDecode(response.body);
-    await verifyCheckSum(checkSum: data["code"], amount: amount, orderId: orderId).then((value) {
+    await verifyCheckSum(checkSum: data["code"], amount: amount, orderId: orderId)
+        .then((value) {
       initiatePayment(amount: amount, orderId: orderId).then((value) {
         String callback = "";
         if (paymentModel.value.paytm!.isSandbox == true) {
-          callback = "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+          callback =
+              "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
         } else {
-          callback = "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+          callback =
+              "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
         }
 
         if (value.head.version.isEmpty) {
-          ShowToastDialog.showToast("Payment Failed");
+          ShowToastDialog.showToast("Payment Failed".tr);
         } else {
           GetPaymentTxtTokenModel result = value;
-          startTransaction(context, txnTokenBy: result.body.txnToken, orderId: orderId, amount: amount, callBackURL: callback, isStaging: paymentModel.value.paytm!.isSandbox);
+          startTransaction(context,
+              txnTokenBy: result.body.txnToken,
+              orderId: orderId,
+              amount: amount,
+              callBackURL: callback,
+              isStaging: paymentModel.value.paytm!.isSandbox);
         }
       });
     });
   }
 
-  Future<void> startTransaction(context, {required String txnTokenBy, required orderId, required double amount, required callBackURL, required isStaging}) async {
+  Future<void> startTransaction(context,
+      {required String txnTokenBy,
+      required orderId,
+      required double amount,
+      required callBackURL,
+      required isStaging}) async {
     // try {
     //   var response = AllInOneSdk.startTransaction(
     //     paymentModel.value.paytm!.paytmMID.toString(),
@@ -454,7 +480,8 @@ class WalletController extends GetxController {
     // }
   }
 
-  Future verifyCheckSum({required String checkSum, required double amount, required orderId}) async {
+  Future verifyCheckSum(
+      {required String checkSum, required double amount, required orderId}) async {
     String getChecksum = "${Constant.globalUrl}payments/validatechecksum";
     final response = await http.post(
         Uri.parse(
@@ -471,13 +498,16 @@ class WalletController extends GetxController {
     return data['status'];
   }
 
-  Future<GetPaymentTxtTokenModel> initiatePayment({required double amount, required orderId}) async {
+  Future<GetPaymentTxtTokenModel> initiatePayment(
+      {required double amount, required orderId}) async {
     String initiateURL = "${Constant.globalUrl}payments/initiatepaytmpayment";
     String callback = "";
     if (paymentModel.value.paytm!.isSandbox == true) {
-      callback = "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+      callback =
+          "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
     } else {
-      callback = "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+      callback =
+          "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
     }
     final response = await http.post(Uri.parse(initiateURL), headers: {}, body: {
       "mid": paymentModel.value.paytm!.paytmMID,
@@ -493,7 +523,7 @@ class WalletController extends GetxController {
     final data = jsonDecode(response.body);
     if (data["body"]["txnToken"] == null || data["body"]["txnToken"].toString().isEmpty) {
       // Get.back();
-      ShowToastDialog.showToast("something went wrong, please contact admin.");
+      ShowToastDialog.showToast("Something went wrong, please contact admin.".tr);
     }
     return GetPaymentTxtTokenModel.fromJson(data);
   }
@@ -529,19 +559,19 @@ class WalletController extends GetxController {
 
   void handlePaymentSuccess(PaymentSuccessResponse response) {
     // Get.back();
-    ShowToastDialog.showToast("Payment Successful!!");
+    ShowToastDialog.showToast("Payment Successful!".tr);
     walletTopUp();
   }
 
   void handleExternalWaller(ExternalWalletResponse response) {
     Get.back();
-    ShowToastDialog.showToast("Payment Processing!! via");
+    ShowToastDialog.showToast("Payment Processing! via".tr);
   }
 
   void handlePaymentError(PaymentFailureResponse response) {
     Get.back();
     // RazorPayFailedModel lom = RazorPayFailedModel.fromJson(jsonDecode(response.message!.toString()));
-    ShowToastDialog.showToast("Payment Failed!!");
+    ShowToastDialog.showToast("Payment Failed!".tr);
   }
 
   //XenditPayment
@@ -550,17 +580,17 @@ class WalletController extends GetxController {
       ShowToastDialog.closeLoader();
       if (model.id != null) {
         Get.to(() => XenditScreen(
-          initialURl: model.invoiceUrl ?? '',
-          transId: model.id ?? '',
-          apiKey: paymentModel.value.xendit!.apiKey!.toString() ?? "",
-        ))!
+                  initialURl: model.invoiceUrl ?? '',
+                  transId: model.id ?? '',
+                  apiKey: paymentModel.value.xendit!.apiKey!.toString() ?? "",
+                ))!
             .then((value) {
           if (value == true) {
-            ShowToastDialog.showToast("Payment Successful!!");
+            ShowToastDialog.showToast("Payment Successful!".tr);
             walletTopUp();
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("Payment Unsuccessful!! \n"),
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Payment Unsuccessful!".tr),
               backgroundColor: Colors.red,
             ));
           }
@@ -573,7 +603,8 @@ class WalletController extends GetxController {
     const url = 'https://api.xendit.co/v2/invoices';
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': generateBasicAuthHeader(paymentModel.value.xendit!.apiKey!.toString()),
+      'Authorization':
+          generateBasicAuthHeader(paymentModel.value.xendit!.apiKey!.toString()),
       // 'Cookie': '__cf_bm=yERkrx3xDITyFGiou0bbKY1bi7xEwovHNwxV1vCNbVc-1724155511-1.0.1.1-jekyYQmPCwY6vIJ524K0V6_CEw6O.dAwOmQnHtwmaXO_MfTrdnmZMka0KZvjukQgXu5B.K_6FJm47SGOPeWviQ',
     };
 
@@ -614,20 +645,21 @@ class WalletController extends GetxController {
   orangeMakePayment({required String amount, required BuildContext context}) async {
     reset();
     var id = Constant.getUuid();
-    var paymentURL = await fetchToken(context: context, orderId: id, amount: amount, currency: 'USD');
+    var paymentURL =
+        await fetchToken(context: context, orderId: id, amount: amount, currency: 'USD');
     ShowToastDialog.closeLoader();
     if (paymentURL.toString() != '') {
       Get.to(() => OrangeMoneyScreen(
-        initialURl: paymentURL,
-        accessToken: accessToken,
-        amount: amount,
-        orangePay: paymentModel.value.orangePay!,
-        orderId: orderId,
-        payToken: payToken,
-      ))!
+                initialURl: paymentURL,
+                accessToken: accessToken,
+                amount: amount,
+                orangePay: paymentModel.value.orangePay!,
+                orderId: orderId,
+                payToken: payToken,
+              ))!
           .then((value) {
         if (value == true) {
-          ShowToastDialog.showToast("Payment Successful!!");
+          ShowToastDialog.showToast("Payment Successful!".tr);
           walletTopUp();
         }
       });
@@ -639,7 +671,11 @@ class WalletController extends GetxController {
     }
   }
 
-  Future fetchToken({required String orderId, required String currency, required BuildContext context, required String amount}) async {
+  Future fetchToken(
+      {required String orderId,
+      required String currency,
+      required BuildContext context,
+      required String amount}) async {
     String apiUrl = 'https://api.orange.com/oauth/v3/token';
     Map<String, String> requestBody = {
       'grant_type': 'client_credentials',
@@ -660,7 +696,8 @@ class WalletController extends GetxController {
 
       accessToken = responseData['access_token'];
       // ignore: use_build_context_synchronously
-      return await webpayment(context: context, amountData: amount, currency: currency, orderIdData: orderId);
+      return await webpayment(
+          context: context, amountData: amount, currency: currency, orderIdData: orderId);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Color(0xff635bff),
@@ -673,7 +710,11 @@ class WalletController extends GetxController {
     }
   }
 
-  Future webpayment({required String orderIdData, required BuildContext context, required String currency, required String amountData}) async {
+  Future webpayment(
+      {required String orderIdData,
+      required BuildContext context,
+      required String currency,
+      required String amountData}) async {
     orderId = orderIdData;
     amount = amountData;
     String apiUrl = paymentModel.value.orangePay!.isSandbox! == true
@@ -693,7 +734,11 @@ class WalletController extends GetxController {
 
     var response = await http.post(
       Uri.parse(apiUrl),
-      headers: <String, String>{'Authorization': 'Bearer $accessToken', 'Content-Type': 'application/json', 'Accept': 'application/json'},
+      headers: <String, String>{
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: json.encode(requestBody),
     );
 
@@ -730,14 +775,14 @@ class WalletController extends GetxController {
       ShowToastDialog.closeLoader();
       if (url != '') {
         Get.to(() => MidtransScreen(
-          initialURl: url,
-        ))!
+                  initialURl: url,
+                ))!
             .then((value) {
           if (value == true) {
-            ShowToastDialog.showToast("Payment Successful!!");
+            ShowToastDialog.showToast("Payment Successful!".tr);
             walletTopUp();
           } else {
-            ShowToastDialog.showToast("Payment Unsuccessful!!");
+            ShowToastDialog.showToast("Payment Unsuccessful!".tr);
           }
         });
       }
@@ -746,7 +791,9 @@ class WalletController extends GetxController {
 
   Future<String> createPaymentLink({required var amount}) async {
     var ordersId = Constant.getUuid();
-    final url = Uri.parse(paymentModel.value.midtrans!.isSandbox == true ? 'https://api.sandbox.midtrans.com/v1/payment-links' : 'https://api.midtrans.com/v1/payment-links');
+    final url = Uri.parse(paymentModel.value.midtrans!.isSandbox == true
+        ? 'https://api.sandbox.midtrans.com/v1/payment-links'
+        : 'https://api.midtrans.com/v1/payment-links');
 
     final response = await http.post(
       url,
@@ -769,7 +816,7 @@ class WalletController extends GetxController {
       final responseData = jsonDecode(response.body);
       return responseData['payment_url'];
     } else {
-      ShowToastDialog.showToast("something went wrong, please contact admin.");
+      ShowToastDialog.showToast("Something went wrong, please contact admin.".tr);
       return '';
     }
   }
@@ -819,7 +866,7 @@ class WalletController extends GetxController {
 
       final value = amountController.value.text.trim();
       if (value.isEmpty || double.tryParse(value) == null) {
-        ShowToastDialog.showToast("Please enter a valid amount.");
+        ShowToastDialog.showToast("Please enter a valid amount.".tr);
         return;
       }
 
@@ -830,7 +877,7 @@ class WalletController extends GetxController {
       final email = driverUserModel.value.email?.trim() ?? "";
 
       if (fullName.isEmpty || phone.isEmpty || email.isEmpty) {
-        ShowToastDialog.showToast("User details are incomplete.");
+        ShowToastDialog.showToast("User details are incomplete.".tr);
         return;
       }
       TcTransactionResponse supp = await epayco.payByCreditCard(
@@ -859,19 +906,19 @@ class WalletController extends GetxController {
         testMode: paymentModel.value.epayco?.isSandbox ?? false,
       );
 
-      if(supp.success != null && supp.success == true){
-        ShowToastDialog.showToast("Card payment Successful.");
+      if (supp.success != null && supp.success == true) {
+        ShowToastDialog.showToast("Card payment Successful.".tr);
         walletTopUp();
-      }else{
+      } else {
         print("My suppData is: ${supp.data!.toJson()}");
         print(jsonEncode(supp.toJson()));
-        final errorMessage = supp.data?.error?.errors?.first.errorMessage ?? 'Unknown error';
+        final errorMessage =
+            supp.data?.error?.errors?.first.errorMessage ?? 'Unknown error';
         ShowToastDialog.showToast(errorMessage);
       }
-
     } catch (e) {
       print("Card Error: $e");
-      ShowToastDialog.showToast("Card payment failed.");
+      ShowToastDialog.showToast("Card payment failed.".tr);
     }
   }
 
@@ -896,5 +943,4 @@ class WalletController extends GetxController {
       },
     );
   }
-
 }

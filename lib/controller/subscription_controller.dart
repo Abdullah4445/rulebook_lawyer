@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:math' as maths;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/constant/collection_name.dart';
@@ -31,7 +32,6 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'dart:math' as maths;
 
 import '../themes/app_colors.dart';
 
@@ -57,11 +57,15 @@ class SubscriptionController extends GetxController {
     setupIAP(); // <-- New line
     super.onInit();
   }
-  assignDriverStatuses() async{
-    driverUserModel.value = await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid()) ?? DriverUserModel();
+
+  assignDriverStatuses() async {
+    driverUserModel.value =
+        await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid()) ??
+            DriverUserModel();
 // ✅ Save to Constant
     Constant.currentDriverUser = driverUserModel.value;
   }
+
   void setupIAP() async {
     final bool available = await _iap.isAvailable();
     if (!available) {
@@ -73,7 +77,7 @@ class SubscriptionController extends GetxController {
     final ProductDetailsResponse response = await _iap.queryProductDetails(ids);
 
     if (response.error != null || response.notFoundIDs.isNotEmpty) {
-      ShowToastDialog.showToast("Error fetching Apple IAP products");
+      ShowToastDialog.showToast("Error fetching Apple IAP products".tr);
       return;
     }
 
@@ -95,7 +99,7 @@ class SubscriptionController extends GetxController {
   void buyExclusivePlan() async {
     try {
       final ProductDetails product =
-      iapProducts.firstWhere((p) => p.id == 'driver_exclusive_plan');
+          iapProducts.firstWhere((p) => p.id == 'driver_exclusive_plan');
 
       final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
       await _iap.buyNonConsumable(purchaseParam: purchaseParam);
@@ -104,7 +108,7 @@ class SubscriptionController extends GetxController {
     }
   }
 
-  getArgument(){
+  getArgument() {
     dynamic argumentData = Get.arguments;
     if (argumentData != null) {
       isShowing.value = argumentData['isShow'];
@@ -112,9 +116,15 @@ class SubscriptionController extends GetxController {
   }
 
   getInitPlanSettings() async {
-    driverUserModel.value = await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid()) ?? DriverUserModel();
+    driverUserModel.value =
+        await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid()) ??
+            DriverUserModel();
 
-    await FirebaseFirestore.instance.collection(CollectionName.settings).doc('globalValue').get().then((value) {
+    await FirebaseFirestore.instance
+        .collection(CollectionName.settings)
+        .doc('globalValue')
+        .get()
+        .then((value) {
       Constant.isSubscriptionModelApplied = value.data()!['subscription_model'];
     });
     await getSubscriptionPlanList();
@@ -140,7 +150,9 @@ class SubscriptionController extends GetxController {
   Future<void> getSubscriptionPlanList() async {
     isLoading.value = true;
     if (Constant.adminCommission?.isEnabled == true) {
-      await FireStoreUtils.getSubscriptionPlanById(planId: Constant.commissionSubscriptionID).then(
+      await FireStoreUtils.getSubscriptionPlanById(
+              planId: Constant.commissionSubscriptionID)
+          .then(
         (value) {
           if (value != null) {
             subscriptionPlanList.add(value);
@@ -153,8 +165,8 @@ class SubscriptionController extends GetxController {
       await FireStoreUtils.getAllSubscriptionPlans().then(
         (value) {
           for (var element in value) {
-              subscriptionPlanList.add(element);
-            }
+            subscriptionPlanList.add(element);
+          }
         },
       );
     }
@@ -175,9 +187,13 @@ class SubscriptionController extends GetxController {
     driverUserModel.value.subscriptionPlanId = selectedSubscriptionPlan.value.id;
     driverUserModel.value.subscriptionPlan = selectedSubscriptionPlan.value;
     driverUserModel.value.subscriptionPlan?.createdAt = Timestamp.now();
-    driverUserModel.value.subscriptionTotalOrders = selectedSubscriptionPlan.value.bookingLimit;
+    driverUserModel.value.subscriptionTotalOrders =
+        selectedSubscriptionPlan.value.bookingLimit;
     driverUserModel.value.subscriptionExpiryDate =
-        selectedSubscriptionPlan.value.expiryDay == '-1' ? null : Constant().addDayInTimestamp(days: selectedSubscriptionPlan.value.expiryDay, date: Timestamp.now());
+        selectedSubscriptionPlan.value.expiryDay == '-1'
+            ? null
+            : Constant().addDayInTimestamp(
+                days: selectedSubscriptionPlan.value.expiryDay, date: Timestamp.now());
 
     SubscriptionHistoryModel subscriptionHistoryData = SubscriptionHistoryModel(
         id: Constant.getUuid(),
@@ -201,7 +217,10 @@ class SubscriptionController extends GetxController {
           note: "Subscription Amount debited".tr);
 
       await FireStoreUtils.setWalletTransaction(transactionModel);
-      driverUserModel.value.walletAmount = (double.parse(driverUserModel.value.walletAmount.toString()) - totalAmount.value).toString();
+      driverUserModel.value.walletAmount =
+          (double.parse(driverUserModel.value.walletAmount.toString()) -
+                  totalAmount.value)
+              .toString();
     }
 
     await FireStoreUtils.updateDriverUser(driverUserModel.value).then(
@@ -212,7 +231,8 @@ class SubscriptionController extends GetxController {
         } else {
           Get.back(result: true);
         }
-        ShowToastDialog.showToast("Success! You’ve unlocked your subscription benefits starting today.".tr);
+        ShowToastDialog.showToast(
+            "Success! You’ve unlocked your subscription benefits starting today.".tr);
       },
     );
   }
@@ -283,8 +303,13 @@ class SubscriptionController extends GetxController {
       };
       log(paymentModel.value.strip!.stripeSecret.toString());
       var stripeSecret = paymentModel.value.strip!.stripeSecret;
-      var response = await http.post(Uri.parse('https://api.stripe.com/v1/payment_intents'),
-          body: body, headers: {'Authorization': 'Bearer $stripeSecret', 'Content-Type': 'application/x-www-form-urlencoded'});
+      var response = await http.post(
+          Uri.parse('https://api.stripe.com/v1/payment_intents'),
+          body: body,
+          headers: {
+            'Authorization': 'Bearer $stripeSecret',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          });
 
       return jsonDecode(response.body);
     } catch (e) {
@@ -381,7 +406,10 @@ class SubscriptionController extends GetxController {
   ///PayStack Payment Method
   payStackPayment(String totalAmount) async {
     await PayStackURLGen.payStackURLGen(
-            amount: (double.parse(totalAmount) * 100).toString(), currency: "NGN", secretKey: paymentModel.value.payStack!.secretKey.toString(), userModel: driverUserModel.value)
+            amount: (double.parse(totalAmount) * 100).toString(),
+            currency: "NGN",
+            secretKey: paymentModel.value.payStack!.secretKey.toString(),
+            userModel: driverUserModel.value)
         .then((value) async {
       if (value != null && value.toString().isNotEmpty) {
         PayStackUrlModel payStackModel = value;
@@ -407,7 +435,8 @@ class SubscriptionController extends GetxController {
   }
 
   //flutter wave Payment Method
-  flutterWaveInitiatePayment({required BuildContext context, required String amount}) async {
+  flutterWaveInitiatePayment(
+      {required BuildContext context, required String amount}) async {
     final url = Uri.parse('https://api.flutterwave.com/v3/payments');
     final headers = {
       'Authorization': 'Bearer ${paymentModel.value.flutterWave!.secretKey}',
@@ -465,8 +494,13 @@ class SubscriptionController extends GetxController {
 
   // payFast
   payFastPayment({required BuildContext context, required String amount}) {
-    PayStackURLGen.getPayHTML(payFastSettingData: paymentModel.value.payfast!, amount: amount.toString(), userModel: driverUserModel.value).then((String? value) async {
-      bool isDone = await Get.to(PayFastScreen(htmlData: value!, payFastSettingData: paymentModel.value.payfast!));
+    PayStackURLGen.getPayHTML(
+            payFastSettingData: paymentModel.value.payfast!,
+            amount: amount.toString(),
+            userModel: driverUserModel.value)
+        .then((String? value) async {
+      bool isDone = await Get.to(PayFastScreen(
+          htmlData: value!, payFastSettingData: paymentModel.value.payfast!));
       if (isDone) {
         // Get.back();
         ShowToastDialog.showToast("Payment successfully");
@@ -495,26 +529,39 @@ class SubscriptionController extends GetxController {
         });
 
     final data = jsonDecode(response.body);
-    await verifyCheckSum(checkSum: data["code"], amount: amount, orderId: orderId).then((value) {
+    await verifyCheckSum(checkSum: data["code"], amount: amount, orderId: orderId)
+        .then((value) {
       initiatePayment(amount: amount, orderId: orderId).then((value) {
         String callback = "";
         if (paymentModel.value.paytm!.isSandbox == true) {
-          callback = "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+          callback =
+              "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
         } else {
-          callback = "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+          callback =
+              "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
         }
 
         if (value.head.version.isEmpty) {
           ShowToastDialog.showToast("Payment Failed");
         } else {
           GetPaymentTxtTokenModel result = value;
-          startTransaction(context, txnTokenBy: result.body.txnToken, orderId: orderId, amount: amount, callBackURL: callback, isStaging: paymentModel.value.paytm!.isSandbox);
+          startTransaction(context,
+              txnTokenBy: result.body.txnToken,
+              orderId: orderId,
+              amount: amount,
+              callBackURL: callback,
+              isStaging: paymentModel.value.paytm!.isSandbox);
         }
       });
     });
   }
 
-  Future<void> startTransaction(context, {required String txnTokenBy, required orderId, required double amount, required callBackURL, required isStaging}) async {
+  Future<void> startTransaction(context,
+      {required String txnTokenBy,
+      required orderId,
+      required double amount,
+      required callBackURL,
+      required isStaging}) async {
     // try {
     //   var response = AllInOneSdk.startTransaction(
     //     paymentModel.value.paytm!.paytmMID.toString(),
@@ -550,7 +597,8 @@ class SubscriptionController extends GetxController {
     // }
   }
 
-  Future verifyCheckSum({required String checkSum, required double amount, required orderId}) async {
+  Future verifyCheckSum(
+      {required String checkSum, required double amount, required orderId}) async {
     String getChecksum = "${Constant.globalUrl}payments/validatechecksum";
     final response = await http.post(
         Uri.parse(
@@ -567,13 +615,16 @@ class SubscriptionController extends GetxController {
     return data['status'];
   }
 
-  Future<GetPaymentTxtTokenModel> initiatePayment({required double amount, required orderId}) async {
+  Future<GetPaymentTxtTokenModel> initiatePayment(
+      {required double amount, required orderId}) async {
     String initiateURL = "${Constant.globalUrl}payments/initiatepaytmpayment";
     String callback = "";
     if (paymentModel.value.paytm!.isSandbox == true) {
-      callback = "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+      callback =
+          "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
     } else {
-      callback = "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+      callback =
+          "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
     }
     final response = await http.post(Uri.parse(initiateURL), headers: {}, body: {
       "mid": paymentModel.value.paytm!.paytmMID,
@@ -669,7 +720,8 @@ class SubscriptionController extends GetxController {
     const url = 'https://api.xendit.co/v2/invoices';
     var headers = {
       'Content-Type': 'application/json',
-      'Authorization': generateBasicAuthHeader(paymentModel.value.xendit!.apiKey!.toString()),
+      'Authorization':
+          generateBasicAuthHeader(paymentModel.value.xendit!.apiKey!.toString()),
       // 'Cookie': '__cf_bm=yERkrx3xDITyFGiou0bbKY1bi7xEwovHNwxV1vCNbVc-1724155511-1.0.1.1-jekyYQmPCwY6vIJ524K0V6_CEw6O.dAwOmQnHtwmaXO_MfTrdnmZMka0KZvjukQgXu5B.K_6FJm47SGOPeWviQ',
     };
 
@@ -701,7 +753,6 @@ class SubscriptionController extends GetxController {
     return 'Basic $base64Encoded';
   }
 
-
 //Orangepay payment
   static String accessToken = '';
   static String payToken = '';
@@ -711,7 +762,8 @@ class SubscriptionController extends GetxController {
   orangeMakePayment({required String amount, required BuildContext context}) async {
     reset();
     var id = Constant.getUuid();
-    var paymentURL = await fetchToken(context: context, orderId: id, amount: amount, currency: 'USD');
+    var paymentURL =
+        await fetchToken(context: context, orderId: id, amount: amount, currency: 'USD');
     ShowToastDialog.closeLoader();
     if (paymentURL.toString() != '') {
       Get.to(() => OrangeMoneyScreen(
@@ -736,7 +788,11 @@ class SubscriptionController extends GetxController {
     }
   }
 
-  Future fetchToken({required String orderId, required String currency, required BuildContext context, required String amount}) async {
+  Future fetchToken(
+      {required String orderId,
+      required String currency,
+      required BuildContext context,
+      required String amount}) async {
     String apiUrl = 'https://api.orange.com/oauth/v3/token';
     Map<String, String> requestBody = {
       'grant_type': 'client_credentials',
@@ -757,7 +813,8 @@ class SubscriptionController extends GetxController {
 
       accessToken = responseData['access_token'];
       // ignore: use_build_context_synchronously
-      return await webpayment(context: context, amountData: amount, currency: currency, orderIdData: orderId);
+      return await webpayment(
+          context: context, amountData: amount, currency: currency, orderIdData: orderId);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Color(0xff635bff),
@@ -770,7 +827,11 @@ class SubscriptionController extends GetxController {
     }
   }
 
-  Future webpayment({required String orderIdData, required BuildContext context, required String currency, required String amountData}) async {
+  Future webpayment(
+      {required String orderIdData,
+      required BuildContext context,
+      required String currency,
+      required String amountData}) async {
     orderId = orderIdData;
     amount = amountData;
     String apiUrl = paymentModel.value.orangePay!.isSandbox! == true
@@ -790,7 +851,11 @@ class SubscriptionController extends GetxController {
 
     var response = await http.post(
       Uri.parse(apiUrl),
-      headers: <String, String>{'Authorization': 'Bearer $accessToken', 'Content-Type': 'application/json', 'Accept': 'application/json'},
+      headers: <String, String>{
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: json.encode(requestBody),
     );
 
@@ -843,7 +908,9 @@ class SubscriptionController extends GetxController {
 
   Future<String> createPaymentLink({required var amount}) async {
     var ordersId = Constant.getUuid();
-    final url = Uri.parse(paymentModel.value.midtrans!.isSandbox == true ? 'https://api.sandbox.midtrans.com/v1/payment-links' : 'https://api.midtrans.com/v1/payment-links');
+    final url = Uri.parse(paymentModel.value.midtrans!.isSandbox == true
+        ? 'https://api.sandbox.midtrans.com/v1/payment-links'
+        : 'https://api.midtrans.com/v1/payment-links');
 
     final response = await http.post(
       url,

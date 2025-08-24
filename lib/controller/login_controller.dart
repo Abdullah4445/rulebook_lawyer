@@ -61,7 +61,7 @@ class LoginController extends GetxController {
           await GoogleSignIn().signIn().catchError((error) {
         debugPrint("catchError--->$error");
         ShowToastDialog.closeLoader();
-        ShowToastDialog.showToast("Something went wrong");
+        ShowToastDialog.showToast("Something went wrong".tr);
         return null;
       });
 

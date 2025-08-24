@@ -22,6 +22,7 @@ const Map<String, String> esES = {
   "Login with apple": "Iniciar sesión con Apple",
   'By tapping "Next" you agree to ': 'Al pulsar "Siguiente", aceptas ',
   'Terms and conditions': 'Términos y condiciones',
+  'Terms and Conditions': 'Términos y condiciones',
   'privacy policy': 'política de privacidad',
   "terms": "términos",
   ' and ': ' y ',
@@ -178,7 +179,6 @@ const Map<String, String> esES = {
   "Are you sure want to delete Account.":
       "¿Estás seguro de que deseas eliminar la cuenta?",
   "Privacy Policy": "Política de privacidad",
-  "Terms and Conditions": "Términos y condiciones",
   'Vehicle Number': 'Número del vehículo',
   'Registration Date': 'Fecha de registro',
   "Select vehicle type": "Seleccionar tipo de vehículo",
@@ -305,4 +305,37 @@ const Map<String, String> esES = {
       'Permiso de ubicación en segundo plano denegado permanentemente.',
   'No matching zone found for the current location. Using default language.':
       'No se encontró una zona que coincida con la ubicación actual. Usando el idioma predeterminado.',
+
+  'Subscription History': 'Historial de Suscripciones',
+  'Subscription': 'Suscripción',
+  'Subscription Details': 'Detalles de la Suscripción',
+  'Subscription ID': 'ID de Suscripción',
+  "Error fetching Apple IAP products": "Error al obtener productos de Apple IAP",
+  "Amount added in your wallet.": "Monto agregado en tu billetera.",
+  "Payment successfully": "Pago exitoso",
+  "Payment Successful!": "Pago exitoso!",
+  "Payment UnSuccessful!": "Pago no exitoso!",
+  "Payment Failed": "Pago fallido",
+  "Payment Processing! via": "Pago en proceso! via",
+  "Please enter a valid amount.": "Por favor, introduce una cantidad válida.",
+  "User details are incomplete.": "Detalles del usuario incompletos.",
+  "Card payment Successful.": "Pago de tarjeta exitoso.",
+  "Card payment failed.": "Pago de tarjeta fallido.",
+  "Document is under verification": "Documento en verificación",
+
+  "Others Ride": "Otros Ride",
+  "Contact us for any questions on your order.":
+      "Contáctanos para cualquier pregunta sobre tu pedido.",
+  "Wallet Topup": "Recarga de billetera",
+  "Ride amount credited": "Monto del viaje acreditado",
+  "Your Address": "Tu dirección",
+  "Shared Rides": "Viajes compartidos",
+  "No shared rides found.": "No se encontraron viajes compartidos.",
+  "Delete All Rides": "Eliminar todos los viajes",
+  "Are you sure you want to delete all saved rides? This action cannot be undone.":
+      "¿Estás seguro de que quieres eliminar todos los viajes guardados? Esta acción no se puede deshacer.",
+  "Delete": "Eliminar",
+  'Accept': 'Aceptar',
+  'commission_text': 'Paga una comisión de @amount en cada pedido.',
+  'booking_limit_text': 'Aceptar límite de reservas: @limit',
 };

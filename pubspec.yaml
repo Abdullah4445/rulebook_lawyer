@@ -182,8 +182,7 @@ flutter_native_splash:
   color: "#ffffff" # Default to white for light mode
   color_dark: "#000000" # Black for dark mode
 
-  image: assets/appicon/app_logo2.png # Light mode image
-  image_dark: assets/appicon/app_logodark2.png # Dark mode image
+  image: assets/appicon/app_logo.png # Light mode image
 
   # Optional branding
   # branding: assets/dart.png
@@ -193,8 +192,8 @@ flutter_native_splash:
     color: "#ffffff" # Default to white for light mode
     color_dark: "#000000" # Black for dark mode
 
-    image: assets/appicon/app_logo2.png # Light mode Android 12 image
-    image_dark: assets/appicon/app_logodark2.png # Dark mode Android 12 image
+    image: assets/appicon/app_logo.png # Light mode Android 12 image
+    image_dark: assets/appicon/app_logo.png # Dark mode Android 12 image
 
     # Optional Android 12 icon background
     # icon_background_color: "#eeeeee" # Light icon background if needed

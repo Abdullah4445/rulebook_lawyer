@@ -6,7 +6,6 @@ import 'package:driver/model/intercity_order_model.dart';
 import 'package:driver/model/order_model.dart';
 import 'package:driver/model/wallet_transaction_model.dart';
 import 'package:driver/model/withdraw_model.dart';
-import 'package:driver/payment/createRazorPayOrderModel.dart';
 import 'package:driver/payment/rozorpayConroller.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/themes/button_them.dart';
@@ -243,7 +242,8 @@ class WalletScreen extends StatelessWidget {
                                                           ),
                                                           Text(
                                                             walletTransactionModel.note
-                                                                .toString(),
+                                                                .toString()
+                                                                .tr,
                                                             style: GoogleFonts.poppins(
                                                                 fontWeight:
                                                                     FontWeight.w400),

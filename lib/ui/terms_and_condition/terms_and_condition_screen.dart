@@ -17,13 +17,13 @@ class TermsAndConditionScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         title: Text(type == "privacy" ? "Privacy Policy".tr : "Terms and Conditions".tr),
-        leading: InkWell(
-            onTap: () {
-              Get.back();
-            },
-            child: const Icon(
-              Icons.arrow_back,
-            )),
+        // leading: InkWell(
+        //     onTap: () {
+        //       Get.back();
+        //     },
+        //     child: const Icon(
+        //       Icons.arrow_back,
+        //     )),
       ),
       body: Column(
         children: [
@@ -33,7 +33,10 @@ class TermsAndConditionScreen extends StatelessWidget {
           ),
           Expanded(
             child: Container(
-              decoration: BoxDecoration(color: Theme.of(context).colorScheme.background, borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(25), topRight: Radius.circular(25))),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 child: Padding(
@@ -43,7 +46,8 @@ class TermsAndConditionScreen extends StatelessWidget {
                       shrinkWrap: true,
                       data: type == "privacy"
                           ? Constant.localizationPrivacyPolicy(Constant.privacyPolicy)
-                          : Constant.localizationTermsCondition(Constant.termsAndConditions),
+                          : Constant.localizationTermsCondition(
+                              Constant.termsAndConditions),
                     ),
                   ),
                 ),

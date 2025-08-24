@@ -2,7 +2,8 @@ const Map<String, String> enUS = {
   'GoRide': 'GoRide',
   'privacy_policy': "Privacy Policy",
   "Sign up": "Sign up",
-  "Create your account to start using GoRide": "Create your account to start using GoRide",
+  "Create your account to start using GoRide":
+      "Create your account to start using GoRide",
   'Full name': 'Full name',
   "Phone number": "Phone number",
   'Email': 'Email',
@@ -13,7 +14,8 @@ const Map<String, String> enUS = {
   "Please enter valid email": "Please enter valid email",
   "Please wait": "Please wait",
   "Login": "Login",
-  "Welcome Back! We are happy to have \n you back": "Welcome Back! We are happy to have \n you back",
+  "Welcome Back! We are happy to have \n you back":
+      "Welcome Back! We are happy to have \n you back",
   "Next": "Next",
   "OR": "OR",
   "Login with google": "Login with google",
@@ -79,12 +81,14 @@ const Map<String, String> enUS = {
   "Customer pickup successfully": "Customer pickup successfully",
   "OTP Invalid": "OTP Invalid",
   "Cargo Load successfully": "Cargo Load successfully",
-  "You have to minimum  wallet amount to Accept Order and place a bid": "You have to minimum  wallet amount to Accept Order and place a bid",
+  "You have to minimum  wallet amount to Accept Order and place a bid":
+      "You have to minimum  wallet amount to Accept Order and place a bid",
   'New': 'New',
   'Accepted': 'Accepted',
   'Active': 'Active',
   "Map view": "Map view",
-  "You are Now offline so you can't get nearest order.": "You are Now offline so you can't get nearest order.",
+  "You are Now offline so you can't get nearest order.":
+      "You are Now offline so you can't get nearest order.",
   "New Rides Not found": "New Rides Not found",
   "Recommended Price is": "Recommended Price is",
   "Approx distanc": "Approx distanc",
@@ -93,11 +97,13 @@ const Map<String, String> enUS = {
   'New Driver Bid': 'New Driver Bid',
   'Driver has offered for your journey.🚗': 'Driver has offered for your journey.🚗',
   "Ride Accepted": "Ride Accepted",
-  "You have to minimum wallet amount to Accept Order and place a bid": "You have to minimum wallet amount to Accept Order and place a bid",
+  "You have to minimum wallet amount to Accept Order and place a bid":
+      "You have to minimum wallet amount to Accept Order and place a bid",
   " For Person": " For Person",
   "View details": "View details",
   "No active ride found": "No active ride found",
-  "Intercity/Outstation feature is disable for": "Intercity/Outstation feature is disable for",
+  "Intercity/Outstation feature is disable for":
+      "Intercity/Outstation feature is disable for",
   'From': 'From',
   'To': 'To',
   'Confirm': 'Confirm',
@@ -193,13 +199,15 @@ const Map<String, String> enUS = {
   "No transaction found": "No transaction found",
   "withdraw": "withdraw",
   "Insufficient balance": "Insufficient balance",
-  "Your bank details is not available.Please add bank details": "Your bank details is not available.Please add bank details",
+  "Your bank details is not available.Please add bank details":
+      "Your bank details is not available.Please add bank details",
   "Withdrawal history": "Withdrawal history",
   "Add Topup Amount": "Add Topup Amount",
   'Enter Amount': 'Enter Amount',
   "Select Payment Option": "Select Payment Option",
   "Topup": "Topup",
-  "Something went wrong, please contact admin.": "Something went wrong, please contact admin.",
+  "Something went wrong, please contact admin.":
+      "Something went wrong, please contact admin.",
   "Please select payment method": "Please select payment method",
   "Please enter amount": "Please enter amount",
   "Transaction Details": "Transaction Details",
@@ -211,12 +219,14 @@ const Map<String, String> enUS = {
   "Amount to Withdraw": "Amount to Withdraw",
   'Notes': 'Notes',
   "Withdrawal": "Withdrawal",
-  "Withdraw amount must be greater or equal to": "Withdraw amount must be greater or equal to",
+  "Withdraw amount must be greater or equal to":
+      "Withdraw amount must be greater or equal to",
   "Request sent to admin": "Request sent to admin",
   'Online': 'Online',
   'Offline': 'Offline',
   'Information': 'Information',
-  'To start earning with GoRide you need to fill in your personal information': 'To start earning with GoRide you need to fill in your personal information',
+  'To start earning with GoRide you need to fill in your personal information':
+      'To start earning with GoRide you need to fill in your personal information',
   'No': 'No',
   'skip': 'skip',
   'Yes': 'Yes',
@@ -241,13 +251,22 @@ const Map<String, String> enUS = {
   'Log out': 'Log out',
   'Please enter valid offer rate': 'Please enter valid offer rate',
   'You have to minimum ': 'You have to minimum ',
-  ' wallet amount to Accept Order and place a bid':' wallet amount to Accept Order and place a bid',
+  ' wallet amount to Accept Order and place a bid':
+      ' wallet amount to Accept Order and place a bid',
 
   // Ride Statuses
-  'Ride Placed': 'Ride Placed',    // Or "Ride Requested", "Order Placed"
+  'Ride Placed': 'Ride Placed', // Or "Ride Requested", "Order Placed"
   'Ride Active': 'Ride Active',
   'Ride InProgress': 'Ride In Progress', // Standard capitalization for "In Progress"
   'Ride Complete': 'Ride Completed', // Or "Ride Finished"
-  'Ride Canceled': 'Ride Canceled',  // Or "Ride Cancelled" (UK English)
-
+  'Ride Canceled': 'Ride Canceled', // Or "Ride Cancelled" (UK English)
+  'notify_customer_button': "Notify Customer About Arrival",
+  "Subscription History": "Subscription History",
+  "Subscription": "Subscription",
+  "Amount added in your wallet.": "Amount added in your wallet.",
+  "Payment Successful!": "Payment Successful!",
+  "Payment successfully": "Payment successfully",
+  "Payment Failed!": "Payment Failed!",
+  'commission_text': 'Pay a commission of @amount on each order.',
+  'booking_limit_text': 'Accept booking limits: @limit',
 };

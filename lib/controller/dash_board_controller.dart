@@ -11,9 +11,9 @@ import 'package:driver/ui/profile_screen/profile_screen.dart';
 import 'package:driver/ui/settings_screen/setting_screen.dart';
 import 'package:driver/ui/subscription_plan_screen/subscription_history.dart';
 import 'package:driver/ui/subscription_plan_screen/subscription_list_screen.dart';
+import 'package:driver/ui/terms_and_condition/terms_and_condition_screen.dart';
 import 'package:driver/ui/vehicle_information/vehicle_information_screen.dart';
 import 'package:driver/ui/wallet/wallet_screen.dart';
-import 'package:driver/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,16 +24,16 @@ class DashBoardController extends GetxController {
   RxList<DrawerItem> drawerItems = <DrawerItem>[].obs;
 
   getDrawerItemWidget(int pos) {
-    if(Constant.isSubscriptionModelApplied == true){
+    if (Constant.isSubscriptionModelApplied == true) {
       switch (pos) {
         case 0:
           return const HomeScreen();
-      // case 1:
-      //   return const OrderScreen();
+        // case 1:
+        //   return const OrderScreen();
         case 1:
           return const HomeIntercityScreen();
-      // case 2:
-      //   return const OrderIntercityScreen();
+        // case 2:
+        //   return const OrderIntercityScreen();
         case 2:
           return const FreightScreen();
         case 3:
@@ -54,19 +54,27 @@ class DashBoardController extends GetxController {
           return const SubscriptionListScreen();
         case 11:
           return const SubscriptionHistory();
+        case 12:
+          return const TermsAndConditionScreen(
+            type: 'terms',
+          );
+        case 13:
+          return const TermsAndConditionScreen(
+            type: 'privacy',
+          );
         default:
           return const Text("Error");
       }
-    }else{
+    } else {
       switch (pos) {
         case 0:
           return const HomeScreen();
-      // case 1:
-      //   return const OrderScreen();
+        // case 1:
+        //   return const OrderScreen();
         case 1:
           return const HomeIntercityScreen();
-      // case 2:
-      //   return const OrderIntercityScreen();
+        // case 2:
+        //   return const OrderIntercityScreen();
         case 2:
           return const FreightScreen();
         case 3:
@@ -85,6 +93,14 @@ class DashBoardController extends GetxController {
           return const SettingScreen();
         case 10:
           return const SubscriptionHistory();
+        case 11:
+          return const TermsAndConditionScreen(
+            type: 'terms',
+          );
+        case 12:
+          return const TermsAndConditionScreen(
+            type: 'privacy',
+          );
         default:
           return const Text("Error");
       }
@@ -94,15 +110,15 @@ class DashBoardController extends GetxController {
   RxInt selectedDrawerIndex = 0.obs;
 
   onSelectItem(int index) async {
-    if(Constant.isSubscriptionModelApplied == true){
-      if (index == 12) {
+    if (Constant.isSubscriptionModelApplied == true) {
+      if (index == 14) {
         await FirebaseAuth.instance.signOut();
         Get.offAll(const LoginScreen());
       } else {
         selectedDrawerIndex.value = index;
       }
-    }else{
-      if (index == 11) {
+    } else {
+      if (index == 13) {
         await FirebaseAuth.instance.signOut();
         Get.offAll(const LoginScreen());
       } else {
@@ -121,8 +137,8 @@ class DashBoardController extends GetxController {
     super.onInit();
   }
 
-  setDrawerList(){
-    if(Constant.isSubscriptionModelApplied == true){
+  setDrawerList() {
+    if (Constant.isSubscriptionModelApplied == true) {
       drawerItems.value = [
         DrawerItem('City'.tr, "assets/icons/ic_city.svg"),
         // DrawerItem('Rides'.tr, "assets/icons/ic_order.svg"),
@@ -138,9 +154,11 @@ class DashBoardController extends GetxController {
         DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
         DrawerItem('Subscription'.tr, "assets/icons/ic_subscription.svg"),
         DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
+        DrawerItem('Terms and Conditions', "assets/icons/ic_terms.svg"),
+        DrawerItem('Privacy Policy', "assets/icons/ic_terms.svg"),
         DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),
       ];
-    }else{
+    } else {
       drawerItems.value = [
         DrawerItem('City'.tr, "assets/icons/ic_city.svg"),
         // DrawerItem('Rides'.tr, "assets/icons/ic_order.svg"),
@@ -155,12 +173,12 @@ class DashBoardController extends GetxController {
         DrawerItem('Vehicle Information'.tr, "assets/icons/ic_city.svg"),
         DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
         DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
+        DrawerItem('Terms and Conditions', "assets/icons/ic_terms.svg"),
+        DrawerItem('Privacy Policy', "assets/icons/ic_terms.svg"),
         DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),
       ];
     }
   }
-
-
 
   Rx<DateTime> currentBackPressTime = DateTime.now().obs;
 
@@ -168,7 +186,8 @@ class DashBoardController extends GetxController {
     DateTime now = DateTime.now();
     if (now.difference(currentBackPressTime.value) > const Duration(seconds: 2)) {
       currentBackPressTime.value = now;
-      ShowToastDialog.showToast("Double press to exit", position: EasyLoadingToastPosition.center);
+      ShowToastDialog.showToast("Double press to exit",
+          position: EasyLoadingToastPosition.center);
       return Future.value(false);
     }
     return Future.value(true);

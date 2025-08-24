@@ -134,13 +134,17 @@ class DashBoardScreen extends StatelessWidget {
                           ),
                         );
                       })
-                  : Text(
-                      controller
-                          .drawerItems[controller.selectedDrawerIndex.value].title.tr,
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                      ),
-                    ),
+                  : (controller.selectedDrawerIndex.value != 12 &&
+                          controller.selectedDrawerIndex.value != 13 &&
+                          controller.selectedDrawerIndex.value != 14)
+                      ? Text(
+                          controller
+                              .drawerItems[controller.selectedDrawerIndex.value].title.tr,
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(""),
               centerTitle: true,
               leading: Builder(builder: (context) {
                 return InkWell(
@@ -225,6 +229,9 @@ class DashBoardScreen extends StatelessWidget {
         DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
         DrawerItem('Subscription'.tr, "assets/icons/ic_subscription.svg"),
         DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
+        DrawerItem('Terms and Conditions'.tr, "assets/icons/ic_terms.svg"),
+        DrawerItem('Privacy Policy'.tr, "assets/icons/ic_terms.svg"),
+
         DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),
       ];
     } else {
@@ -242,6 +249,10 @@ class DashBoardScreen extends StatelessWidget {
         DrawerItem('Vehicle Information'.tr, "assets/icons/ic_city.svg"),
         DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
         DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
+        DrawerItem('Terms and Conditions'.tr, "assets/icons/ic_terms.svg"),
+        DrawerItem('Privacy Policy'.tr, "assets/icons/ic_terms.svg"),
+        DrawerItem('Terms and Conditions'.tr, "assets/icons/ic_terms.svg"),
+        DrawerItem('Privacy Policy'.tr, "assets/icons/ic_terms.svg"),
         DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),
       ];
     }

@@ -45,47 +45,59 @@ class SubscriptionListScreen extends StatelessWidget {
                   height: Responsive.width(12, context),
                   width: Responsive.width(100, context),
                 ),
-
                 Expanded(
                   child: Container(
                     height: Responsive.height(100, context),
                     width: Responsive.width(100, context),
                     decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background, borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+                        color: Theme.of(context).colorScheme.background,
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(25), topRight: Radius.circular(25))),
                     child: controller.isLoading.value
                         ? Constant.loader(context)
                         : Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             child: SingleChildScrollView(
                               child: controller.subscriptionPlanList.isEmpty
                                   ? SizedBox(
                                       width: Responsive.width(100, context),
                                       height: Responsive.height(80, context),
-                                      child: Constant.showEmptyView(message: "Subscription Plan Not Found.".tr))
+                                      child: Constant.showEmptyView(
+                                          message: "Subscription Plan Not Found.".tr))
                                   : ListView.builder(
                                       physics: const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       primary: false,
                                       itemCount: controller.subscriptionPlanList.length,
                                       itemBuilder: (context, index) {
-                                        final subscriptionPlanModel = controller.subscriptionPlanList[index];
+                                        final subscriptionPlanModel =
+                                            controller.subscriptionPlanList[index];
                                         return SubscriptionPlanWidget(
                                           onContainClick: () {
-                                            controller.selectedSubscriptionPlan.value = subscriptionPlanModel;
-                                            controller.totalAmount.value = double.parse(subscriptionPlanModel.price ?? '0.0');
+                                            controller.selectedSubscriptionPlan.value =
+                                                subscriptionPlanModel;
+                                            controller.totalAmount.value = double.parse(
+                                                subscriptionPlanModel.price ?? '0.0');
                                             controller.update();
                                           },
                                           onClick: () {
-                                            if(controller.selectedSubscriptionPlan.value.id  == subscriptionPlanModel.id){
-                                              if (controller.selectedSubscriptionPlan.value.type == 'free' ||
-                                                  controller.selectedSubscriptionPlan.value.id == Constant.commissionSubscriptionID) {
-                                                controller.selectedPaymentMethod.value = 'free';
+                                            if (controller
+                                                    .selectedSubscriptionPlan.value.id ==
+                                                subscriptionPlanModel.id) {
+                                              if (controller.selectedSubscriptionPlan
+                                                          .value.type ==
+                                                      'free' ||
+                                                  controller.selectedSubscriptionPlan
+                                                          .value.id ==
+                                                      Constant.commissionSubscriptionID) {
+                                                controller.selectedPaymentMethod.value =
+                                                    'free';
                                                 controller.placeOrder();
                                               } else {
                                                 paymentMethodDialog(context, controller);
                                               }
                                             }
-
                                           },
                                           type: 'Plan',
                                           subscriptionPlanModel: subscriptionPlanModel,
@@ -103,7 +115,9 @@ class SubscriptionListScreen extends StatelessWidget {
 
   paymentMethodDialog(BuildContext context, SubscriptionController controller) {
     return showModalBottomSheet(
-        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(30), topLeft: Radius.circular(30))),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(30), topLeft: Radius.circular(30))),
         context: context,
         isScrollControlled: true,
         isDismissible: false,
@@ -152,7 +166,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                   style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                                 ),
                                 Visibility(
-                                  visible: !Platform.isIOS && controller.paymentModel.value.wallet!.enable == true,
+                                  visible: !Platform.isIOS &&
+                                      controller.paymentModel.value.wallet!.enable ==
+                                          true,
                                   child: Obx(
                                     () => Column(
                                       children: [
@@ -161,13 +177,20 @@ class SubscriptionListScreen extends StatelessWidget {
                                         ),
                                         InkWell(
                                           onTap: () {
-                                            controller.selectedPaymentMethod.value = controller.paymentModel.value.wallet!.name.toString();
+                                            controller.selectedPaymentMethod.value =
+                                                controller.paymentModel.value.wallet!.name
+                                                    .toString();
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                              borderRadius: const BorderRadius.all(
+                                                  Radius.circular(10)),
                                               border: Border.all(
-                                                  color: controller.selectedPaymentMethod.value == controller.paymentModel.value.wallet!.name.toString()
+                                                  color: controller.selectedPaymentMethod
+                                                              .value ==
+                                                          controller.paymentModel.value
+                                                              .wallet!.name
+                                                              .toString()
                                                       ? themeChange.getThem()
                                                           ? AppColors.darkModePrimary
                                                           : AppColors.primary
@@ -175,16 +198,22 @@ class SubscriptionListScreen extends StatelessWidget {
                                                   width: 1),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 10),
                                               child: Row(
                                                 children: [
                                                   Container(
                                                     height: 40,
                                                     width: 80,
-                                                    decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                    decoration: const BoxDecoration(
+                                                        color: AppColors.lightGray,
+                                                        borderRadius: BorderRadius.all(
+                                                            Radius.circular(5))),
                                                     child: Padding(
                                                       padding: const EdgeInsets.all(8.0),
-                                                      child: SvgPicture.asset('assets/icons/ic_wallet.svg', color: AppColors.primary),
+                                                      child: SvgPicture.asset(
+                                                          'assets/icons/ic_wallet.svg',
+                                                          color: AppColors.primary),
                                                     ),
                                                   ),
                                                   const SizedBox(
@@ -192,16 +221,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                   ),
                                                   Expanded(
                                                     child: Text(
-                                                      controller.paymentModel.value.wallet!.name.toString(),
+                                                      controller
+                                                          .paymentModel.value.wallet!.name
+                                                          .toString(),
                                                       style: GoogleFonts.poppins(),
                                                     ),
                                                   ),
                                                   Radio(
-                                                    value: controller.paymentModel.value.wallet!.name.toString(),
-                                                    groupValue: controller.selectedPaymentMethod.value,
-                                                    activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                    value: controller
+                                                        .paymentModel.value.wallet!.name
+                                                        .toString(),
+                                                    groupValue: controller
+                                                        .selectedPaymentMethod.value,
+                                                    activeColor: themeChange.getThem()
+                                                        ? AppColors.darkModePrimary
+                                                        : AppColors.primary,
                                                     onChanged: (value) {
-                                                      controller.selectedPaymentMethod.value = controller.paymentModel.value.wallet!.name.toString();
+                                                      controller.selectedPaymentMethod
+                                                              .value =
+                                                          controller.paymentModel.value
+                                                              .wallet!.name
+                                                              .toString();
                                                     },
                                                   )
                                                 ],
@@ -220,19 +260,26 @@ class SubscriptionListScreen extends StatelessWidget {
                                       const SizedBox(height: 10),
                                       InkWell(
                                         onTap: () {
-                                          controller.selectedPaymentMethod.value = 'apple_in_app';
+                                          controller.selectedPaymentMethod.value =
+                                              'apple_in_app';
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            borderRadius:
+                                                BorderRadius.all(Radius.circular(10)),
                                             border: Border.all(
-                                                color: controller.selectedPaymentMethod.value == 'apple_in_app'
-                                                    ? themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary
+                                                color: controller.selectedPaymentMethod
+                                                            .value ==
+                                                        'apple_in_app'
+                                                    ? themeChange.getThem()
+                                                        ? AppColors.darkModePrimary
+                                                        : AppColors.primary
                                                     : AppColors.textFieldBorder,
                                                 width: 1),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
                                             child: Row(
                                               children: [
                                                 Container(
@@ -240,20 +287,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                   width: 80,
                                                   decoration: BoxDecoration(
                                                       color: AppColors.lightGray,
-                                                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                                                  child: Icon(Icons.apple, size: 32), // or use an Apple logo SVG
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5))),
+                                                  child: Icon(Icons.apple,
+                                                      size:
+                                                          32), // or use an Apple logo SVG
                                                 ),
                                                 const SizedBox(width: 10),
                                                 Expanded(
-                                                  child: Text("Apple In-App Purchase", style: GoogleFonts.poppins()),
+                                                  child: Text("Apple In-App Purchase",
+                                                      style: GoogleFonts.poppins()),
                                                 ),
                                                 Radio(
                                                   value: 'apple_in_app',
-                                                  groupValue: controller.selectedPaymentMethod.value,
-
-                                                  activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                  groupValue: controller
+                                                      .selectedPaymentMethod.value,
+                                                  activeColor: themeChange.getThem()
+                                                      ? AppColors.darkModePrimary
+                                                      : AppColors.primary,
                                                   onChanged: (value) {
-                                                    controller.selectedPaymentMethod.value = 'apple_in_app';
+                                                    controller.selectedPaymentMethod
+                                                        .value = 'apple_in_app';
                                                   },
                                                 )
                                               ],
@@ -264,9 +318,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-
                                 Visibility(
-                                  visible: !Platform.isIOS && controller.paymentModel.value.strip!.enable == true,
+                                  visible: !Platform.isIOS &&
+                                      controller.paymentModel.value.strip!.enable == true,
                                   child: Obx(
                                     () => Column(
                                       children: [
@@ -275,13 +329,20 @@ class SubscriptionListScreen extends StatelessWidget {
                                         ),
                                         InkWell(
                                           onTap: () {
-                                            controller.selectedPaymentMethod.value = controller.paymentModel.value.strip!.name.toString();
+                                            controller.selectedPaymentMethod.value =
+                                                controller.paymentModel.value.strip!.name
+                                                    .toString();
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                              borderRadius: const BorderRadius.all(
+                                                  Radius.circular(10)),
                                               border: Border.all(
-                                                  color: controller.selectedPaymentMethod.value == controller.paymentModel.value.strip!.name.toString()
+                                                  color: controller.selectedPaymentMethod
+                                                              .value ==
+                                                          controller.paymentModel.value
+                                                              .strip!.name
+                                                              .toString()
                                                       ? themeChange.getThem()
                                                           ? AppColors.darkModePrimary
                                                           : AppColors.primary
@@ -289,16 +350,21 @@ class SubscriptionListScreen extends StatelessWidget {
                                                   width: 1),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 10),
                                               child: Row(
                                                 children: [
                                                   Container(
                                                     height: 40,
                                                     width: 80,
-                                                    decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                    decoration: const BoxDecoration(
+                                                        color: AppColors.lightGray,
+                                                        borderRadius: BorderRadius.all(
+                                                            Radius.circular(5))),
                                                     child: Padding(
                                                       padding: const EdgeInsets.all(8.0),
-                                                      child: Image.asset('assets/images/stripe.png'),
+                                                      child: Image.asset(
+                                                          'assets/images/stripe.png'),
                                                     ),
                                                   ),
                                                   const SizedBox(
@@ -306,16 +372,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                   ),
                                                   Expanded(
                                                     child: Text(
-                                                      controller.paymentModel.value.strip!.name.toString(),
+                                                      controller
+                                                          .paymentModel.value.strip!.name
+                                                          .toString(),
                                                       style: GoogleFonts.poppins(),
                                                     ),
                                                   ),
                                                   Radio(
-                                                    value: controller.paymentModel.value.strip!.name.toString(),
-                                                    groupValue: controller.selectedPaymentMethod.value,
-                                                    activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                    value: controller
+                                                        .paymentModel.value.strip!.name
+                                                        .toString(),
+                                                    groupValue: controller
+                                                        .selectedPaymentMethod.value,
+                                                    activeColor: themeChange.getThem()
+                                                        ? AppColors.darkModePrimary
+                                                        : AppColors.primary,
                                                     onChanged: (value) {
-                                                      controller.selectedPaymentMethod.value = controller.paymentModel.value.strip!.name.toString();
+                                                      controller.selectedPaymentMethod
+                                                              .value =
+                                                          controller.paymentModel.value
+                                                              .strip!.name
+                                                              .toString();
                                                     },
                                                   )
                                                 ],
@@ -328,7 +405,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Visibility(
-                                  visible: !Platform.isIOS && controller.paymentModel.value.paypal!.enable == true,
+                                  visible: !Platform.isIOS &&
+                                      controller.paymentModel.value.paypal!.enable ==
+                                          true,
                                   child: Column(
                                     children: [
                                       const SizedBox(
@@ -336,13 +415,20 @@ class SubscriptionListScreen extends StatelessWidget {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          controller.selectedPaymentMethod.value = controller.paymentModel.value.paypal!.name.toString();
+                                          controller.selectedPaymentMethod.value =
+                                              controller.paymentModel.value.paypal!.name
+                                                  .toString();
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                            borderRadius: const BorderRadius.all(
+                                                Radius.circular(10)),
                                             border: Border.all(
-                                                color: controller.selectedPaymentMethod.value == controller.paymentModel.value.paypal!.name.toString()
+                                                color: controller.selectedPaymentMethod
+                                                            .value ==
+                                                        controller.paymentModel.value
+                                                            .paypal!.name
+                                                            .toString()
                                                     ? themeChange.getThem()
                                                         ? AppColors.darkModePrimary
                                                         : AppColors.primary
@@ -350,16 +436,21 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 width: 1),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
                                             child: Row(
                                               children: [
                                                 Container(
                                                   height: 40,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                  decoration: const BoxDecoration(
+                                                      color: AppColors.lightGray,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5))),
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset('assets/images/paypal.png'),
+                                                    child: Image.asset(
+                                                        'assets/images/paypal.png'),
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -367,16 +458,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    controller.paymentModel.value.paypal!.name.toString(),
+                                                    controller
+                                                        .paymentModel.value.paypal!.name
+                                                        .toString(),
                                                     style: GoogleFonts.poppins(),
                                                   ),
                                                 ),
                                                 Radio(
-                                                  value: controller.paymentModel.value.paypal!.name.toString(),
-                                                  groupValue: controller.selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                  value: controller
+                                                      .paymentModel.value.paypal!.name
+                                                      .toString(),
+                                                  groupValue: controller
+                                                      .selectedPaymentMethod.value,
+                                                  activeColor: themeChange.getThem()
+                                                      ? AppColors.darkModePrimary
+                                                      : AppColors.primary,
                                                   onChanged: (value) {
-                                                    controller.selectedPaymentMethod.value = controller.paymentModel.value.paypal!.name.toString();
+                                                    controller
+                                                            .selectedPaymentMethod.value =
+                                                        controller.paymentModel.value
+                                                            .paypal!.name
+                                                            .toString();
                                                   },
                                                 )
                                               ],
@@ -388,7 +490,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Visibility(
-                                  visible: !Platform.isIOS && controller.paymentModel.value.payStack!.enable == true,
+                                  visible: !Platform.isIOS &&
+                                      controller.paymentModel.value.payStack!.enable ==
+                                          true,
                                   child: Column(
                                     children: [
                                       const SizedBox(
@@ -396,13 +500,20 @@ class SubscriptionListScreen extends StatelessWidget {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          controller.selectedPaymentMethod.value = controller.paymentModel.value.payStack!.name.toString();
+                                          controller.selectedPaymentMethod.value =
+                                              controller.paymentModel.value.payStack!.name
+                                                  .toString();
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                            borderRadius: const BorderRadius.all(
+                                                Radius.circular(10)),
                                             border: Border.all(
-                                                color: controller.selectedPaymentMethod.value == controller.paymentModel.value.payStack!.name.toString()
+                                                color: controller.selectedPaymentMethod
+                                                            .value ==
+                                                        controller.paymentModel.value
+                                                            .payStack!.name
+                                                            .toString()
                                                     ? themeChange.getThem()
                                                         ? AppColors.darkModePrimary
                                                         : AppColors.primary
@@ -410,16 +521,21 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 width: 1),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
                                             child: Row(
                                               children: [
                                                 Container(
                                                   height: 40,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                  decoration: const BoxDecoration(
+                                                      color: AppColors.lightGray,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5))),
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset('assets/images/paystack.png'),
+                                                    child: Image.asset(
+                                                        'assets/images/paystack.png'),
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -427,16 +543,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    controller.paymentModel.value.payStack!.name.toString(),
+                                                    controller
+                                                        .paymentModel.value.payStack!.name
+                                                        .toString(),
                                                     style: GoogleFonts.poppins(),
                                                   ),
                                                 ),
                                                 Radio(
-                                                  value: controller.paymentModel.value.payStack!.name.toString(),
-                                                  groupValue: controller.selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                  value: controller
+                                                      .paymentModel.value.payStack!.name
+                                                      .toString(),
+                                                  groupValue: controller
+                                                      .selectedPaymentMethod.value,
+                                                  activeColor: themeChange.getThem()
+                                                      ? AppColors.darkModePrimary
+                                                      : AppColors.primary,
                                                   onChanged: (value) {
-                                                    controller.selectedPaymentMethod.value = controller.paymentModel.value.payStack!.name.toString();
+                                                    controller
+                                                            .selectedPaymentMethod.value =
+                                                        controller.paymentModel.value
+                                                            .payStack!.name
+                                                            .toString();
                                                   },
                                                 )
                                               ],
@@ -448,7 +575,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Visibility(
-                                  visible: !Platform.isIOS && controller.paymentModel.value.mercadoPago!.enable == true,
+                                  visible: !Platform.isIOS &&
+                                      controller.paymentModel.value.mercadoPago!.enable ==
+                                          true,
                                   child: Column(
                                     children: [
                                       const SizedBox(
@@ -456,13 +585,21 @@ class SubscriptionListScreen extends StatelessWidget {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          controller.selectedPaymentMethod.value = controller.paymentModel.value.mercadoPago!.name.toString();
+                                          controller.selectedPaymentMethod.value =
+                                              controller
+                                                  .paymentModel.value.mercadoPago!.name
+                                                  .toString();
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                            borderRadius: const BorderRadius.all(
+                                                Radius.circular(10)),
                                             border: Border.all(
-                                                color: controller.selectedPaymentMethod.value == controller.paymentModel.value.mercadoPago!.name.toString()
+                                                color: controller.selectedPaymentMethod
+                                                            .value ==
+                                                        controller.paymentModel.value
+                                                            .mercadoPago!.name
+                                                            .toString()
                                                     ? themeChange.getThem()
                                                         ? AppColors.darkModePrimary
                                                         : AppColors.primary
@@ -470,16 +607,21 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 width: 1),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
                                             child: Row(
                                               children: [
                                                 Container(
                                                   height: 40,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                  decoration: const BoxDecoration(
+                                                      color: AppColors.lightGray,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5))),
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset('assets/images/mercadopago.png'),
+                                                    child: Image.asset(
+                                                        'assets/images/mercadopago.png'),
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -487,16 +629,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    controller.paymentModel.value.mercadoPago!.name.toString(),
+                                                    controller.paymentModel.value
+                                                        .mercadoPago!.name
+                                                        .toString(),
                                                     style: GoogleFonts.poppins(),
                                                   ),
                                                 ),
                                                 Radio(
-                                                  value: controller.paymentModel.value.mercadoPago!.name.toString(),
-                                                  groupValue: controller.selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                  value: controller.paymentModel.value
+                                                      .mercadoPago!.name
+                                                      .toString(),
+                                                  groupValue: controller
+                                                      .selectedPaymentMethod.value,
+                                                  activeColor: themeChange.getThem()
+                                                      ? AppColors.darkModePrimary
+                                                      : AppColors.primary,
                                                   onChanged: (value) {
-                                                    controller.selectedPaymentMethod.value = controller.paymentModel.value.mercadoPago!.name.toString();
+                                                    controller
+                                                            .selectedPaymentMethod.value =
+                                                        controller.paymentModel.value
+                                                            .mercadoPago!.name
+                                                            .toString();
                                                   },
                                                 )
                                               ],
@@ -508,7 +661,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Visibility(
-                                  visible: !Platform.isIOS && controller.paymentModel.value.flutterWave!.enable == true,
+                                  visible: !Platform.isIOS &&
+                                      controller.paymentModel.value.flutterWave!.enable ==
+                                          true,
                                   child: Column(
                                     children: [
                                       const SizedBox(
@@ -516,13 +671,21 @@ class SubscriptionListScreen extends StatelessWidget {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          controller.selectedPaymentMethod.value = controller.paymentModel.value.flutterWave!.name.toString();
+                                          controller.selectedPaymentMethod.value =
+                                              controller
+                                                  .paymentModel.value.flutterWave!.name
+                                                  .toString();
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                            borderRadius: const BorderRadius.all(
+                                                Radius.circular(10)),
                                             border: Border.all(
-                                                color: controller.selectedPaymentMethod.value == controller.paymentModel.value.flutterWave!.name.toString()
+                                                color: controller.selectedPaymentMethod
+                                                            .value ==
+                                                        controller.paymentModel.value
+                                                            .flutterWave!.name
+                                                            .toString()
                                                     ? themeChange.getThem()
                                                         ? AppColors.darkModePrimary
                                                         : AppColors.primary
@@ -530,16 +693,21 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 width: 1),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
                                             child: Row(
                                               children: [
                                                 Container(
                                                   height: 40,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                  decoration: const BoxDecoration(
+                                                      color: AppColors.lightGray,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5))),
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset('assets/images/flutterwave.png'),
+                                                    child: Image.asset(
+                                                        'assets/images/flutterwave.png'),
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -547,16 +715,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    controller.paymentModel.value.flutterWave!.name.toString(),
+                                                    controller.paymentModel.value
+                                                        .flutterWave!.name
+                                                        .toString(),
                                                     style: GoogleFonts.poppins(),
                                                   ),
                                                 ),
                                                 Radio(
-                                                  value: controller.paymentModel.value.flutterWave!.name.toString(),
-                                                  groupValue: controller.selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                  value: controller.paymentModel.value
+                                                      .flutterWave!.name
+                                                      .toString(),
+                                                  groupValue: controller
+                                                      .selectedPaymentMethod.value,
+                                                  activeColor: themeChange.getThem()
+                                                      ? AppColors.darkModePrimary
+                                                      : AppColors.primary,
                                                   onChanged: (value) {
-                                                    controller.selectedPaymentMethod.value = controller.paymentModel.value.flutterWave!.name.toString();
+                                                    controller
+                                                            .selectedPaymentMethod.value =
+                                                        controller.paymentModel.value
+                                                            .flutterWave!.name
+                                                            .toString();
                                                   },
                                                 )
                                               ],
@@ -568,7 +747,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Visibility(
-                                  visible: !Platform.isIOS && controller.paymentModel.value.payfast!.enable == true,
+                                  visible: !Platform.isIOS &&
+                                      controller.paymentModel.value.payfast!.enable ==
+                                          true,
                                   child: Column(
                                     children: [
                                       const SizedBox(
@@ -576,13 +757,20 @@ class SubscriptionListScreen extends StatelessWidget {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          controller.selectedPaymentMethod.value = controller.paymentModel.value.payfast!.name.toString();
+                                          controller.selectedPaymentMethod.value =
+                                              controller.paymentModel.value.payfast!.name
+                                                  .toString();
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                            borderRadius: const BorderRadius.all(
+                                                Radius.circular(10)),
                                             border: Border.all(
-                                                color: controller.selectedPaymentMethod.value == controller.paymentModel.value.payfast!.name.toString()
+                                                color: controller.selectedPaymentMethod
+                                                            .value ==
+                                                        controller.paymentModel.value
+                                                            .payfast!.name
+                                                            .toString()
                                                     ? themeChange.getThem()
                                                         ? AppColors.darkModePrimary
                                                         : AppColors.primary
@@ -590,16 +778,21 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 width: 1),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
                                             child: Row(
                                               children: [
                                                 Container(
                                                   height: 40,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                  decoration: const BoxDecoration(
+                                                      color: AppColors.lightGray,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5))),
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset('assets/images/payfast.png'),
+                                                    child: Image.asset(
+                                                        'assets/images/payfast.png'),
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -607,16 +800,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    controller.paymentModel.value.payfast!.name.toString(),
+                                                    controller
+                                                        .paymentModel.value.payfast!.name
+                                                        .toString(),
                                                     style: GoogleFonts.poppins(),
                                                   ),
                                                 ),
                                                 Radio(
-                                                  value: controller.paymentModel.value.payfast!.name.toString(),
-                                                  groupValue: controller.selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                  value: controller
+                                                      .paymentModel.value.payfast!.name
+                                                      .toString(),
+                                                  groupValue: controller
+                                                      .selectedPaymentMethod.value,
+                                                  activeColor: themeChange.getThem()
+                                                      ? AppColors.darkModePrimary
+                                                      : AppColors.primary,
                                                   onChanged: (value) {
-                                                    controller.selectedPaymentMethod.value = controller.paymentModel.value.payfast!.name.toString();
+                                                    controller
+                                                            .selectedPaymentMethod.value =
+                                                        controller.paymentModel.value
+                                                            .payfast!.name
+                                                            .toString();
                                                   },
                                                 )
                                               ],
@@ -628,7 +832,8 @@ class SubscriptionListScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Visibility(
-                                  visible:!Platform.isIOS && controller.paymentModel.value.paytm!.enable == true,
+                                  visible: !Platform.isIOS &&
+                                      controller.paymentModel.value.paytm!.enable == true,
                                   child: Column(
                                     children: [
                                       const SizedBox(
@@ -636,13 +841,20 @@ class SubscriptionListScreen extends StatelessWidget {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          controller.selectedPaymentMethod.value = controller.paymentModel.value.paytm!.name.toString();
+                                          controller.selectedPaymentMethod.value =
+                                              controller.paymentModel.value.paytm!.name
+                                                  .toString();
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                            borderRadius: const BorderRadius.all(
+                                                Radius.circular(10)),
                                             border: Border.all(
-                                                color: controller.selectedPaymentMethod.value == controller.paymentModel.value.paytm!.name.toString()
+                                                color: controller.selectedPaymentMethod
+                                                            .value ==
+                                                        controller.paymentModel.value
+                                                            .paytm!.name
+                                                            .toString()
                                                     ? themeChange.getThem()
                                                         ? AppColors.darkModePrimary
                                                         : AppColors.primary
@@ -650,16 +862,21 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 width: 1),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
                                             child: Row(
                                               children: [
                                                 Container(
                                                   height: 40,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                  decoration: const BoxDecoration(
+                                                      color: AppColors.lightGray,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5))),
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset('assets/images/paytam.png'),
+                                                    child: Image.asset(
+                                                        'assets/images/paytam.png'),
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -667,16 +884,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    controller.paymentModel.value.paytm!.name.toString(),
+                                                    controller
+                                                        .paymentModel.value.paytm!.name
+                                                        .toString(),
                                                     style: GoogleFonts.poppins(),
                                                   ),
                                                 ),
                                                 Radio(
-                                                  value: controller.paymentModel.value.paytm!.name.toString(),
-                                                  groupValue: controller.selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                  value: controller
+                                                      .paymentModel.value.paytm!.name
+                                                      .toString(),
+                                                  groupValue: controller
+                                                      .selectedPaymentMethod.value,
+                                                  activeColor: themeChange.getThem()
+                                                      ? AppColors.darkModePrimary
+                                                      : AppColors.primary,
                                                   onChanged: (value) {
-                                                    controller.selectedPaymentMethod.value = controller.paymentModel.value.paytm!.name.toString();
+                                                    controller
+                                                            .selectedPaymentMethod.value =
+                                                        controller.paymentModel.value
+                                                            .paytm!.name
+                                                            .toString();
                                                   },
                                                 )
                                               ],
@@ -688,7 +916,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Visibility(
-                                  visible: !Platform.isIOS && controller.paymentModel.value.razorpay!.enable == true,
+                                  visible: !Platform.isIOS &&
+                                      controller.paymentModel.value.razorpay!.enable ==
+                                          true,
                                   child: Column(
                                     children: [
                                       const SizedBox(
@@ -696,13 +926,20 @@ class SubscriptionListScreen extends StatelessWidget {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          controller.selectedPaymentMethod.value = controller.paymentModel.value.razorpay!.name.toString();
+                                          controller.selectedPaymentMethod.value =
+                                              controller.paymentModel.value.razorpay!.name
+                                                  .toString();
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                            borderRadius: const BorderRadius.all(
+                                                Radius.circular(10)),
                                             border: Border.all(
-                                                color: controller.selectedPaymentMethod.value == controller.paymentModel.value.razorpay!.name.toString()
+                                                color: controller.selectedPaymentMethod
+                                                            .value ==
+                                                        controller.paymentModel.value
+                                                            .razorpay!.name
+                                                            .toString()
                                                     ? themeChange.getThem()
                                                         ? AppColors.darkModePrimary
                                                         : AppColors.primary
@@ -710,16 +947,21 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 width: 1),
                                           ),
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
                                             child: Row(
                                               children: [
                                                 Container(
                                                   height: 40,
                                                   width: 80,
-                                                  decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                  decoration: const BoxDecoration(
+                                                      color: AppColors.lightGray,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(5))),
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset('assets/images/razorpay.png'),
+                                                    child: Image.asset(
+                                                        'assets/images/razorpay.png'),
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -727,16 +969,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    controller.paymentModel.value.razorpay!.name.toString(),
+                                                    controller
+                                                        .paymentModel.value.razorpay!.name
+                                                        .toString(),
                                                     style: GoogleFonts.poppins(),
                                                   ),
                                                 ),
                                                 Radio(
-                                                  value: controller.paymentModel.value.razorpay!.name.toString(),
-                                                  groupValue: controller.selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                  value: controller
+                                                      .paymentModel.value.razorpay!.name
+                                                      .toString(),
+                                                  groupValue: controller
+                                                      .selectedPaymentMethod.value,
+                                                  activeColor: themeChange.getThem()
+                                                      ? AppColors.darkModePrimary
+                                                      : AppColors.primary,
                                                   onChanged: (value) {
-                                                    controller.selectedPaymentMethod.value = controller.paymentModel.value.razorpay!.name.toString();
+                                                    controller
+                                                            .selectedPaymentMethod.value =
+                                                        controller.paymentModel.value
+                                                            .razorpay!.name
+                                                            .toString();
                                                   },
                                                 )
                                               ],
@@ -747,7 +1000,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                controller.paymentModel.value.midtrans != null && controller.paymentModel.value.midtrans!.enable == true
+                                controller.paymentModel.value.midtrans != null &&
+                                        controller.paymentModel.value.midtrans!.enable ==
+                                            true
                                     ? Column(
                                         children: [
                                           const SizedBox(
@@ -755,13 +1010,22 @@ class SubscriptionListScreen extends StatelessWidget {
                                           ),
                                           InkWell(
                                             onTap: () {
-                                              controller.selectedPaymentMethod.value = controller.paymentModel.value.midtrans!.name.toString();
+                                              controller.selectedPaymentMethod.value =
+                                                  controller
+                                                      .paymentModel.value.midtrans!.name
+                                                      .toString();
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                borderRadius: const BorderRadius.all(
+                                                    Radius.circular(10)),
                                                 border: Border.all(
-                                                    color: controller.selectedPaymentMethod.value == controller.paymentModel.value.midtrans!.name.toString()
+                                                    color: controller
+                                                                .selectedPaymentMethod
+                                                                .value ==
+                                                            controller.paymentModel.value
+                                                                .midtrans!.name
+                                                                .toString()
                                                         ? themeChange.getThem()
                                                             ? AppColors.darkModePrimary
                                                             : AppColors.primary
@@ -769,16 +1033,22 @@ class SubscriptionListScreen extends StatelessWidget {
                                                     width: 1),
                                               ),
                                               child: Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 10, vertical: 10),
                                                 child: Row(
                                                   children: [
                                                     Container(
                                                       height: 40,
                                                       width: 80,
-                                                      decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                      decoration: const BoxDecoration(
+                                                          color: AppColors.lightGray,
+                                                          borderRadius: BorderRadius.all(
+                                                              Radius.circular(5))),
                                                       child: Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child: Image.asset('assets/images/midtrans.png'),
+                                                        padding:
+                                                            const EdgeInsets.all(8.0),
+                                                        child: Image.asset(
+                                                            'assets/images/midtrans.png'),
                                                       ),
                                                     ),
                                                     const SizedBox(
@@ -786,16 +1056,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                     ),
                                                     Expanded(
                                                       child: Text(
-                                                        controller.paymentModel.value.midtrans!.name.toString(),
+                                                        controller.paymentModel.value
+                                                            .midtrans!.name
+                                                            .toString(),
                                                         style: GoogleFonts.poppins(),
                                                       ),
                                                     ),
                                                     Radio(
-                                                      value: controller.paymentModel.value.midtrans!.name.toString(),
-                                                      groupValue: controller.selectedPaymentMethod.value,
-                                                      activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                      value: controller.paymentModel.value
+                                                          .midtrans!.name
+                                                          .toString(),
+                                                      groupValue: controller
+                                                          .selectedPaymentMethod.value,
+                                                      activeColor: themeChange.getThem()
+                                                          ? AppColors.darkModePrimary
+                                                          : AppColors.primary,
                                                       onChanged: (value) {
-                                                        controller.selectedPaymentMethod.value = controller.paymentModel.value.midtrans!.name.toString();
+                                                        controller.selectedPaymentMethod
+                                                                .value =
+                                                            controller.paymentModel.value
+                                                                .midtrans!.name
+                                                                .toString();
                                                       },
                                                     )
                                                   ],
@@ -806,7 +1087,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                         ],
                                       )
                                     : const SizedBox(),
-                                controller.paymentModel.value.xendit != null && controller.paymentModel.value.xendit!.enable == true
+                                controller.paymentModel.value.xendit != null &&
+                                        controller.paymentModel.value.xendit!.enable ==
+                                            true
                                     ? Column(
                                         children: [
                                           const SizedBox(
@@ -814,13 +1097,22 @@ class SubscriptionListScreen extends StatelessWidget {
                                           ),
                                           InkWell(
                                             onTap: () {
-                                              controller.selectedPaymentMethod.value = controller.paymentModel.value.xendit!.name.toString();
+                                              controller.selectedPaymentMethod.value =
+                                                  controller
+                                                      .paymentModel.value.xendit!.name
+                                                      .toString();
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                borderRadius: const BorderRadius.all(
+                                                    Radius.circular(10)),
                                                 border: Border.all(
-                                                    color: controller.selectedPaymentMethod.value == controller.paymentModel.value.xendit!.name.toString()
+                                                    color: controller
+                                                                .selectedPaymentMethod
+                                                                .value ==
+                                                            controller.paymentModel.value
+                                                                .xendit!.name
+                                                                .toString()
                                                         ? themeChange.getThem()
                                                             ? AppColors.darkModePrimary
                                                             : AppColors.primary
@@ -828,16 +1120,22 @@ class SubscriptionListScreen extends StatelessWidget {
                                                     width: 1),
                                               ),
                                               child: Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 10, vertical: 10),
                                                 child: Row(
                                                   children: [
                                                     Container(
                                                       height: 40,
                                                       width: 80,
-                                                      decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                      decoration: const BoxDecoration(
+                                                          color: AppColors.lightGray,
+                                                          borderRadius: BorderRadius.all(
+                                                              Radius.circular(5))),
                                                       child: Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child: Image.asset('assets/images/xendit.png'),
+                                                        padding:
+                                                            const EdgeInsets.all(8.0),
+                                                        child: Image.asset(
+                                                            'assets/images/xendit.png'),
                                                       ),
                                                     ),
                                                     const SizedBox(
@@ -845,16 +1143,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                     ),
                                                     Expanded(
                                                       child: Text(
-                                                        controller.paymentModel.value.xendit!.name.toString(),
+                                                        controller.paymentModel.value
+                                                            .xendit!.name
+                                                            .toString(),
                                                         style: GoogleFonts.poppins(),
                                                       ),
                                                     ),
                                                     Radio(
-                                                      value: controller.paymentModel.value.xendit!.name.toString(),
-                                                      groupValue: controller.selectedPaymentMethod.value,
-                                                      activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                      value: controller
+                                                          .paymentModel.value.xendit!.name
+                                                          .toString(),
+                                                      groupValue: controller
+                                                          .selectedPaymentMethod.value,
+                                                      activeColor: themeChange.getThem()
+                                                          ? AppColors.darkModePrimary
+                                                          : AppColors.primary,
                                                       onChanged: (value) {
-                                                        controller.selectedPaymentMethod.value = controller.paymentModel.value.xendit!.name.toString();
+                                                        controller.selectedPaymentMethod
+                                                                .value =
+                                                            controller.paymentModel.value
+                                                                .xendit!.name
+                                                                .toString();
                                                       },
                                                     )
                                                   ],
@@ -865,7 +1174,9 @@ class SubscriptionListScreen extends StatelessWidget {
                                         ],
                                       )
                                     : const SizedBox(),
-                                controller.paymentModel.value.orangePay != null && controller.paymentModel.value.orangePay!.enable == true
+                                controller.paymentModel.value.orangePay != null &&
+                                        controller.paymentModel.value.orangePay!.enable ==
+                                            true
                                     ? Column(
                                         children: [
                                           const SizedBox(
@@ -873,13 +1184,22 @@ class SubscriptionListScreen extends StatelessWidget {
                                           ),
                                           InkWell(
                                             onTap: () {
-                                              controller.selectedPaymentMethod.value = controller.paymentModel.value.orangePay!.name.toString();
+                                              controller.selectedPaymentMethod.value =
+                                                  controller
+                                                      .paymentModel.value.orangePay!.name
+                                                      .toString();
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                borderRadius: const BorderRadius.all(
+                                                    Radius.circular(10)),
                                                 border: Border.all(
-                                                    color: controller.selectedPaymentMethod.value == controller.paymentModel.value.orangePay!.name.toString()
+                                                    color: controller
+                                                                .selectedPaymentMethod
+                                                                .value ==
+                                                            controller.paymentModel.value
+                                                                .orangePay!.name
+                                                                .toString()
                                                         ? themeChange.getThem()
                                                             ? AppColors.darkModePrimary
                                                             : AppColors.primary
@@ -887,16 +1207,22 @@ class SubscriptionListScreen extends StatelessWidget {
                                                     width: 1),
                                               ),
                                               child: Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 10, vertical: 10),
                                                 child: Row(
                                                   children: [
                                                     Container(
                                                       height: 40,
                                                       width: 80,
-                                                      decoration: const BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                      decoration: const BoxDecoration(
+                                                          color: AppColors.lightGray,
+                                                          borderRadius: BorderRadius.all(
+                                                              Radius.circular(5))),
                                                       child: Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child: Image.asset('assets/images/orange_money.png'),
+                                                        padding:
+                                                            const EdgeInsets.all(8.0),
+                                                        child: Image.asset(
+                                                            'assets/images/orange_money.png'),
                                                       ),
                                                     ),
                                                     const SizedBox(
@@ -904,16 +1230,27 @@ class SubscriptionListScreen extends StatelessWidget {
                                                     ),
                                                     Expanded(
                                                       child: Text(
-                                                        controller.paymentModel.value.orangePay!.name.toString(),
+                                                        controller.paymentModel.value
+                                                            .orangePay!.name
+                                                            .toString(),
                                                         style: GoogleFonts.poppins(),
                                                       ),
                                                     ),
                                                     Radio(
-                                                      value: controller.paymentModel.value.orangePay!.name.toString(),
-                                                      groupValue: controller.selectedPaymentMethod.value,
-                                                      activeColor: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+                                                      value: controller.paymentModel.value
+                                                          .orangePay!.name
+                                                          .toString(),
+                                                      groupValue: controller
+                                                          .selectedPaymentMethod.value,
+                                                      activeColor: themeChange.getThem()
+                                                          ? AppColors.darkModePrimary
+                                                          : AppColors.primary,
                                                       onChanged: (value) {
-                                                        controller.selectedPaymentMethod.value = controller.paymentModel.value.orangePay!.name.toString();
+                                                        controller.selectedPaymentMethod
+                                                                .value =
+                                                            controller.paymentModel.value
+                                                                .orangePay!.name
+                                                                .toString();
                                                       },
                                                     )
                                                   ],
@@ -935,61 +1272,96 @@ class SubscriptionListScreen extends StatelessWidget {
                       ButtonThem.buildButton(context, title: "Pay Now".tr, onPress: () {
                         if (controller.selectedPaymentMethod.value == '') {
                           ShowToastDialog.showToast("Please Select Payment Method.");
-                        }
-                        else if (controller.selectedPaymentMethod.value == 'apple_in_app') {
+                        } else if (controller.selectedPaymentMethod.value ==
+                            'apple_in_app') {
                           Get.back();
                           controller.buyExclusivePlan(); // ✅ Apple IAP
-                        }
-                        else {
-                          if (controller.selectedPaymentMethod.value == controller.paymentModel.value.wallet!.name) {
-                            if (double.parse(controller.driverUserModel.value.walletAmount.toString()) >= controller.totalAmount.value) {
+                        } else {
+                          if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.wallet!.name) {
+                            if (double.parse(controller.driverUserModel.value.walletAmount
+                                    .toString()) >=
+                                controller.totalAmount.value) {
                               Get.back();
                               controller.placeOrder();
                             } else {
                               ShowToastDialog.showToast("Wallet Amount Insufficient".tr);
                             }
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.strip!.name) {
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.strip!.name) {
                             Get.back();
-                            controller.stripeMakePayment(amount: controller.totalAmount.value.toString());
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.paypal!.name) {
+                            controller.stripeMakePayment(
+                                amount: controller.totalAmount.value.toString());
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.paypal!.name) {
                             Get.back();
-                            controller.paypalPaymentSheet(controller.totalAmount.value.toString(), context1);
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.payStack!.name) {
+                            controller.paypalPaymentSheet(
+                                controller.totalAmount.value.toString(), context1);
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.payStack!.name) {
                             Get.back();
-                            controller.payStackPayment(controller.totalAmount.value.toString());
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.mercadoPago!.name) {
+                            controller
+                                .payStackPayment(controller.totalAmount.value.toString());
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.mercadoPago!.name) {
                             Get.back();
-                            controller.mercadoPagoMakePayment(context: context, amount: controller.totalAmount.value.toString());
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.flutterWave!.name) {
+                            controller.mercadoPagoMakePayment(
+                                context: context,
+                                amount: controller.totalAmount.value.toString());
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.flutterWave!.name) {
                             Get.back();
-                            controller.flutterWaveInitiatePayment(context: context, amount: controller.totalAmount.value.toString());
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.payfast!.name) {
+                            controller.flutterWaveInitiatePayment(
+                                context: context,
+                                amount: controller.totalAmount.value.toString());
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.payfast!.name) {
                             Get.back();
-                            controller.payFastPayment(context: context, amount: controller.totalAmount.value.toString());
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.paytm!.name) {
+                            controller.payFastPayment(
+                                context: context,
+                                amount: controller.totalAmount.value.toString());
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.paytm!.name) {
                             Get.back();
-                            controller.getPaytmCheckSum(context, amount: double.parse(controller.totalAmount.value.toString()));
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.razorpay!.name) {
+                            controller.getPaytmCheckSum(context,
+                                amount: double.parse(
+                                    controller.totalAmount.value.toString()));
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.razorpay!.name) {
                             RazorPayController()
-                                .createOrderRazorPay(amount: int.parse(controller.totalAmount.value.toString()), razorpayModel: controller.paymentModel.value.razorpay)
+                                .createOrderRazorPay(
+                                    amount: int.parse(
+                                        controller.totalAmount.value.toString()),
+                                    razorpayModel: controller.paymentModel.value.razorpay)
                                 .then((value) {
                               if (value == null) {
                                 Get.back();
-                                ShowToastDialog.showToast("Something went wrong, please contact admin.".tr);
+                                ShowToastDialog.showToast(
+                                    "Something went wrong, please contact admin.".tr);
                               } else {
                                 CreateRazorPayOrderModel result = value;
-                                controller.openCheckout(amount: controller.totalAmount.value.toString(), orderId: result.id);
+                                controller.openCheckout(
+                                    amount: controller.totalAmount.value.toString(),
+                                    orderId: result.id);
                               }
                             });
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.midtrans!.name) {
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.midtrans!.name) {
                             Get.back();
-                            controller.midtransMakePayment(context: context, amount: controller.totalAmount.value.toString());
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.orangePay!.name) {
+                            controller.midtransMakePayment(
+                                context: context,
+                                amount: controller.totalAmount.value.toString());
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.orangePay!.name) {
                             Get.back();
-                            controller.orangeMakePayment(context: context, amount: controller.totalAmount.value.toString());
-                          } else if (controller.selectedPaymentMethod.value == controller.paymentModel.value.xendit!.name) {
+                            controller.orangeMakePayment(
+                                context: context,
+                                amount: controller.totalAmount.value.toString());
+                          } else if (controller.selectedPaymentMethod.value ==
+                              controller.paymentModel.value.xendit!.name) {
                             Get.back();
-                            controller.xenditPayment(context, controller.totalAmount.value.toString());
+                            controller.xenditPayment(
+                                context, controller.totalAmount.value.toString());
                           } else {
                             ShowToastDialog.showToast("Please select payment method".tr);
                           }
@@ -1014,7 +1386,12 @@ class SubscriptionPlanWidget extends StatelessWidget {
   final String type;
   final SubscriptionPlanModel subscriptionPlanModel;
 
-  const SubscriptionPlanWidget({super.key, required this.onClick, required this.type, required this.subscriptionPlanModel, required this.onContainClick});
+  const SubscriptionPlanWidget(
+      {super.key,
+      required this.onClick,
+      required this.type,
+      required this.subscriptionPlanModel,
+      required this.onContainClick});
 
   @override
   Widget build(BuildContext context) {
@@ -1029,8 +1406,10 @@ class SubscriptionPlanWidget extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
               decoration: BoxDecoration(
-                border: Border.all(color: themeChange.getThem() ? AppColors.grey800 : AppColors.grey200),
-                color: controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                border: Border.all(
+                    color: themeChange.getThem() ? AppColors.grey800 : AppColors.grey200),
+                color: controller.selectedSubscriptionPlan.value.id ==
+                        subscriptionPlanModel.id
                     ? themeChange.getThem()
                         ? AppColors.grey50
                         : AppColors.grey800
@@ -1061,7 +1440,8 @@ class SubscriptionPlanWidget extends StatelessWidget {
                               Text(
                                 subscriptionPlanModel.name ?? '',
                                 style: TextStyle(
-                                  color: controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                                  color: controller.selectedSubscriptionPlan.value.id ==
+                                          subscriptionPlanModel.id
                                       ? themeChange.getThem()
                                           ? AppColors.grey900
                                           : AppColors.grey50
@@ -1084,7 +1464,8 @@ class SubscriptionPlanWidget extends StatelessWidget {
                             ],
                           ),
                         ),
-                        controller.driverUserModel.value.subscriptionPlanId == subscriptionPlanModel.id
+                        controller.driverUserModel.value.subscriptionPlanId ==
+                                subscriptionPlanModel.id
                             ? ButtonThem.buildButton(
                                 context,
                                 btnWidthRatio: 0.24,
@@ -1101,11 +1482,16 @@ class SubscriptionPlanWidget extends StatelessWidget {
                     const SizedBox(height: 16),
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(
-                        subscriptionPlanModel.type == "free" ? "Free" : Constant.amountShow(amount: double.parse(subscriptionPlanModel.price ?? '0.0').toString()),
+                        subscriptionPlanModel.type == "free"
+                            ? "Free"
+                            : Constant.amountShow(
+                                amount: double.parse(subscriptionPlanModel.price ?? '0.0')
+                                    .toString()),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                          color: controller.selectedSubscriptionPlan.value.id ==
+                                  subscriptionPlanModel.id
                               ? themeChange.getThem()
                                   ? AppColors.grey800
                                   : AppColors.grey200
@@ -1116,10 +1502,13 @@ class SubscriptionPlanWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        subscriptionPlanModel.expiryDay == "-1" ? "LifeTime" : "${subscriptionPlanModel.expiryDay} Days",
+                        subscriptionPlanModel.expiryDay == "-1"
+                            ? "LifeTime"
+                            : "${subscriptionPlanModel.expiryDay} Days",
                         style: TextStyle(
                           fontSize: 14,
-                          color: controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                          color: controller.selectedSubscriptionPlan.value.id ==
+                                  subscriptionPlanModel.id
                               ? themeChange.getThem()
                                   ? AppColors.grey500
                                   : AppColors.grey500
@@ -1140,27 +1529,37 @@ class SubscriptionPlanWidget extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: themeChange.getThem()
-                                        ? controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                                        ? controller.selectedSubscriptionPlan.value.id ==
+                                                subscriptionPlanModel.id
                                             ? AppColors.grey800
                                             : AppColors.grey200
-                                        : controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                                        : controller.selectedSubscriptionPlan.value.id ==
+                                                subscriptionPlanModel.id
                                             ? AppColors.grey200
                                             : AppColors.grey800,
                                   )),
                               Expanded(
                                 child: Text(
-                                    'Pay a commission of ${Constant.adminCommission?.type == 'percentage' ? "${Constant.adminCommission?.amount}%" : "${Constant.amountShow(amount: Constant.adminCommission?.amount)} Flat"} on each order.',
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: themeChange.getThem()
-                                          ? controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
-                                              ? AppColors.grey800
-                                              : AppColors.grey200
-                                          : controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
-                                              ? AppColors.grey200
-                                              : AppColors.grey800,
-                                    )),
+                                  'commission_text'.trParams({
+                                    'amount': Constant.adminCommission?.type ==
+                                            'percentage'
+                                        ? "${Constant.adminCommission?.amount}%"
+                                        : "${Constant.amountShow(amount: Constant.adminCommission?.amount)} Flat"
+                                  }),
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: themeChange.getThem()
+                                        ? controller.selectedSubscriptionPlan.value.id ==
+                                                subscriptionPlanModel.id
+                                            ? AppColors.grey800
+                                            : AppColors.grey200
+                                        : controller.selectedSubscriptionPlan.value.id ==
+                                                subscriptionPlanModel.id
+                                            ? AppColors.grey200
+                                            : AppColors.grey800,
+                                  ),
+                                ),
                               ),
                             ],
                           )),
@@ -1177,26 +1576,33 @@ class SubscriptionPlanWidget extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: themeChange.getThem()
-                                        ? controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                                        ? controller.selectedSubscriptionPlan.value.id ==
+                                                subscriptionPlanModel.id
                                             ? AppColors.grey800
                                             : AppColors.grey200
-                                        : controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                                        : controller.selectedSubscriptionPlan.value.id ==
+                                                subscriptionPlanModel.id
                                             ? AppColors.grey200
                                             : AppColors.grey800,
                                   )),
                               Expanded(
-                                child: Text(subscriptionPlanModel.planPoints?[index] ?? '',
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: themeChange.getThem()
-                                          ? controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
-                                              ? AppColors.grey800
-                                              : AppColors.grey200
-                                          : controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
-                                              ? AppColors.grey200
-                                              : AppColors.grey800,
-                                    )),
+                                child:
+                                    Text(subscriptionPlanModel.planPoints?[index] ?? '',
+                                        maxLines: 2,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: themeChange.getThem()
+                                              ? controller.selectedSubscriptionPlan.value
+                                                          .id ==
+                                                      subscriptionPlanModel.id
+                                                  ? AppColors.grey800
+                                                  : AppColors.grey200
+                                              : controller.selectedSubscriptionPlan.value
+                                                          .id ==
+                                                      subscriptionPlanModel.id
+                                                  ? AppColors.grey200
+                                                  : AppColors.grey800,
+                                        )),
                               ),
                             ],
                           ),
@@ -1205,7 +1611,8 @@ class SubscriptionPlanWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Divider(
-                        color: controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                        color: controller.selectedSubscriptionPlan.value.id ==
+                                subscriptionPlanModel.id
                             ? themeChange.getThem()
                                 ? AppColors.grey200
                                 : AppColors.grey700
@@ -1213,33 +1620,46 @@ class SubscriptionPlanWidget extends StatelessWidget {
                                 ? AppColors.grey700
                                 : AppColors.grey200),
                     const SizedBox(height: 10),
-                    Text('Accept booking limits : ${subscriptionPlanModel.bookingLimit == '-1' ? 'Unlimited' : subscriptionPlanModel.bookingLimit ?? '0'}',
-                        textAlign: TextAlign.end,
-                        maxLines: 2,
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: themeChange.getThem()
-                                ? controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
-                                    ? AppColors.grey900
-                                    : AppColors.grey50
-                                : controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
-                                    ? AppColors.grey50
-                                    : AppColors.grey900)),
+                    Text(
+                      'booking_limit_text'.trParams({
+                        'limit': subscriptionPlanModel.bookingLimit == '-1'
+                            ? 'Unlimited' // you can also translate this separately if needed
+                            : subscriptionPlanModel.bookingLimit ?? '0',
+                      }),
+                      textAlign: TextAlign.end,
+                      maxLines: 2,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: themeChange.getThem()
+                            ? controller.selectedSubscriptionPlan.value.id ==
+                                    subscriptionPlanModel.id
+                                ? AppColors.grey900
+                                : AppColors.grey50
+                            : controller.selectedSubscriptionPlan.value.id ==
+                                    subscriptionPlanModel.id
+                                ? AppColors.grey50
+                                : AppColors.grey900,
+                      ),
+                    ),
                     const SizedBox(height: 20),
                     ButtonThem.buildButton(
                       context,
-                      title: controller.driverUserModel.value.subscriptionPlanId == subscriptionPlanModel.id
+                      title: controller.driverUserModel.value.subscriptionPlanId ==
+                              subscriptionPlanModel.id
                           ? "Renew"
-                          : controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                          : controller.selectedSubscriptionPlan.value.id ==
+                                  subscriptionPlanModel.id
                               ? "Active".tr
                               : "Select Plan".tr,
                       onPress: onClick,
-                      textColor: controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                      textColor: controller.selectedSubscriptionPlan.value.id ==
+                              subscriptionPlanModel.id
                           ? AppColors.grey900
                           : themeChange.getThem()
                               ? AppColors.grey500
                               : AppColors.grey500,
-                      bgColors: controller.selectedSubscriptionPlan.value.id == subscriptionPlanModel.id
+                      bgColors: controller.selectedSubscriptionPlan.value.id ==
+                              subscriptionPlanModel.id
                           ? AppColors.darkModePrimary
                           : themeChange.getThem()
                               ? AppColors.grey800
@@ -1259,7 +1679,11 @@ class FeatureItem extends StatelessWidget {
   final bool isActive;
   final bool selectedPlan;
 
-  const FeatureItem({super.key, required this.title, required this.isActive, required this.selectedPlan});
+  const FeatureItem(
+      {super.key,
+      required this.title,
+      required this.isActive,
+      required this.selectedPlan});
 
   @override
   Widget build(BuildContext context) {
