@@ -13,7 +13,8 @@ const Map<String, String> arAR = {
   "Please enter valid email": "يرجى إدخال بريد إلكتروني صالح",
   "Please wait": "يرجى الانتظار",
   "Login": "تسجيل الدخول",
-  "Welcome Back! We are happy to have \n you back": "مرحباً بعودتك! يسعدنا أنك هنا \n معنا",
+  "Welcome Back! We are happy to have \n you back":
+      "مرحباً بعودتك! يسعدنا أنك هنا \n معنا",
   "Next": "التالي",
   "OR": "أو",
   "Login with google": "تسجيل الدخول باستخدام جوجل",
@@ -73,16 +74,19 @@ const Map<String, String> arAR = {
   "OTP verify": "التحقق من رمز التحقق",
   "Please wait...": "يرجى الانتظار...",
   'Ride Started': 'تم بدء الرحلة',
-  'The ride has officially started. Please follow the designated route to the destination.': 'تم بدء الرحلة رسمياً. يرجى اتباع الطريق المحدد للوصول إلى الوجهة.',
+  'The ride has officially started. Please follow the designated route to the destination.':
+      'تم بدء الرحلة رسمياً. يرجى اتباع الطريق المحدد للوصول إلى الوجهة.',
   "Customer pickup successfully": "تم التقاط الراكب بنجاح",
   "OTP Invalid": "رمز التحقق غير صالح",
   "Cargo Load successfully": "تم تحميل الشحنة بنجاح",
-  "You have to minimum  wallet amount to Accept Order and place a bid": "يجب أن يكون لديك حد أدنى من الرصيد لقبول الطلب وتقديم عرض",
+  "You have to minimum  wallet amount to Accept Order and place a bid":
+      "يجب أن يكون لديك حد أدنى من الرصيد لقبول الطلب وتقديم عرض",
   'New': 'جديد',
   'Accepted': 'مقبول',
   'Active': 'نشط',
   "Map view": "عرض الخريطة",
-  "You are Now offline so you can't get nearest order.": "أنت الآن غير متصل بالإنترنت لذا لا يمكنك الحصول على الطلبات القريبة.",
+  "You are Now offline so you can't get nearest order.":
+      "أنت الآن غير متصل بالإنترنت لذا لا يمكنك الحصول على الطلبات القريبة.",
   "New Rides Not found": "لم يتم العثور على رحلات جديدة",
   "Recommended Price is": "السعر الموصى به هو",
   "Approx distanc": "المسافة التقريبية",
@@ -91,11 +95,13 @@ const Map<String, String> arAR = {
   'New Driver Bid': 'عرض جديد من السائق',
   'Driver has offered for your journey.🚗': 'السائق قدم عرضًا لرحلتك.🚗',
   "Ride Accepted": "تم قبول الرحلة",
-  "You have to minimum wallet amount to Accept Order and place a bid": "يجب أن يكون لديك حد أدنى من الرصيد لقبول الطلب وتقديم عرض",
+  "You have to minimum wallet amount to Accept Order and place a bid":
+      "يجب أن يكون لديك حد أدنى من الرصيد لقبول الطلب وتقديم عرض",
   " For Person": " للشخص",
   "View details": "عرض التفاصيل",
   "No active ride found": "لم يتم العثور على رحلة نشطة",
-  "Intercity/Outstation feature is disable for": "ميزة الرحلات بين المدن/الخارجية معطلة لـ",
+  "Intercity/Outstation feature is disable for":
+      "ميزة الرحلات بين المدن/الخارجية معطلة لـ",
   'From': 'من',
   'To': 'إلى',
   'Confirm': 'تأكيد',
@@ -190,7 +196,8 @@ const Map<String, String> arAR = {
   "No transaction found": "لم يتم العثور على أي معاملة",
   "withdraw": "سحب",
   "Insufficient balance": "الرصيد غير كافٍ",
-  "Your bank details is not available. Please add bank details": "تفاصيل حسابك البنكي غير متاحة. يرجى إضافة تفاصيل البنك",
+  "Your bank details is not available. Please add bank details":
+      "تفاصيل حسابك البنكي غير متاحة. يرجى إضافة تفاصيل البنك",
   "Withdrawal history": "سجل السحب",
   "Add Topup Amount": "أضف مبلغ الشحن",
   "Enter Amount": "أدخل المبلغ",
@@ -213,7 +220,8 @@ const Map<String, String> arAR = {
   "Online": "متصل",
   "Offline": "غير متصل",
   "Information": "معلومات",
-  "To start earning with GoRide you need to fill in your personal information": "لبدء الكسب مع GoRide، عليك ملء معلوماتك الشخصية",
+  "To start earning with goflow you need to fill in your personal information":
+      "لبدء الكسب مع GoRide، عليك ملء معلوماتك الشخصية",
   "No": "لا",
   "skip": "تخطي",
   "Yes": "نعم",

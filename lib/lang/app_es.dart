@@ -228,7 +228,7 @@ const Map<String, String> esES = {
   'Online': 'En línea',
   'Offline': 'Desconectado',
   'Information': 'Información',
-  'To start earning with GoRide you need to fill in your personal information':
+  'To start earning with goflow you need to fill in your personal information':
       'Para empezar a ganar con GoRide, necesitas completar tu información personal',
   'No': 'No',
   'skip': 'omitir',
@@ -338,4 +338,11 @@ const Map<String, String> esES = {
   'Accept': 'Aceptar',
   'commission_text': 'Paga una comisión de @amount en cada pedido.',
   'booking_limit_text': 'Aceptar límite de reservas: @limit',
+  "Cancel ride":
+      "Cancelar viaje", // Assuming "Cancel ride" is the key for the button/action
+  'cancel_ride_title': 'Cancelar viaje',
+  'cancel_ride_message': '¿Estás seguro de que quieres cancelar este viaje?',
+  'ride_cancelled_title': "¡El viaje fue cancelado por el conductor!",
+  'ride_cancelled_body_customer':
+      "¡Lamentamos las molestias! Pero el viaje fue cancelado por el conductor."
 };

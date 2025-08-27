@@ -225,8 +225,8 @@ const Map<String, String> enUS = {
   'Online': 'Online',
   'Offline': 'Offline',
   'Information': 'Information',
-  'To start earning with GoRide you need to fill in your personal information':
-      'To start earning with GoRide you need to fill in your personal information',
+  'To start earning with goflow you need to fill in your personal information':
+      'To start earning with goflow you need to fill in your personal information',
   'No': 'No',
   'skip': 'skip',
   'Yes': 'Yes',
@@ -269,4 +269,9 @@ const Map<String, String> enUS = {
   "Payment Failed!": "Payment Failed!",
   'commission_text': 'Pay a commission of @amount on each order.',
   'booking_limit_text': 'Accept booking limits: @limit',
+  'cancel_ride_title': 'Cancel Ride',
+  'cancel_ride_message': 'Are you sure you want to cancel this ride?',
+  'ride_cancelled_title': "Ride was cancelled by driver!",
+  'ride_cancelled_body_customer':
+      "Sorry for inconvenience! But Ride was cancelled by driver!"
 };

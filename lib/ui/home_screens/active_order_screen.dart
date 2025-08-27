@@ -356,7 +356,48 @@ class ActiveOrderScreen extends StatelessWidget {
                                                             ? Colors.black
                                                             : Colors.white),
                                                   ),
-                                                )
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                InkWell(
+                                                  onTap: () async {
+                                                    Get.defaultDialog(
+                                                      title: 'cancel_ride_title'.tr,
+                                                      middleText:
+                                                          'cancel_ride_message'.tr,
+                                                      textCancel: 'no'.tr,
+                                                      textConfirm: 'yes'.tr,
+                                                      confirmTextColor: Colors.black87,
+                                                      cancelTextColor: Colors.black87,
+                                                      onConfirm: () async {
+// 2) Helper: notify assigned/accepted drivers, then cancel order
+
+                                                        await _notifyCustomerAndCancelOrder(
+                                                            orderModel);
+
+                                                        Get.back(); // close dialog after confirm
+                                                      },
+                                                      onCancel: () {
+                                                        Get.back(); // just close if user presses "No"
+                                                      },
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    height: 44,
+                                                    width: 44,
+                                                    decoration: BoxDecoration(
+                                                        color: themeChange.getThem()
+                                                            ? AppColors.darkModePrimary
+                                                            : AppColors.primary,
+                                                        borderRadius:
+                                                            BorderRadius.circular(5)),
+                                                    child: Icon(Icons.close,
+                                                        color: themeChange.getThem()
+                                                            ? Colors.black
+                                                            : Colors.white),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ],
@@ -470,5 +511,54 @@ class ActiveOrderScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+Future<void> _notifyCustomerAndCancelOrder(OrderModel orderModel) async {
+  // 1. Notify the Customer associated with the order
+  try {
+    // Fetch the customer details using userId from the orderModel
+    UserModel? customer = await FireStoreUtils.getCustomer(orderModel.userId.toString());
+
+    if (customer != null && customer.fcmToken!.isNotEmpty) {
+      await SendNotification.sendOneNotification(
+        token: customer.fcmToken.toString(),
+        title: 'ride_cancelled_title'.tr, // Use a specific title for cancellation
+        body: 'ride_cancelled_body_customer'
+            .tr, // Use a specific body for cancellation for the customer
+        payload: {
+          'orderId': orderModel.id,
+          'type':
+              'ride_cancelled', // You can use a specific type for client-side handling
+        },
+      );
+    } else {
+      if (customer == null) {
+        print("Error: Customer not found for ID ${orderModel.userId}");
+      } else if (customer.fcmToken!.isEmpty) {
+        print(
+            "Warning: Customer ${customer.id} has no FCM token. Cannot send cancellation notification.");
+      }
+    }
+  } catch (e) {
+    print("Error sending cancellation notification to customer ${orderModel.userId}: $e");
+    // Decide if you want to proceed with cancellation even if notification fails
+  }
+
+  // 2. THEN update order status to Canceled
+  orderModel.status = Constant.rideCanceled;
+  // Clear any driver associations as the ride is cancelled
+  orderModel.acceptedDriverId = []; // Clear list of accepted drivers
+  orderModel.driverId = null; // No active driver after cancellation
+  orderModel.updateDate = Timestamp.now(); // Update the modification time
+
+  try {
+    await FireStoreUtils.setOrder(orderModel);
+    print(
+        "Order ${orderModel.id} cancelled successfully and status updated in Firestore.");
+  } catch (e) {
+    print("Error updating order ${orderModel.id} status to cancelled in Firestore: $e");
+    // Handle this error appropriately - the order might be cancelled in the app
+    // but not in the database, which could lead to inconsistencies.
   }
 }
