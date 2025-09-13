@@ -5,6 +5,7 @@ import 'package:driver/ui/splash_screen.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+// nawa kam
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -28,7 +29,7 @@ Future<void> _initializeFirebase() async {
 }
 
 void main() async {
-  print("Shoaib will start work from here");
+  print("Faheem work will start from here!");
   WidgetsFlutterBinding.ensureInitialized();
   print("🌼 Firebase Initialized 🌼");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
