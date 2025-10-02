@@ -357,7 +357,6 @@ class Constant {
   static double calculateAdminCommission({
     String? amount,
     AdminCommission? adminCommission,
-
   }) {
     double taxAmount = 0.0;
 
@@ -412,10 +411,13 @@ class Constant {
   }
 
   static String amountShow({required String? amount}) {
-    if (Constant.currencyModel!.symbolAtRight == true) {
-      return "${double.parse(amount.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.currencyModel!.symbol.toString()}";
+    // Safely parse amount
+    final double parsedAmount = double.tryParse(amount ?? '0') ?? 0.0;
+
+    if (Constant.currencyModel?.symbolAtRight == true) {
+      return "${parsedAmount.toStringAsFixed(Constant.currencyModel?.decimalDigits ?? 2)} ${Constant.currencyModel?.symbol ?? ''}";
     } else {
-      return "${Constant.currencyModel!.symbol.toString()} ${double.parse(amount.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)}";
+      return "${Constant.currencyModel?.symbol ?? ''} ${parsedAmount.toStringAsFixed(Constant.currencyModel?.decimalDigits ?? 2)}";
     }
   }
 

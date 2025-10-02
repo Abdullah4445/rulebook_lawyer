@@ -46,54 +46,35 @@ class NewOrderScreen extends StatelessWidget {
                             child: Text("New Rides Not found".tr),
                           );
                         } else {
-                          // ordersList = snapshot.data!;
                           return ListView.builder(
                             itemCount: snapshot.data!.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              OrderModel orderModel = snapshot.data![index];
-                              print("My data is: ${orderModel.toJson()}");
+                              final orderModel = snapshot.data![index];
 
-                              // Safely extract values or use fallback
-                              final kmCharge = orderModel.service?.kmCharge ?? 0.0;
-                              final distance = orderModel.distance ?? 0.0;
-                              final decimals = Constant.currencyModel?.decimalDigits ?? 2;
+                              // --- Safe parsing of numeric values ---
+                              final double kmChargeParsed = double.tryParse(
+                                      orderModel.service?.kmCharge?.toString() ?? "0") ??
+                                  0.0;
+                              final double distanceParsed = double.tryParse(
+                                      orderModel.distance?.toString() ?? "0") ??
+                                  0.0;
+                              final int decimals =
+                                  Constant.currencyModel?.decimalDigits ?? 2;
 
-                              // Now it's safe to parse
-
-                              print("orderModel: $orderModel");
-                              print("orderModel.service: ${orderModel.service}");
-                              print("orderModel.service.kmCharge: ${orderModel.service?.kmCharge}");
-                              print("orderModel.distance: ${orderModel.distance}");
-                              print("Constant.currencyModel: ${Constant.currencyModel}");
-                              print("Constant.currencyModel.decimalDigits: ${Constant.currencyModel?.decimalDigits}");
-                              final amount = Constant.amountCalculate(
-                                kmCharge.toString(),
-                                distance.toString(),
-                              ).toStringAsFixed(decimals);
-
-                                // amount = Constant.amountCalculate(
-                                //         orderModel.service!.kmCharge.toString(),
-                                //         orderModel.distance.toString())
-                                //     .toStringAsFixed(
-                                //         Constant.currencyModel!.decimalDigits!);
-                              // } else {
-                              //   amount = Constant.amountCalculate(
-                              //           orderModel.service!.kmCharge.toString(),
-                              //           orderModel.distance.toString())
-                              //       .toStringAsFixed(
-                              //           Constant.currencyModel!.decimalDigits!);
-                              // }
+                              // --- Calculate amount safely ---
+                              final double amountCalculated = Constant.amountCalculate(
+                                  kmChargeParsed.toString(), distanceParsed.toString());
+                              final String amount =
+                                  amountCalculated.toStringAsFixed(decimals);
 
                               return Column(
                                 children: [
-
                                   InkWell(
                                     onTap: () {
                                       Get.to(const OrderMapScreen(), arguments: {
                                         "orderModel": orderModel.id.toString()
-                                      })!
-                                          .then((value) {
+                                      })?.then((value) {
                                         if (value != null && value == true) {
                                           controller.selectedIndex.value = 1;
                                         }
@@ -109,18 +90,18 @@ class NewOrderScreen extends StatelessWidget {
                                           borderRadius:
                                               const BorderRadius.all(Radius.circular(10)),
                                           border: Border.all(
-                                              color: themeChange.getThem()
-                                                  ? AppColors.darkContainerBorder
-                                                  : AppColors.containerBorder,
-                                              width: 0.5),
+                                            color: themeChange.getThem()
+                                                ? AppColors.darkContainerBorder
+                                                : AppColors.containerBorder,
+                                            width: 0.5,
+                                          ),
                                           boxShadow: themeChange.getThem()
                                               ? null
                                               : [
                                                   BoxShadow(
                                                     color: Colors.grey.withOpacity(0.5),
                                                     blurRadius: 8,
-                                                    offset: const Offset(
-                                                        0, 2), // changes position of shadow
+                                                    offset: const Offset(0, 2),
                                                   ),
                                                 ],
                                         ),
@@ -129,7 +110,7 @@ class NewOrderScreen extends StatelessWidget {
                                               vertical: 10, horizontal: 10),
                                           child: Column(
                                             children: [
-
+                                              // --- User Info & Fare ---
                                               UserView(
                                                 userId: orderModel.userId,
                                                 amount: orderModel.offerRate,
@@ -137,52 +118,61 @@ class NewOrderScreen extends StatelessWidget {
                                                 distanceType: orderModel.distanceType,
                                               ),
                                               const Padding(
-                                                padding: EdgeInsets.symmetric(vertical: 5),
+                                                padding:
+                                                    EdgeInsets.symmetric(vertical: 5),
                                                 child: Divider(),
                                               ),
+                                              // --- Locations ---
                                               LocationView(
-                                                sourceLocation:
-                                                    orderModel.sourceLocationName.toString(),
-                                                destinationLocation: orderModel
-                                                    .destinationLocationName
-                                                    .toString(),
-                                              ),
-                                              Column(
-                                                children: [
-                                                  const SizedBox(
-                                                    height: 10,
+                                                  sourceLocation: orderModel
+                                                      .sourceLocationName
+                                                      .toString(),
+                                                  destinationLocation: orderModel
+                                                                  .destinationLocationName ==
+                                                              null ||
+                                                          orderModel
+                                                              .destinationLocationName!
+                                                              .isEmpty
+                                                      ? "No Destination Location provided"
+                                                          .tr
+                                                      : orderModel.destinationLocationName
+                                                          .toString()),
+                                              const SizedBox(height: 10),
+                                              // --- Recommended fare or taxi meter fare display ---
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 10, vertical: 5),
+                                                child: Container(
+                                                  width: Responsive.width(100, context),
+                                                  decoration: BoxDecoration(
+                                                    color: themeChange.getThem()
+                                                        ? AppColors.darkGray
+                                                        : AppColors.gray,
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(10)),
                                                   ),
-
-                                                  Padding(
+                                                  child: Padding(
                                                     padding: const EdgeInsets.symmetric(
-                                                        horizontal: 10, vertical: 5),
-                                                    child: Container(
-                                                      width: Responsive.width(100, context),
-                                                      decoration: BoxDecoration(
-                                                          color: themeChange.getThem()
-                                                              ? AppColors.darkGray
-                                                              : AppColors.gray,
-                                                          borderRadius: BorderRadius.all(
-                                                              Radius.circular(10))),
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.symmetric(
-                                                            horizontal: 10, vertical: 10),
-                                                        child: Center(
-                                                          child: Text(
-                                                            'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${((orderModel.distance.toString()))}',
-
-
-                              // 'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${double.parse(orderModel.distance.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.distanceType}',
-                                                            style: GoogleFonts.poppins(
-                                                                fontWeight: FontWeight.w500,
-                                                                color: Colors.black),
-                                                          ),
+                                                        horizontal: 10, vertical: 10),
+                                                    child: Center(
+                                                      child: Text(
+                                                        amount == "0" ||
+                                                                amount == "-" ||
+                                                                orderModel
+                                                                    .destinationLocationName!
+                                                                    .isEmpty
+                                                            ? "Taxi meter preferred for this ride"
+                                                            : 'Recommended Price is ${Constant.amountShow(amount: amount)}. '
+                                                                'Approx distance ${distanceParsed.toStringAsFixed(2)} ${Constant.distanceType}',
+                                                        style: GoogleFonts.poppins(
+                                                          fontWeight: FontWeight.w500,
+                                                          color: Colors.black,
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                ],
-                                              )
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),

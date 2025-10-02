@@ -344,5 +344,7 @@ const Map<String, String> esES = {
   'cancel_ride_message': '¿Estás seguro de que quieres cancelar este viaje?',
   'ride_cancelled_title': "¡El viaje fue cancelado por el conductor!",
   'ride_cancelled_body_customer':
-      "¡Lamentamos las molestias! Pero el viaje fue cancelado por el conductor."
+      "¡Lamentamos las molestias! Pero el viaje fue cancelado por el conductor.",
+  'Taxi Meter Preffered for this ride': 'Taxímetro preferido para este viaje',
+  'Enter fare rate': 'Introduce la tarifa',
 };

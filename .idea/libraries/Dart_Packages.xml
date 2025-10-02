@@ -1006,21 +1006,21 @@
         <entry key="leak_tracker">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker-10.0.9/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker-11.0.2/lib" />
             </list>
           </value>
         </entry>
         <entry key="leak_tracker_flutter_testing">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.9/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.10/lib" />
             </list>
           </value>
         </entry>
         <entry key="leak_tracker_testing">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.1/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.2/lib" />
             </list>
           </value>
         </entry>
@@ -1503,7 +1503,7 @@
         <entry key="test_api">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.4/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.6/lib" />
             </list>
           </value>
         </entry>
@@ -1622,7 +1622,7 @@
         <entry key="vector_math">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/vector_math-2.1.4/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/vector_math-2.2.0/lib" />
             </list>
           </value>
         </entry>
@@ -1894,9 +1894,9 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/intl-0.20.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/js-0.7.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/json_annotation-4.9.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker-10.0.9/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.9/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker-11.0.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.10/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/lints-6.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/list_counter-1.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/location-8.0.1/lib" />
@@ -1964,7 +1964,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/stripe_platform_interface-11.5.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/synchronized-3.4.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/term_glyph-1.2.2/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/test_api-0.7.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/timezone-0.10.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/tuple-2.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/typed_data-1.4.0/lib" />
@@ -1981,7 +1981,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_graphics-1.1.19/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_graphics_codec-1.1.13/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.1.17/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_math-2.1.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vector_math-2.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player-2.10.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player_android-2.8.7/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player_avfoundation-2.8.0/lib" />

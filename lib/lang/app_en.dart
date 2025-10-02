@@ -273,5 +273,7 @@ const Map<String, String> enUS = {
   'cancel_ride_message': 'Are you sure you want to cancel this ride?',
   'ride_cancelled_title': "Ride was cancelled by driver!",
   'ride_cancelled_body_customer':
-      "Sorry for inconvenience! But Ride was cancelled by driver!"
+      "Sorry for inconvenience! But Ride was cancelled by driver!",
+  'Taxi Meter Preffered for this ride': 'Taxi Meter Preffered for this ride',
+  'Enter fare rate': 'Enter fare rate',
 };

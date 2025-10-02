@@ -62,49 +62,7 @@ class OrderMapScreen extends StatelessWidget {
                             child: Stack(
                               children: [
                                 Constant.selectedMapType == 'osm'
-                                    ?
-                                    // myOsm.OSMFlutter(
-                                    //         controller: controller.mapOsmController?? myOsm.MapController(initPosition:  myOsm.GeoPoint(latitude: 20.9153, longitude: -100.7439), useExternalTracking: false),
-                                    //         // osmOption:  myOsm.OSMOption(
-                                    //         //   userTrackingOption:  myOsm.UserTrackingOption(
-                                    //         //     enableTracking: true,
-                                    //         //     unFollowUser: false,
-                                    //         //   ),
-                                    //         //   zoomOption:  myOsm.ZoomOption(
-                                    //         //     initZoom: 8,
-                                    //         //     minZoomLevel: 3,
-                                    //         //     maxZoomLevel: 19,
-                                    //         //     stepZoom: 1.0,
-                                    //         //   ),
-                                    //         //   userLocationMarker:  myOsm.UserLocationMaker(
-                                    //         //     personMarker:  myOsm.MarkerIcon(
-                                    //         //       icon: Icon(
-                                    //         //         Icons.location_history_rounded,
-                                    //         //         color: Colors.red,
-                                    //         //         size: 48,
-                                    //         //       ),
-                                    //         //     ),
-                                    //         //     directionArrowMarker:  myOsm.MarkerIcon(
-                                    //         //       icon: Icon(
-                                    //         //         Icons.double_arrow,
-                                    //         //         size: 48,
-                                    //         //       ),
-                                    //         //     ),
-                                    //         //   ),
-                                    //         //   roadConfiguration:  myOsm.RoadOption(
-                                    //         //     roadColor: Colors.yellowAccent,
-                                    //         //   ),
-                                    //         //   // markerOption: MarkerOption(
-                                    //         //   //     defaultMarker: MarkerIcon(
-                                    //         //   //   icon: Icon(
-                                    //         //   //     Icons.person_pin_circle,
-                                    //         //   //     color: Colors.blue,
-                                    //         //   //     size: 56,
-                                    //         //   //   ),
-                                    //         //   // )),
-                                    //         // ))
-
-                                    myOsm.OSMFlutter(
+                                    ? myOsm.OSMFlutter(
                                         controller: controller.mapOsmController ??
                                             myOsm.MapController(
                                                 initPosition: myOsm.GeoPoint(
@@ -210,13 +168,24 @@ class OrderMapScreen extends StatelessWidget {
                                               child: Divider(),
                                             ),
                                             LocationView(
-                                              sourceLocation: controller
-                                                  .orderModel.value.sourceLocationName
-                                                  .toString(),
-                                              destinationLocation: controller.orderModel
-                                                  .value.destinationLocationName
-                                                  .toString(),
-                                            ),
+                                                sourceLocation: controller
+                                                    .orderModel.value.sourceLocationName
+                                                    .toString(),
+                                                destinationLocation: controller
+                                                                .orderModel
+                                                                .value
+                                                                .destinationLocationName ==
+                                                            null ||
+                                                        controller
+                                                            .orderModel
+                                                            .value
+                                                            .destinationLocationName!
+                                                            .isEmpty
+                                                    ? "Taxi Meter Preffered for this ride"
+                                                        .tr
+                                                    : controller.orderModel.value
+                                                        .destinationLocationName
+                                                        .toString()),
                                             const SizedBox(
                                               height: 10,
                                             ),
@@ -226,97 +195,105 @@ class OrderMapScreen extends StatelessWidget {
                                                   true,
                                               child: Padding(
                                                 padding: const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    // InkWell(
-                                                    //
-                                                    //   child: Container(
-                                                    //     decoration: BoxDecoration(
-                                                    //         border: Border.all(
-                                                    //             color: AppColors
-                                                    //                 .textFieldBorder),
-                                                    //         borderRadius:
-                                                    //             const BorderRadius.all(
-                                                    //                 Radius.circular(6))),
-                                                    //     child: Padding(
-                                                    //       padding:
-                                                    //           const EdgeInsets.symmetric(
-                                                    //               horizontal: 10,
-                                                    //               vertical: 10),
-                                                    //       child: Text(
-                                                    //         "- 500",
-                                                    //         style: GoogleFonts.poppins(
-                                                    //             color: Colors.black),
-                                                    //       ),
-                                                    //     ),
-                                                    //   ),
-                                                    // ),
+                                                child: controller.orderModel.value
+                                                        .destinationLocationName!.isEmpty
+                                                    ? Container()
+                                                    : Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment.center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment.center,
+                                                        children: [
+                                                          // InkWell(
+                                                          //
+                                                          //   child: Container(
+                                                          //     decoration: BoxDecoration(
+                                                          //         border: Border.all(
+                                                          //             color: AppColors
+                                                          //                 .textFieldBorder),
+                                                          //         borderRadius:
+                                                          //             const BorderRadius.all(
+                                                          //                 Radius.circular(6))),
+                                                          //     child: Padding(
+                                                          //       padding:
+                                                          //           const EdgeInsets.symmetric(
+                                                          //               horizontal: 10,
+                                                          //               vertical: 10),
+                                                          //       child: Text(
+                                                          //         "- 500",
+                                                          //         style: GoogleFonts.poppins(
+                                                          //             color: Colors.black),
+                                                          //       ),
+                                                          //     ),
+                                                          //   ),
+                                                          // ),
 
-                                                    ButtonThem.roundButton(
-                                                      context,
-                                                      title: "- 500",
-                                                      btnWidthRatio: 0.23,
-                                                      onPress: () {
-                                                        if (double.parse(controller
-                                                                .newAmount.value) >=
-                                                            10) {
-                                                          controller.newAmount.value =
-                                                              (double.parse(controller
-                                                                          .newAmount
-                                                                          .value) -
+                                                          ButtonThem.roundButton(
+                                                            context,
+                                                            title: "- 500",
+                                                            btnWidthRatio: 0.23,
+                                                            onPress: () {
+                                                              if (double.parse(controller
+                                                                      .newAmount.value) >=
+                                                                  10) {
+                                                                controller.newAmount
+                                                                    .value = (double.parse(
+                                                                            controller
+                                                                                .newAmount
+                                                                                .value) -
+                                                                        500)
+                                                                    .toString();
+
+                                                                controller
+                                                                        .enterOfferRateController
+                                                                        .value
+                                                                        .text =
+                                                                    controller
+                                                                        .newAmount.value;
+                                                              } else {
+                                                                controller.newAmount
+                                                                    .value = "0";
+                                                              }
+                                                            },
+                                                          ),
+
+                                                          const SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          Text(
+                                                              Constant.amountShow(
+                                                                  amount: controller
+                                                                      .newAmount.value
+                                                                      .toString()),
+                                                              style:
+                                                                  GoogleFonts.poppins()),
+                                                          const SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          ButtonThem.roundButton(
+                                                            context,
+                                                            title: "+ 500",
+                                                            btnWidthRatio: 0.23,
+                                                            onPress: () {
+                                                              controller.newAmount
+                                                                  .value = (double.parse(
+                                                                          controller
+                                                                              .newAmount
+                                                                              .value) +
                                                                       500)
-                                                                  .toString();
-
-                                                          controller
-                                                                  .enterOfferRateController
-                                                                  .value
-                                                                  .text =
-                                                              controller.newAmount.value;
-                                                        } else {
-                                                          controller.newAmount.value =
-                                                              "0";
-                                                        }
-                                                      },
-                                                    ),
-
-                                                    const SizedBox(
-                                                      width: 20,
-                                                    ),
-                                                    Text(
-                                                        Constant.amountShow(
-                                                            amount: controller
-                                                                .newAmount.value
-                                                                .toString()),
-                                                        style: GoogleFonts.poppins()),
-                                                    const SizedBox(
-                                                      width: 20,
-                                                    ),
-                                                    ButtonThem.roundButton(
-                                                      context,
-                                                      title: "+ 500",
-                                                      btnWidthRatio: 0.23,
-                                                      onPress: () {
-                                                        controller.newAmount.value =
-                                                            (double.parse(controller
-                                                                        .newAmount
-                                                                        .value) +
-                                                                    500)
-                                                                .toStringAsFixed(Constant
-                                                                    .currencyModel!
-                                                                    .decimalDigits!);
-                                                        controller
-                                                                .enterOfferRateController
-                                                                .value
-                                                                .text =
-                                                            controller.newAmount.value;
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
+                                                                  .toStringAsFixed(Constant
+                                                                      .currencyModel!
+                                                                      .decimalDigits!);
+                                                              controller
+                                                                      .enterOfferRateController
+                                                                      .value
+                                                                      .text =
+                                                                  controller
+                                                                      .newAmount.value;
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
                                               ),
                                             ),
                                             const SizedBox(
@@ -329,7 +306,10 @@ class OrderMapScreen extends StatelessWidget {
                                               child: TextFieldThem
                                                   .buildTextFiledWithPrefixIcon(
                                                 context,
-                                                hintText: "Enter Fare rate",
+                                                hintText: controller.orderModel.value
+                                                        .destinationLocationName!.isEmpty
+                                                    ? "Enter Taxi Meter rate"
+                                                    : "Enter Fare rate".tr,
                                                 controller: controller
                                                     .enterOfferRateController.value,
                                                 keyBoardType:
