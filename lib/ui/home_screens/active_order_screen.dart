@@ -4,12 +4,10 @@ import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/send_notification.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/controller/active_order_controller.dart';
-import 'package:driver/model/driver_user_model.dart';
 import 'package:driver/model/order_model.dart';
 import 'package:driver/model/user_model.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/themes/button_them.dart';
-import 'package:driver/ui/chat_screen/chat_screen.dart';
 import 'package:driver/ui/home_screens/live_tracking_screen.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
 import 'package:driver/utils/fire_store_utils.dart';
@@ -24,8 +22,22 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
-class ActiveOrderScreen extends StatelessWidget {
+import '../../model/driver_user_model.dart';
+import '../chat_screen/chat_screen.dart';
+
+class ActiveOrderScreen extends StatefulWidget {
   const ActiveOrderScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ActiveOrderScreen> createState() => _ActiveOrderScreenState();
+}
+
+class _ActiveOrderScreenState extends State<ActiveOrderScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +73,6 @@ class ActiveOrderScreen extends StatelessWidget {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
-                            print("BILAL Saeed");
                             Map<String, dynamic> data =
                                 snapshot.data!.docs[index].data() as Map<String, dynamic>;
                             print(data['sourceLocationName']);
@@ -77,44 +88,38 @@ class ActiveOrderScreen extends StatelessWidget {
                                 orderModel.status == Constant.rideActive)) {
                               controller.startLocationUpdates(orderModel);
                             }
+                            // Inside your ListView.builder for each order
                             return InkWell(
                               onTap: () {
+                                // Navigate to LiveTracking or external map
                                 if (Constant.mapType == "inappmap") {
-                                  if (orderModel.status == Constant.rideActive ||
-                                      orderModel.status == Constant.rideInProgress) {
-                                    Get.to(LiveTrackingScreen(), arguments: {
-                                      "orderModel": orderModel,
-                                      "type": "orderModel",
-                                    });
-                                  }
+                                  Get.to(LiveTrackingScreen(orderModel: orderModel),
+                                      arguments: {
+                                        "driverLatLng": LatLng(
+                                          Constant.currentLocation?.latitude ?? 0.0,
+                                          Constant.currentLocation?.longitude ?? 0.0,
+                                        ),
+                                        "customerLatLng": LatLng(
+                                          orderModel.sourceLocationLatLng?.latitude ??
+                                              0.0,
+                                          orderModel.sourceLocationLatLng?.longitude ??
+                                              0.0,
+                                        ),
+                                        "type": "routeOnly",
+                                      });
                                 } else {
-                                  if (orderModel.status == Constant.rideInProgress) {
-                                    Utils.redirectMap(
-                                        curName: orderModel.sourceLocationName!,
-                                        curLat:
-                                            orderModel.sourceLocationLatLng!.latitude!,
-                                        curLon:
-                                            orderModel.sourceLocationLatLng!.longitude!,
-                                        latitude: orderModel
-                                            .destinationLocationLatLng!.latitude!,
-                                        longLatitude: orderModel
-                                            .destinationLocationLatLng!.longitude!,
-                                        name: orderModel.destinationLocationName
-                                            .toString());
-                                  } else {
-                                    Utils.redirectMap(
-                                        curName: orderModel.sourceLocationName!,
-                                        curLat:
-                                            orderModel.sourceLocationLatLng!.latitude!,
-                                        curLon:
-                                            orderModel.sourceLocationLatLng!.longitude!,
-                                        latitude: orderModel
-                                            .destinationLocationLatLng!.latitude!,
-                                        longLatitude: orderModel
-                                            .destinationLocationLatLng!.longitude!,
-                                        name: orderModel.destinationLocationName
-                                            .toString());
-                                  }
+                                  Utils.redirectMap(
+                                    curName: orderModel.sourceLocationName!,
+                                    curLat: orderModel.sourceLocationLatLng!.latitude!,
+                                    curLon: orderModel.sourceLocationLatLng!.longitude!,
+                                    latitude:
+                                        orderModel.destinationLocationLatLng!.latitude!,
+                                    longLatitude:
+                                        orderModel.destinationLocationLatLng!.longitude!,
+                                    name: orderModel.destinationLocationName!.isEmpty
+                                        ? "Taxi Meter Preffered for this ride"
+                                        : orderModel.destinationLocationName!,
+                                  );
                                 }
                               },
                               child: Padding(
@@ -131,24 +136,16 @@ class ActiveOrderScreen extends StatelessWidget {
                                             ? AppColors.darkContainerBorder
                                             : AppColors.containerBorder,
                                         width: 0.5),
-                                    boxShadow: themeChange.getThem()
-                                        ? null
-                                        : [
-                                            BoxShadow(
-                                              color: Colors.grey.withOpacity(0.5),
-                                              blurRadius: 8,
-                                              offset: const Offset(
-                                                  0, 2), // changes position of shadow
-                                            ),
-                                          ],
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 10),
                                     child: Column(
                                       children: [
+                                        // --- Customer Info & Fare ---
+
                                         UserView(
-                                          userId: orderModel.userId,
+                                          userId: orderModel.userId.toString(),
                                           amount: orderModel.finalRate,
                                           distance: orderModel.distance,
                                           distanceType: orderModel.distanceType,
@@ -157,19 +154,16 @@ class ActiveOrderScreen extends StatelessWidget {
                                           padding: EdgeInsets.symmetric(vertical: 5),
                                           child: Divider(),
                                         ),
+
+                                        // --- Show Route Button ---
                                         ButtonThem.buildBorderButton(
                                           context,
                                           title: "Show Route to Customer".tr,
                                           btnHeight: 44,
                                           iconVisibility: false,
-                                          onPress: () async {
-                                            // print("My order details are: ");
-                                            // print( orderModel.toJson());
-
+                                          onPress: () {
                                             Get.to(
-                                              LiveTrackingScreen(
-                                                orderModel: orderModel,
-                                              ),
+                                              LiveTrackingScreen(orderModel: orderModel),
                                               arguments: {
                                                 "driverLatLng": LatLng(
                                                   Constant.currentLocation?.latitude ??
@@ -188,30 +182,85 @@ class ActiveOrderScreen extends StatelessWidget {
                                                 "type": "routeOnly",
                                               },
                                             );
-                                            // Get.to(
-                                            //   const LiveTrackingScreen(),
-                                            //   arguments: {
-                                            //     "driverLatLng": Constant.currentLocation,
-                                            //     "customerLatLng": orderModel.sourceLocationLatLng,
-                                            //     "type": "routeOnly",
-                                            //   },
-                                            // );
                                           },
                                         ),
+
                                         const Padding(
                                           padding: EdgeInsets.symmetric(vertical: 5),
                                           child: Divider(),
                                         ),
+
+                                        // --- Locations ---
                                         LocationView(
                                           sourceLocation:
                                               orderModel.sourceLocationName.toString(),
                                           destinationLocation: orderModel
-                                              .destinationLocationName
-                                              .toString(),
+                                                          .destinationLocationName ==
+                                                      null ||
+                                                  orderModel
+                                                      .destinationLocationName!.isEmpty
+                                              ? "Taxi Meter Preffered for this ride".tr
+                                              : orderModel.destinationLocationName
+                                                  .toString(),
                                         ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
+
+                                        const SizedBox(height: 10),
+
+                                        // --- Taxi Meter UI ---
+                                        // --- Taxi Meter UI ---
+                                        if (orderModel.meterStatus == 'on' &&
+                                            orderModel.status == Constant.rideInProgress)
+                                          StreamBuilder<DocumentSnapshot>(
+                                            stream: FirebaseFirestore.instance
+                                                .collection(CollectionName.orders)
+                                                .doc(orderModel.id)
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              if (!snapshot.hasData) return Container();
+                                              var docData = snapshot.data!.data()
+                                                  as Map<String, dynamic>?;
+
+                                              double fare = 0.0;
+                                              if (docData != null &&
+                                                  docData['meterFare'] != null) {
+                                                fare = double.tryParse(
+                                                        docData['meterFare']
+                                                            .toString()) ??
+                                                    0.0;
+                                              }
+                                              print("DocData:  ${docData!['meterFare']}");
+                                              print("DocData:  ${orderModel.id}");
+
+                                              return Text(
+                                                "Current Fare: ${Constant.amountShow(amount: fare.toString())}",
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              );
+                                            },
+                                          ),
+
+                                        // --- Start/Stop Taxi Meter button (only if destination not set) ---
+                                        // if (orderModel.destinationLocationName!.isEmpty)
+                                        //   Obx(() => ElevatedButton(
+                                        //         onPressed: () {
+                                        //           if (controller.taxiMeterActive.value) {
+                                        //             controller.stopTaxiMeter(orderModel);
+                                        //           } else {
+                                        //             controller.startTaxiMeter(orderModel);
+                                        //           }
+                                        //         },
+                                        //         child: Text(
+                                        //           controller.taxiMeterActive.value
+                                        //               ? "Stop Taxi Meter".tr
+                                        //               : "Start Taxi Meter".tr,
+                                        //         ),
+                                        //       )),
+
+                                        const SizedBox(height: 10),
+
+                                        // --- Ride Actions: Pickup / Complete ---
                                         Row(
                                           children: [
                                             Expanded(
@@ -225,49 +274,38 @@ class ActiveOrderScreen extends StatelessWidget {
                                                       onPress: () async {
                                                         orderModel.status =
                                                             Constant.rideComplete;
-
                                                         controller.stopLocationUpdates();
+                                                        controller
+                                                            .stopTaxiMeter(orderModel);
 
-                                                        await FireStoreUtils.getCustomer(
-                                                                orderModel.userId
-                                                                    .toString())
-                                                            .then((value) async {
-                                                          if (value != null) {
-                                                            if (value.fcmToken != null) {
-                                                              Map<String, dynamic>
-                                                                  playLoad =
-                                                                  <String, dynamic>{
-                                                                "type":
-                                                                    "city_order_complete",
+                                                        // Notify customer
+                                                        UserModel? customer =
+                                                            await FireStoreUtils
+                                                                .getCustomer(
+                                                                    orderModel.userId!);
+                                                        if (customer?.fcmToken != null) {
+                                                          await SendNotification
+                                                              .sendOneNotification(
+                                                                  token:
+                                                                      customer!.fcmToken!,
+                                                                  title:
+                                                                      'Ride complete!'.tr,
+                                                                  body:
+                                                                      'Please complete your payment.'
+                                                                          .tr,
+                                                                  payload: {
                                                                 "orderId": orderModel.id
-                                                              };
+                                                              });
+                                                        }
 
-                                                              await SendNotification
-                                                                  .sendOneNotification(
-                                                                      token: value.fcmToken
-                                                                          .toString(),
-                                                                      title:
-                                                                          'Ride complete!'
-                                                                              .tr,
-                                                                      body:
-                                                                          'Please complete your payment.'
-                                                                              .tr,
-                                                                      payload: playLoad);
-                                                            }
-                                                          }
-                                                        });
-
+                                                        // Save order
                                                         await FireStoreUtils.setOrder(
-                                                                orderModel)
-                                                            .then((value) {
-                                                          if (value == true) {
-                                                            ShowToastDialog.showToast(
-                                                                "Ride Complete successfully"
-                                                                    .tr);
-                                                            controller.homeController
-                                                                .selectedIndex.value = 3;
-                                                          }
-                                                        });
+                                                            orderModel);
+                                                        controller.homeController
+                                                            .selectedIndex.value = 3;
+                                                        ShowToastDialog.showToast(
+                                                            "Ride Complete successfully"
+                                                                .tr);
                                                       },
                                                     )
                                                   : ButtonThem.buildBorderButton(
@@ -287,121 +325,24 @@ class ActiveOrderScreen extends StatelessWidget {
                                                       },
                                                     ),
                                             ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
+
+                                            const SizedBox(width: 10),
+
+                                            // --- Chat / Call / Cancel Buttons ---
                                             Row(
                                               children: [
-                                                InkWell(
-                                                  onTap: () async {
-                                                    UserModel? customer =
-                                                        await FireStoreUtils.getCustomer(
-                                                            orderModel.userId.toString());
-                                                    DriverUserModel? driver =
-                                                        await FireStoreUtils
-                                                            .getDriverProfile(orderModel
-                                                                .driverId
-                                                                .toString());
-
-                                                    Get.to(ChatScreens(
-                                                      driverId: driver!.id,
-                                                      customerId: customer!.id,
-                                                      customerName: customer.fullName,
-                                                      customerProfileImage:
-                                                          customer.profilePic,
-                                                      driverName: driver.fullName,
-                                                      driverProfileImage:
-                                                          driver.profilePic,
-                                                      orderId: orderModel.id,
-                                                      token: customer.fcmToken,
-                                                    ));
-                                                  },
-                                                  child: Container(
-                                                    height: 44,
-                                                    width: 44,
-                                                    decoration: BoxDecoration(
-                                                        color: themeChange.getThem()
-                                                            ? AppColors.darkModePrimary
-                                                            : AppColors.primary,
-                                                        borderRadius:
-                                                            BorderRadius.circular(5)),
-                                                    child: Icon(Icons.chat,
-                                                        color: themeChange.getThem()
-                                                            ? Colors.black
-                                                            : Colors.white),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                InkWell(
-                                                  onTap: () async {
-                                                    UserModel? customer =
-                                                        await FireStoreUtils.getCustomer(
-                                                            orderModel.userId.toString());
-                                                    Constant.makePhoneCall(
-                                                        "${customer!.countryCode}${customer.phoneNumber}");
-                                                  },
-                                                  child: Container(
-                                                    height: 44,
-                                                    width: 44,
-                                                    decoration: BoxDecoration(
-                                                        color: themeChange.getThem()
-                                                            ? AppColors.darkModePrimary
-                                                            : AppColors.primary,
-                                                        borderRadius:
-                                                            BorderRadius.circular(5)),
-                                                    child: Icon(Icons.call,
-                                                        color: themeChange.getThem()
-                                                            ? Colors.black
-                                                            : Colors.white),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                InkWell(
-                                                  onTap: () async {
-                                                    Get.defaultDialog(
-                                                      title: 'cancel_ride_title'.tr,
-                                                      middleText:
-                                                          'cancel_ride_message'.tr,
-                                                      textCancel: 'no'.tr,
-                                                      textConfirm: 'yes'.tr,
-                                                      confirmTextColor: Colors.black87,
-                                                      cancelTextColor: Colors.black87,
-                                                      onConfirm: () async {
-// 2) Helper: notify assigned/accepted drivers, then cancel order
-
-                                                        await _notifyCustomerAndCancelOrder(
-                                                            orderModel);
-
-                                                        Get.back(); // close dialog after confirm
-                                                      },
-                                                      onCancel: () {
-                                                        Get.back(); // just close if user presses "No"
-                                                      },
-                                                    );
-                                                  },
-                                                  child: Container(
-                                                    height: 44,
-                                                    width: 44,
-                                                    decoration: BoxDecoration(
-                                                        color: themeChange.getThem()
-                                                            ? AppColors.darkModePrimary
-                                                            : AppColors.primary,
-                                                        borderRadius:
-                                                            BorderRadius.circular(5)),
-                                                    child: Icon(Icons.close,
-                                                        color: themeChange.getThem()
-                                                            ? Colors.black
-                                                            : Colors.white),
-                                                  ),
-                                                ),
+                                                buildChatButton(
+                                                    context, themeChange, orderModel),
+                                                const SizedBox(width: 10),
+                                                buildCallButton(
+                                                    context, themeChange, orderModel),
+                                                const SizedBox(width: 10),
+                                                buildCancelButton(
+                                                    context, themeChange, orderModel),
                                               ],
                                             ),
                                           ],
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -412,6 +353,98 @@ class ActiveOrderScreen extends StatelessWidget {
                 },
               );
             });
+  }
+
+  // Chat Button
+  Widget buildChatButton(
+      BuildContext context, DarkThemeProvider themeChange, OrderModel orderModel) {
+    return InkWell(
+      onTap: () async {
+        UserModel? customer = await FireStoreUtils.getCustomer(orderModel.userId!);
+        DriverUserModel? driver =
+            await FireStoreUtils.getDriverProfile(orderModel.driverId!);
+
+        if (customer != null && driver != null) {
+          Get.to(ChatScreens(
+            driverId: driver.id,
+            customerId: customer.id,
+            customerName: customer.fullName,
+            customerProfileImage: customer.profilePic,
+            driverName: driver.fullName,
+            driverProfileImage: driver.profilePic,
+            orderId: orderModel.id,
+            token: customer.fcmToken,
+          ));
+        }
+      },
+      child: Container(
+        height: 44,
+        width: 44,
+        decoration: BoxDecoration(
+          color: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child:
+            Icon(Icons.chat, color: themeChange.getThem() ? Colors.black : Colors.white),
+      ),
+    );
+  }
+
+// Call Button
+  Widget buildCallButton(
+      BuildContext context, DarkThemeProvider themeChange, OrderModel orderModel) {
+    return InkWell(
+      onTap: () async {
+        UserModel? customer = await FireStoreUtils.getCustomer(orderModel.userId!);
+        if (customer != null) {
+          Constant.makePhoneCall("${customer.countryCode}${customer.phoneNumber}");
+        }
+      },
+      child: Container(
+        height: 44,
+        width: 44,
+        decoration: BoxDecoration(
+          color: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child:
+            Icon(Icons.call, color: themeChange.getThem() ? Colors.black : Colors.white),
+      ),
+    );
+  }
+
+// Cancel Ride Button
+  Widget buildCancelButton(
+      BuildContext context, DarkThemeProvider themeChange, OrderModel orderModel) {
+    return InkWell(
+      onTap: () async {
+        Get.defaultDialog(
+          title: 'cancel_ride_title'.tr,
+          middleText: 'cancel_ride_message'.tr,
+          textCancel: 'no'.tr,
+          textConfirm: 'yes'.tr,
+          confirmTextColor: Colors.black87,
+          cancelTextColor: Colors.black87,
+          onConfirm: () async {
+            await _notifyCustomerAndCancelOrder(orderModel);
+            Get.back(); // Close dialog after confirm
+          },
+          onCancel: () {
+            Get.back(); // Just close if user presses "No"
+          },
+        );
+      },
+      child: Container(
+        height: 44,
+        width: 44,
+        decoration: BoxDecoration(
+          color: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child:
+            Icon(Icons.close, color: themeChange.getThem() ? Colors.black : Colors.white),
+      ),
+    );
   }
 
   otpDialog(
@@ -496,9 +529,17 @@ class ActiveOrderScreen extends StatelessWidget {
                 await FireStoreUtils.setOrder(orderModel).then((value) {
                   if (value == true) {
                     ShowToastDialog.closeLoader();
+                    controller.customerIsPicked.value = true;
+                    controller.customerIsPicked.refresh();
                     ShowToastDialog.showToast("Customer pickup successfully".tr);
                   }
                 });
+
+                if (orderModel.destinationLocationName == null ||
+                    orderModel.destinationLocationName!.isEmpty) {
+                  print("TAXIIIII METER STARTEDDD");
+                  controller.startTaxiMeter(orderModel);
+                }
               } else {
                 ShowToastDialog.showToast("OTP Invalid".tr,
                     position: EasyLoadingToastPosition.center);

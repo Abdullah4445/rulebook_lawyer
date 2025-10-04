@@ -112,8 +112,15 @@ class NewOrderScreen extends StatelessWidget {
                                             children: [
                                               // --- User Info & Fare ---
                                               UserView(
-                                                userId: orderModel.userId,
-                                                amount: orderModel.offerRate,
+                                                userId: orderModel.userId.toString(),
+                                                amount:
+                                                    orderModel.destinationLocationName ==
+                                                                null ||
+                                                            orderModel
+                                                                .destinationLocationName!
+                                                                .isEmpty
+                                                        ? ''
+                                                        : orderModel.offerRate,
                                                 distance: orderModel.distance,
                                                 distanceType: orderModel.distanceType,
                                               ),

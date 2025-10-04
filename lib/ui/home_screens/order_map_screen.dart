@@ -155,7 +155,8 @@ class OrderMapScreen extends StatelessWidget {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             UserView(
-                                              userId: controller.orderModel.value.userId,
+                                              userId: controller.orderModel.value.userId
+                                                  .toString(),
                                               amount:
                                                   controller.orderModel.value.offerRate,
                                               distance:

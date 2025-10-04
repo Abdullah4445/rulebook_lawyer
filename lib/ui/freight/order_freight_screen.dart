@@ -59,27 +59,38 @@ class OrderFreightScreen extends StatelessWidget {
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              InterCityOrderModel orderModel = InterCityOrderModel.fromJson(snapshot.data!.docs[index].data() as Map<String, dynamic>);
+                              InterCityOrderModel orderModel =
+                                  InterCityOrderModel.fromJson(snapshot.data!.docs[index]
+                                      .data() as Map<String, dynamic>);
                               return InkWell(
                                 onTap: () {
-                                  Get.to(const CompleteIntercityOrderScreen(), arguments: {
-                                    "orderModel": orderModel,
-                                  });
+                                  Get.to(const CompleteIntercityOrderScreen(),
+                                      arguments: {
+                                        "orderModel": orderModel,
+                                      });
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: themeChange.getThem() ? AppColors.darkContainerBackground : AppColors.containerBackground,
-                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                      border: Border.all(color: themeChange.getThem() ? AppColors.darkContainerBorder : AppColors.containerBorder, width: 0.5),
+                                      color: themeChange.getThem()
+                                          ? AppColors.darkContainerBackground
+                                          : AppColors.containerBackground,
+                                      borderRadius:
+                                          const BorderRadius.all(Radius.circular(10)),
+                                      border: Border.all(
+                                          color: themeChange.getThem()
+                                              ? AppColors.darkContainerBorder
+                                              : AppColors.containerBorder,
+                                          width: 0.5),
                                       boxShadow: themeChange.getThem()
                                           ? null
                                           : [
                                               BoxShadow(
                                                 color: Colors.grey.withOpacity(0.5),
                                                 blurRadius: 8,
-                                                offset: const Offset(0, 2), // changes position of shadow
+                                                offset: const Offset(
+                                                    0, 2), // changes position of shadow
                                               ),
                                             ],
                                     ),
@@ -89,7 +100,7 @@ class OrderFreightScreen extends StatelessWidget {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           UserView(
-                                            userId: orderModel.userId,
+                                            userId: orderModel.userId.toString(),
                                             amount: orderModel.finalRate,
                                             distance: orderModel.distance,
                                             distanceType: orderModel.distanceType,
@@ -103,50 +114,85 @@ class OrderFreightScreen extends StatelessWidget {
                                               width: 10,
                                             ),
                                             Text(
-                                              Constant.localizationName(orderModel.freightVehicle!.name),
-                                              style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
+                                              Constant.localizationName(
+                                                  orderModel.freightVehicle!.name),
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
                                             )
                                           ]),
-
                                           const SizedBox(
                                             height: 10,
                                           ),
                                           LocationView(
-                                            sourceLocation: orderModel.sourceLocationName.toString(),
-                                            destinationLocation: orderModel.destinationLocationName.toString(),
+                                            sourceLocation:
+                                                orderModel.sourceLocationName.toString(),
+                                            destinationLocation: orderModel
+                                                .destinationLocationName
+                                                .toString(),
                                           ),
                                           const SizedBox(
                                             height: 10,
                                           ),
-                                          orderModel.status == Constant.rideComplete || orderModel.status == Constant.rideActive
+                                          orderModel.status == Constant.rideComplete ||
+                                                  orderModel.status == Constant.rideActive
                                               ? Container(
                                                   decoration: BoxDecoration(
-                                                      color: themeChange.getThem() ? AppColors.darkGray : AppColors.gray,
-                                                      borderRadius: const BorderRadius.all(Radius.circular(10))),
+                                                      color: themeChange.getThem()
+                                                          ? AppColors.darkGray
+                                                          : AppColors.gray,
+                                                      borderRadius:
+                                                          const BorderRadius.all(
+                                                              Radius.circular(10))),
                                                   child: Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                      padding: const EdgeInsets.symmetric(
+                                                          horizontal: 10, vertical: 10),
                                                       child: Row(
                                                         children: [
-                                                          Expanded(child: Text(orderModel.status.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.w600))),
-                                                          Text(Constant().formatTimestamp(orderModel.createdDate), style: GoogleFonts.poppins()),
+                                                          Expanded(
+                                                              child: Text(
+                                                                  orderModel.status
+                                                                      .toString(),
+                                                                  style:
+                                                                      GoogleFonts.poppins(
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .w600))),
+                                                          Text(
+                                                              Constant().formatTimestamp(
+                                                                  orderModel.createdDate),
+                                                              style:
+                                                                  GoogleFonts.poppins()),
                                                         ],
                                                       )),
                                                 )
                                               : Container(
                                                   decoration: BoxDecoration(
-                                                      color: themeChange.getThem() ? AppColors.darkGray : AppColors.gray,
-                                                      borderRadius: const BorderRadius.all(Radius.circular(10))),
+                                                      color: themeChange.getThem()
+                                                          ? AppColors.darkGray
+                                                          : AppColors.gray,
+                                                      borderRadius:
+                                                          const BorderRadius.all(
+                                                              Radius.circular(10))),
                                                   child: Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                      padding: const EdgeInsets.symmetric(
+                                                          horizontal: 10, vertical: 10),
                                                       child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment.center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment.center,
                                                         children: [
-                                                          const Icon(Icons.access_time_outlined),
+                                                          const Icon(
+                                                              Icons.access_time_outlined),
                                                           const SizedBox(
                                                             width: 10,
                                                           ),
-                                                          Text(Constant().formatTimestamp(orderModel.createdDate), style: GoogleFonts.poppins()),
+                                                          Text(
+                                                              Constant().formatTimestamp(
+                                                                  orderModel.createdDate),
+                                                              style:
+                                                                  GoogleFonts.poppins()),
                                                         ],
                                                       )),
                                                 ),
@@ -155,7 +201,6 @@ class OrderFreightScreen extends StatelessWidget {
                                           ),
                                           Row(
                                             children: [
-
                                               Expanded(
                                                 child: ButtonThem.buildBorderButton(
                                                   context,
@@ -163,10 +208,12 @@ class OrderFreightScreen extends StatelessWidget {
                                                   btnHeight: 44,
                                                   iconVisibility: false,
                                                   onPress: () async {
-                                                    Get.to(const ReviewScreen(), arguments: {
-                                                      "type": "interCityOrderModel",
-                                                      "interCityOrderModel": orderModel,
-                                                    });
+                                                    Get.to(const ReviewScreen(),
+                                                        arguments: {
+                                                          "type": "interCityOrderModel",
+                                                          "interCityOrderModel":
+                                                              orderModel,
+                                                        });
                                                   },
                                                 ),
                                               ),
@@ -174,21 +221,34 @@ class OrderFreightScreen extends StatelessWidget {
                                                 width: 10,
                                               ),
                                               Visibility(
-                                                visible: orderModel.status == Constant.rideComplete ? false : true,
+                                                visible: orderModel.status ==
+                                                        Constant.rideComplete
+                                                    ? false
+                                                    : true,
                                                 child: Row(
                                                   children: [
                                                     InkWell(
                                                       onTap: () async {
-                                                        UserModel? customer = await FireStoreUtils.getCustomer(orderModel.userId.toString());
-                                                        DriverUserModel? driver = await FireStoreUtils.getDriverProfile(orderModel.driverId.toString());
+                                                        UserModel? customer =
+                                                            await FireStoreUtils
+                                                                .getCustomer(orderModel
+                                                                    .userId
+                                                                    .toString());
+                                                        DriverUserModel? driver =
+                                                            await FireStoreUtils
+                                                                .getDriverProfile(
+                                                                    orderModel.driverId
+                                                                        .toString());
 
                                                         Get.to(ChatScreens(
                                                           driverId: driver!.id,
                                                           customerId: customer!.id,
                                                           customerName: customer.fullName,
-                                                          customerProfileImage: customer.profilePic,
+                                                          customerProfileImage:
+                                                              customer.profilePic,
                                                           driverName: driver.fullName,
-                                                          driverProfileImage: driver.profilePic,
+                                                          driverProfileImage:
+                                                              driver.profilePic,
                                                           orderId: orderModel.id,
                                                           token: customer.fcmToken,
                                                         ));
@@ -197,8 +257,16 @@ class OrderFreightScreen extends StatelessWidget {
                                                         height: 44,
                                                         width: 44,
                                                         decoration: BoxDecoration(
-                                                            color: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary, borderRadius: BorderRadius.circular(5)),
-                                                        child: Icon(Icons.chat, color: themeChange.getThem() ? Colors.black : Colors.white),
+                                                            color: themeChange.getThem()
+                                                                ? AppColors
+                                                                    .darkModePrimary
+                                                                : AppColors.primary,
+                                                            borderRadius:
+                                                                BorderRadius.circular(5)),
+                                                        child: Icon(Icons.chat,
+                                                            color: themeChange.getThem()
+                                                                ? Colors.black
+                                                                : Colors.white),
                                                       ),
                                                     ),
                                                     const SizedBox(
@@ -206,15 +274,28 @@ class OrderFreightScreen extends StatelessWidget {
                                                     ),
                                                     InkWell(
                                                       onTap: () async {
-                                                        UserModel? customer = await FireStoreUtils.getCustomer(orderModel.userId.toString());
-                                                        Constant.makePhoneCall("${customer!.countryCode}${customer.phoneNumber}");
+                                                        UserModel? customer =
+                                                            await FireStoreUtils
+                                                                .getCustomer(orderModel
+                                                                    .userId
+                                                                    .toString());
+                                                        Constant.makePhoneCall(
+                                                            "${customer!.countryCode}${customer.phoneNumber}");
                                                       },
                                                       child: Container(
                                                         height: 44,
                                                         width: 44,
                                                         decoration: BoxDecoration(
-                                                            color: themeChange.getThem() ? AppColors.darkModePrimary : AppColors.primary, borderRadius: BorderRadius.circular(5)),
-                                                        child: Icon(Icons.call, color: themeChange.getThem() ? Colors.black : Colors.white),
+                                                            color: themeChange.getThem()
+                                                                ? AppColors
+                                                                    .darkModePrimary
+                                                                : AppColors.primary,
+                                                            borderRadius:
+                                                                BorderRadius.circular(5)),
+                                                        child: Icon(Icons.call,
+                                                            color: themeChange.getThem()
+                                                                ? Colors.black
+                                                                : Colors.white),
                                                       ),
                                                     )
                                                   ],
@@ -225,11 +306,11 @@ class OrderFreightScreen extends StatelessWidget {
                                           const SizedBox(
                                             height: 10,
                                           ),
-
-
                                           ButtonThem.buildButton(
                                             context,
-                                            title: orderModel.paymentStatus == true ? "Payment completed".tr : "Payment Pending".tr,
+                                            title: orderModel.paymentStatus == true
+                                                ? "Payment completed".tr
+                                                : "Payment Pending".tr,
                                             btnHeight: 44,
                                             onPress: () async {},
                                           ),
@@ -237,69 +318,109 @@ class OrderFreightScreen extends StatelessWidget {
                                             height: 10,
                                           ),
                                           Visibility(
-                                              visible: controller.paymentModel.value.cash!.name == orderModel.paymentType.toString() && orderModel.paymentStatus == false,
+                                              visible: controller.paymentModel.value.cash!
+                                                          .name ==
+                                                      orderModel.paymentType.toString() &&
+                                                  orderModel.paymentStatus == false,
                                               child: ButtonThem.buildButton(
                                                 context,
                                                 title: "Confirm cash payment".tr,
                                                 btnHeight: 44,
                                                 onPress: () async {
-                                                  ShowToastDialog.showLoader("Please wait..".tr);
+                                                  ShowToastDialog.showLoader(
+                                                      "Please wait..".tr);
                                                   orderModel.paymentStatus = true;
-                                                  orderModel.status = Constant.rideComplete;
+                                                  orderModel.status =
+                                                      Constant.rideComplete;
                                                   orderModel.updateDate = Timestamp.now();
 
                                                   String? couponAmount = "0.0";
                                                   if (orderModel.coupon != null) {
                                                     if (orderModel.coupon?.code != null) {
-                                                      if (orderModel.coupon!.type == "fix") {
-                                                        couponAmount = orderModel.coupon!.amount.toString();
+                                                      if (orderModel.coupon!.type ==
+                                                          "fix") {
+                                                        couponAmount = orderModel
+                                                            .coupon!.amount
+                                                            .toString();
                                                       } else {
-                                                        couponAmount =
-                                                            ((double.parse(orderModel.finalRate.toString()) * double.parse(orderModel.coupon!.amount.toString())) / 100).toString();
+                                                        couponAmount = ((double.parse(
+                                                                        orderModel
+                                                                            .finalRate
+                                                                            .toString()) *
+                                                                    double.parse(orderModel
+                                                                        .coupon!.amount
+                                                                        .toString())) /
+                                                                100)
+                                                            .toString();
                                                       }
                                                     }
                                                   }
 
-                                                  WalletTransactionModel adminCommissionWallet = WalletTransactionModel(
-                                                      id: Constant.getUuid(),
-                                                      amount:
-                                                          "-${Constant.calculateAdminCommission(amount: (double.parse(orderModel.finalRate.toString()) - double.parse(couponAmount.toString())).toString(), adminCommission: orderModel.adminCommission)}",
-                                                      createdDate: Timestamp.now(),
-                                                      paymentType: "wallet".tr,
-                                                      transactionId: orderModel.id,
-                                                      orderType: "intercity",
-                                                      userId: orderModel.driverId.toString(),
-                                                      userType: "driver",
-                                                      note: "Admin commission debited".tr);
-
-                                                  await FireStoreUtils.setWalletTransaction(adminCommissionWallet).then((value) async {
-                                                    if (value == true) {
-                                                      await FireStoreUtils.updatedDriverWallet(
+                                                  WalletTransactionModel
+                                                      adminCommissionWallet =
+                                                      WalletTransactionModel(
+                                                          id: Constant.getUuid(),
                                                           amount:
-                                                              "-${Constant.calculateAdminCommission(amount: (double.parse(orderModel.finalRate.toString()) - double.parse(couponAmount.toString())).toString(), adminCommission: orderModel.adminCommission)}");
-                                                    }
-                                                  });
+                                                              "-${Constant.calculateAdminCommission(amount: (double.parse(orderModel.finalRate.toString()) - double.parse(couponAmount.toString())).toString(), adminCommission: orderModel.adminCommission)}",
+                                                          createdDate: Timestamp.now(),
+                                                          paymentType: "wallet".tr,
+                                                          transactionId: orderModel.id,
+                                                          orderType: "intercity",
+                                                          userId: orderModel.driverId
+                                                              .toString(),
+                                                          userType: "driver",
+                                                          note: "Admin commission debited"
+                                                              .tr);
 
-                                                  await FireStoreUtils.getCustomer(orderModel.userId.toString()).then((value) async {
-                                                    if (value != null) {
-                                                      await SendNotification.sendOneNotification(
-                                                          token: value.fcmToken.toString(),
-                                                          title: 'Cash Payment confirmed'.tr,
-                                                          body: 'Driver has confirmed your cash payment'.tr,
-                                                          payload: {});
-                                                    }
-                                                  });
-
-                                                  await FireStoreUtils.getIntercityFirstOrderOrNOt(orderModel).then((value) async {
+                                                  await FireStoreUtils
+                                                          .setWalletTransaction(
+                                                              adminCommissionWallet)
+                                                      .then((value) async {
                                                     if (value == true) {
-                                                      await FireStoreUtils.updateIntercityReferralAmount(orderModel);
+                                                      await FireStoreUtils
+                                                          .updatedDriverWallet(
+                                                              amount:
+                                                                  "-${Constant.calculateAdminCommission(amount: (double.parse(orderModel.finalRate.toString()) - double.parse(couponAmount.toString())).toString(), adminCommission: orderModel.adminCommission)}");
                                                     }
                                                   });
 
-                                                  await FireStoreUtils.setInterCityOrder(orderModel).then((value) {
+                                                  await FireStoreUtils.getCustomer(
+                                                          orderModel.userId.toString())
+                                                      .then((value) async {
+                                                    if (value != null) {
+                                                      await SendNotification
+                                                          .sendOneNotification(
+                                                              token: value.fcmToken
+                                                                  .toString(),
+                                                              title:
+                                                                  'Cash Payment confirmed'
+                                                                      .tr,
+                                                              body:
+                                                                  'Driver has confirmed your cash payment'
+                                                                      .tr,
+                                                              payload: {});
+                                                    }
+                                                  });
+
+                                                  await FireStoreUtils
+                                                          .getIntercityFirstOrderOrNOt(
+                                                              orderModel)
+                                                      .then((value) async {
+                                                    if (value == true) {
+                                                      await FireStoreUtils
+                                                          .updateIntercityReferralAmount(
+                                                              orderModel);
+                                                    }
+                                                  });
+
+                                                  await FireStoreUtils.setInterCityOrder(
+                                                          orderModel)
+                                                      .then((value) {
                                                     if (value == true) {
                                                       ShowToastDialog.closeLoader();
-                                                      ShowToastDialog.showToast("Payment Confirm successfully".tr);
+                                                      ShowToastDialog.showToast(
+                                                          "Payment Confirm successfully"
+                                                              .tr);
                                                     }
                                                   });
                                                 },
