@@ -17,6 +17,7 @@ import 'themes/Styles.dart';
 import 'utils/Preferences.dart';
 
 /// Handles background notifications
+/// new code pushing
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessageBackgroundHandle(RemoteMessage message) async {
