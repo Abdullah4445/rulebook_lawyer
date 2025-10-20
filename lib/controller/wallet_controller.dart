@@ -912,9 +912,8 @@ class WalletController extends GetxController {
       } else {
         print("My suppData is: ${supp.data!.toJson()}");
         print(jsonEncode(supp.toJson()));
-        final errorMessage =
-            supp.data?.error?.errors?.first.errorMessage ?? 'Unknown error';
-        ShowToastDialog.showToast(errorMessage);
+        // final errorMessage = supp.data?.error?.errors?.first.errorMessage ?? 'Unknown error';
+        // ShowToastDialog.showToast(errorMessage);
       }
     } catch (e) {
       print("Card Error: $e");

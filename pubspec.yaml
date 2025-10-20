@@ -99,7 +99,6 @@ dependencies:
   flutter_native_splash: ^2.4.5
   in_app_purchase: ^3.2.3
   epayco_dart:
-    path: ../epayco_dart
   flutter_credit_card: ^4.1.0
   wakelock_plus: ^1.3.2
   geolocator: ^10.1.1
@@ -182,7 +181,7 @@ flutter_native_splash:
   color: "#ffffff" # Default to white for light mode
   color_dark: "#000000" # Black for dark mode
 
-  image: assets/appicon/app_logo.png # Light mode image
+  image: assets/appicon/lawyer_splash1.png # Light mode image
 
   # Optional branding
   # branding: assets/dart.png
@@ -192,8 +191,8 @@ flutter_native_splash:
     color: "#ffffff" # Default to white for light mode
     color_dark: "#000000" # Black for dark mode
 
-    image: assets/appicon/app_logo.png # Light mode Android 12 image
-    image_dark: assets/appicon/app_logo.png # Dark mode Android 12 image
+    image: assets/appicon/lawyer_splash1.png # Light mode Android 12 image
+    image_dark: assets/appicon/lawyer_splash1.png # Dark mode Android 12 image
 
     # Optional Android 12 icon background
     # icon_background_color: "#eeeeee" # Light icon background if needed

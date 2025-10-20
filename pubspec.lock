@@ -284,9 +284,10 @@ packages:
   epayco_dart:
     dependency: "direct main"
     description:
-      path: "../epayco_dart"
-      relative: true
-    source: path
+      name: epayco_dart
+      sha256: "9070793391cc33426d7dde61cc31a233390b49cc5e090d608e7c683c256f8b06"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.0.6"
   eventify:
     dependency: transitive
