@@ -1,74 +1,41 @@
 {
   "project_info": {
-    "project_number": "1005394126485",
-    "firebase_url": "https://movil-ya-d19c0-default-rtdb.firebaseio.com",
-    "project_id": "movil-ya-d19c0",
-    "storage_bucket": "movil-ya-d19c0.firebasestorage.app"
+    "project_number": "82480771693",
+    "firebase_url": "https://rulebook804-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "rulebook804",
+    "storage_bucket": "rulebook804.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1005394126485:android:b8316ef7468e5873eadd9c",
+        "mobilesdk_app_id": "1:82480771693:android:f4c39828f50526369b4564",
         "android_client_info": {
-          "package_name": "com.goflow.billcoder.driver"
+          "package_name": "com.Ailab.rulebook.customer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1005394126485-h5gjmku5o23j0epu69mm44hne3cnhp1a.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.billcoder.driver",
-            "certificate_hash": "4d6086b7c5f9ce167eaf74e02ef8d55f676a5d82"
-          }
-        },
-        {
-          "client_id": "1005394126485-kmp99onntr01m3rshd927guf587s76pu.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.billcoder.driver",
-            "certificate_hash": "dfd269145b207735fa15f86e0a34b4221813ebb9"
-          }
-        },
-        {
-          "client_id": "1005394126485-la1sud1n1ec0dlbj4rbvdl0b75liu7fg.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.billcoder.driver",
-            "certificate_hash": "723c5e46c04a28852e89c6d7be26ca439a9fd4dd"
-          }
-        },
-        {
-          "client_id": "1005394126485-o62d7dj8t2iedn1ath2gpi0oahbef2g5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.billcoder.driver",
-            "certificate_hash": "b2ff6ea9553ba5cacf4cbc3890940abc97d643a5"
-          }
-        },
-        {
-          "client_id": "1005394126485-rgjfhebdc06ud9sk4omou70rvdf3od7b.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.billcoder.driver",
-            "certificate_hash": "00ba8003dce3f30d85ecaa993b54d8ca24268bcc"
-          }
+          "client_id": "82480771693-is2grp5q30rlgtfc72to4emfu5kilg9i.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCOOnMuX_F3PvR-35hpHZWDDK-bweq5jys"
+          "current_key": "AIzaSyB7FVMu1XeNYVorDa4gmb2jH8kI2WMUYsU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1005394126485-7sibs57og6geb52erd1d0q4bkbd0ejo4.apps.googleusercontent.com",
+              "client_id": "82480771693-is2grp5q30rlgtfc72to4emfu5kilg9i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "82480771693-acithlooppulv4ecmkb7rir5hkktu6rb.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.goflow.taxi.rider",
-                "app_store_id": "6670756426"
+                "bundle_id": "com.ailab.rulebooklawyer"
               }
             }
           ]
@@ -77,205 +44,42 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1005394126485:android:d5e06d83ee51b0e6eadd9c",
+        "mobilesdk_app_id": "1:82480771693:android:2f30d76fa5f709f09b4564",
         "android_client_info": {
-          "package_name": "com.goflow.billcoder.rider"
+          "package_name": "com.ailab.rulebooklawyer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1005394126485-hev9ttpoa4df9jerv3k7mbtl8oa4hpfk.apps.googleusercontent.com",
+          "client_id": "82480771693-mhne7e6q8ofloa700mq7kv31re8h42g9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.goflow.billcoder.rider",
-            "certificate_hash": "4d6086b7c5f9ce167eaf74e02ef8d55f676a5d82"
+            "package_name": "com.ailab.rulebooklawyer",
+            "certificate_hash": "21e22db1bcacc618880968fbd8dcd360288d567f"
           }
         },
         {
-          "client_id": "1005394126485-ihp396i5trsr8qptdrner3vpegktbv74.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.billcoder.rider",
-            "certificate_hash": "dfd269145b207735fa15f86e0a34b4221813ebb9"
-          }
-        },
-        {
-          "client_id": "1005394126485-kmph15i24eum2nknfk1eg71qg1be37uq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.billcoder.rider",
-            "certificate_hash": "723c5e46c04a28852e89c6d7be26ca439a9fd4dd"
-          }
-        },
-        {
-          "client_id": "1005394126485-nv41ofg1aj6b69mafbt6091dk2lht1p3.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.billcoder.rider",
-            "certificate_hash": "b2ff6ea9553ba5cacf4cbc3890940abc97d643a5"
-          }
-        },
-        {
-          "client_id": "1005394126485-qvi8v8mr8l69la8ln87cf472e6caeo9a.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.billcoder.rider",
-            "certificate_hash": "00ba8003dce3f30d85ecaa993b54d8ca24268bcc"
-          }
+          "client_id": "82480771693-is2grp5q30rlgtfc72to4emfu5kilg9i.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCOOnMuX_F3PvR-35hpHZWDDK-bweq5jys"
+          "current_key": "AIzaSyB7FVMu1XeNYVorDa4gmb2jH8kI2WMUYsU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1005394126485-7sibs57og6geb52erd1d0q4bkbd0ejo4.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.goflow.taxi.rider",
-                "app_store_id": "6670756426"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1005394126485:android:b772dc43ac920a3deadd9c",
-        "android_client_info": {
-          "package_name": "com.goflow.taxi.rider"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1005394126485-4lu33smpecfccpb2m6i8vosc0b1mmqcc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.taxi.rider",
-            "certificate_hash": "4d6086b7c5f9ce167eaf74e02ef8d55f676a5d82"
-          }
-        },
-        {
-          "client_id": "1005394126485-5c66vp7qj5fimq4nm6ph060t5sqi7uas.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.taxi.rider",
-            "certificate_hash": "dfd269145b207735fa15f86e0a34b4221813ebb9"
-          }
-        },
-        {
-          "client_id": "1005394126485-g39ur42cp2rmuscpsarlijlbc1jt531v.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.taxi.rider",
-            "certificate_hash": "b2ff6ea9553ba5cacf4cbc3890940abc97d643a5"
-          }
-        },
-        {
-          "client_id": "1005394126485-o72sb67kg3j62hltup4nq38vc2vcmnuf.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.taxi.rider",
-            "certificate_hash": "00ba8003dce3f30d85ecaa993b54d8ca24268bcc"
-          }
-        },
-        {
-          "client_id": "1005394126485-uu8gm6tmb0fnmnlnsc5mqi0j4kj381ri.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflow.taxi.rider",
-            "certificate_hash": "723c5e46c04a28852e89c6d7be26ca439a9fd4dd"
-          }
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCOOnMuX_F3PvR-35hpHZWDDK-bweq5jys"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
+              "client_id": "82480771693-is2grp5q30rlgtfc72to4emfu5kilg9i.apps.googleusercontent.com",
+              "client_type": 3
+            },
             {
-              "client_id": "1005394126485-7sibs57og6geb52erd1d0q4bkbd0ejo4.apps.googleusercontent.com",
+              "client_id": "82480771693-acithlooppulv4ecmkb7rir5hkktu6rb.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.goflow.taxi.rider",
-                "app_store_id": "6670756426"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1005394126485:android:b1f9ceaa73255949eadd9c",
-        "android_client_info": {
-          "package_name": "com.goflowdriver.taxi.driver"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1005394126485-bc5ajqt29icnn4s42tscb9am7qvrqf4n.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflowdriver.taxi.driver",
-            "certificate_hash": "723c5e46c04a28852e89c6d7be26ca439a9fd4dd"
-          }
-        },
-        {
-          "client_id": "1005394126485-h9lgpnlf5dp9eggiqeiu58g919f5n07l.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflowdriver.taxi.driver",
-            "certificate_hash": "4d6086b7c5f9ce167eaf74e02ef8d55f676a5d82"
-          }
-        },
-        {
-          "client_id": "1005394126485-q3re2hfnlp2trsv77u6sd4hhhhhgjk3b.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflowdriver.taxi.driver",
-            "certificate_hash": "00ba8003dce3f30d85ecaa993b54d8ca24268bcc"
-          }
-        },
-        {
-          "client_id": "1005394126485-u9jhpvf35n5t9nqm30korvn91eam13ep.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflowdriver.taxi.driver",
-            "certificate_hash": "b2ff6ea9553ba5cacf4cbc3890940abc97d643a5"
-          }
-        },
-        {
-          "client_id": "1005394126485-v5ms8reqapo20uq1c825m381pkgh8h5g.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.goflowdriver.taxi.driver",
-            "certificate_hash": "dfd269145b207735fa15f86e0a34b4221813ebb9"
-          }
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCOOnMuX_F3PvR-35hpHZWDDK-bweq5jys"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1005394126485-7sibs57og6geb52erd1d0q4bkbd0ejo4.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.goflow.taxi.rider",
-                "app_store_id": "6670756426"
+                "bundle_id": "com.ailab.rulebooklawyer"
               }
             }
           ]

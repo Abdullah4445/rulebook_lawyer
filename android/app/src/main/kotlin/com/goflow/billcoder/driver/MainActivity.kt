@@ -1,4 +1,4 @@
-package com.goflowdriver.taxi.driver
+package com.ailab.rulebooklawyer
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
