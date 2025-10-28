@@ -16,6 +16,7 @@ import 'firebase_options.dart';
 import 'services/localization_service.dart';
 import 'themes/Styles.dart';
 import 'utils/Preferences.dart';
+// not working
 
 /// Handles background notifications
 
