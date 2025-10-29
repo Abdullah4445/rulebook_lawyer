@@ -32,7 +32,30 @@ class NewOrderScreen extends StatelessWidget {
                       child:
                           Text("You are Now offline so you can't get nearest order.".tr),
                     )
-                  : StreamBuilder<List<OrderModel>>(
+                  :
+          // Obx(() {
+          //   if (controller.availableRides.isEmpty) {
+          //     return const Center(child: Text("No new rides available"));
+          //   }
+          //   return ListView.builder(
+          //     itemCount: controller.availableRides.length,
+          //     itemBuilder: (context, index) {
+          //       final ride = controller.availableRides[index];
+          //       return ListTile(
+          //         title: Text(ride.sourceLocationName ?? "No source"),
+          //         subtitle: Text(ride.destinationLocationName ?? "No destination"),
+          //         trailing: ElevatedButton(
+          //           onPressed: () {
+          //             controller.acceptRide(ride.id??"");
+          //           },
+          //           child: const Text("Accept"),
+          //         ),
+          //       );
+          //     },
+          //   );
+          // });
+
+          StreamBuilder<List<OrderModel>>(
                       stream: FireStoreUtils().getOrders(
                           controller.driverModel.value,
                           Constant.currentLocation?.latitude,

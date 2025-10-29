@@ -66,7 +66,7 @@ class Constant {
 
   static CurrencyModel? currencyModel;
 
-  static const String ridePlaced = "Ride Placed";
+  static const String ridePlaced = "ride Placed";
   static const String rideActive = "Ride Active";
   static const String rideInProgress = "Ride InProgress";
   static const String rideComplete = "Ride Completed";

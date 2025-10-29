@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.goflowdriver.taxi.driver">
+    package="com.ailab.rulebooklawyer">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -20,7 +20,7 @@
         android:name="${applicationName}"
         android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/launcher_icon"
-        android:label="Goflow Driver"
+        android:label="Rulebook Lawyer"
         android:usesCleartextTraffic="true"
         tools:replace="android:label">
         <activity

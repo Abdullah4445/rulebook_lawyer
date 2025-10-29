@@ -33,7 +33,7 @@ if (keystorePropertiesFile.exists()) {
 
 
 android {
-    namespace 'com.goflowdriver.taxi.driver'
+    namespace 'com.ailab.rulebooklawyer'
     compileSdkVersion 35
     ndkVersion "29.0.13599879"
     compileOptions {
@@ -52,7 +52,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.goflowdriver.taxi.driver"
+        applicationId "com.ailab.rulebooklawyer"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
