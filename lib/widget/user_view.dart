@@ -6,125 +6,155 @@ import 'package:driver/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class UserView extends StatefulWidget {
+class UserView extends StatelessWidget {
   final String? userId;
   final String? amount;
   final String? distance;
   final String? distanceType;
 
-  const UserView({Key? key, this.userId, this.amount, this.distance, this.distanceType})
-      : super(key: key);
-
-  @override
-  State<UserView> createState() => _UserViewState();
-}
-
-class _UserViewState extends State<UserView> {
-  UserModel? user;
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUser();
-  }
-
-  Future<void> _loadUser() async {
-    try {
-      final fetchedUser = await FireStoreUtils.getCustomer(widget.userId.toString());
-      if (mounted) {
-        setState(() {
-          user = fetchedUser;
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-      print("Error fetching user: $e");
-    }
-  }
+  const UserView({Key? key, this.userId, this.amount, this.distance, this.distanceType,}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final double parsedAmount = double.tryParse(widget.amount ?? '0') ?? 0.0;
-    final double parsedDistance = double.tryParse(widget.distance ?? '0') ?? 0.0;
-    final String displayAmount =
-        parsedAmount > 0 ? Constant.amountShow(amount: parsedAmount.toString()) : "-";
-    final String displayDistance = parsedDistance > 0
-        ? "${parsedDistance.toStringAsFixed(Constant.currencyModel?.decimalDigits ?? 2)} ${widget.distanceType}"
-        : "-";
-
-    final String displayName = user?.fullName ?? "Asynchronous user";
-    final String profilePic = user?.profilePic ?? Constant.userPlaceHolder;
-
-    if (isLoading) {
-      return const SizedBox();
-    }
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          child: CachedNetworkImage(
-            height: 50,
-            width: 50,
-            imageUrl: profilePic,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Constant.loader(context),
-            errorWidget: (context, url, error) => Image.network(Constant.userPlaceHolder),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(displayName, style: GoogleFonts.poppins(fontWeight: FontWeight.w800)),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
+    return FutureBuilder<UserModel?>(
+        future: FireStoreUtils.getCustomer(userId.toString()),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return const SizedBox();
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              } else {
+                if (snapshot.data == null) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('💰'),
-                      const SizedBox(width: 5),
-                      Text(displayAmount,
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Icon(Icons.location_on, size: 18),
-                      const SizedBox(width: 5),
-                      Text(displayDistance,
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Icon(Icons.star, size: 22, color: AppColors.ratingColour),
-                      const SizedBox(width: 5),
-                      Text(
-                        Constant.calculateReview(
-                          reviewCount: user?.reviewsCount ?? "0",
-                          reviewSum: user?.reviewsSum ?? "0",
+                      ClipRRect(
+                        borderRadius: const BorderRadius.all(Radius.circular(10)),
+                        child: CachedNetworkImage(
+                          height: 50,
+                          width: 50,
+                          imageUrl: Constant.userPlaceHolder,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Constant.loader(context),
+                          errorWidget: (context, url, error) => Image.network(
+                              'https://firebasestorage.googleapis.com/v0/b/goflow-1a752.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115'),
                         ),
-                        style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Asynchronous user", style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(Constant.amountShow(amount: amount.toString()), style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text("${(double.parse(distance.toString())).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} $distanceType",
+                                        style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.star,
+                                      size: 22,
+                                      color: AppColors.ratingColour,
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(Constant.calculateReview(reviewCount: "0.0", reviewSum: "0.0"), style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
+                                  ],
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+                  );
+                }
+                UserModel driverModel = snapshot.data!;
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                      child: CachedNetworkImage(
+                        height: 50,
+                        width: 50,
+                        imageUrl: driverModel.profilePic.toString(),
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Constant.loader(context),
+                        errorWidget: (context, url, error) => Image.network(
+                            'https://firebasestorage.googleapis.com/v0/b/goflow-1a752.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115'),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(driverModel.fullName.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(Constant.amountShow(amount: amount.toString()), style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    "${double.tryParse(distance?.toString() ?? '0')?.toStringAsFixed(Constant.currencyModel?.decimalDigits ?? 2)} $distanceType",
+                                    style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.star,
+                                    size: 22,
+                                    color: AppColors.ratingColour,
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(Constant.calculateReview(reviewCount: driverModel.reviewsCount, reviewSum: driverModel.reviewsSum), style: GoogleFonts.poppins(fontWeight: FontWeight.w500)),
+                                ],
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
+            default:
+              return const Text('Error');
+          }
+        });
   }
 }

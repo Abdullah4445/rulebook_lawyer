@@ -289,10 +289,10 @@ class WalletController extends GetxController {
   ///PayStack Payment Method
   payStackPayment(String totalAmount) async {
     await PayStackURLGen.payStackURLGen(
-            amount: (double.parse(totalAmount) * 100).toString(),
-            currency: "NGN",
-            secretKey: paymentModel.value.payStack!.secretKey.toString(),
-            userModel: driverUserModel.value)
+        amount: (double.parse(totalAmount) * 100).toString(),
+        currency: "NGN",
+        secretKey: paymentModel.value.payStack!.secretKey.toString(),
+        userModel: driverUserModel.value)
         .then((value) async {
       if (value != null && value.toString().isNotEmpty) {
         PayStackUrlModel payStackModel = value;
@@ -378,9 +378,9 @@ class WalletController extends GetxController {
   // payFast
   payFastPayment({required BuildContext context, required String amount}) {
     PayStackURLGen.getPayHTML(
-            payFastSettingData: paymentModel.value.payfast!,
-            amount: amount.toString(),
-            userModel: driverUserModel.value)
+        payFastSettingData: paymentModel.value.payfast!,
+        amount: amount.toString(),
+        userModel: driverUserModel.value)
         .then((String? value) async {
       bool isDone = await Get.to(PayFastScreen(
           htmlData: value!, payFastSettingData: paymentModel.value.payfast!));
@@ -418,10 +418,10 @@ class WalletController extends GetxController {
         String callback = "";
         if (paymentModel.value.paytm!.isSandbox == true) {
           callback =
-              "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+          "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
         } else {
           callback =
-              "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+          "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
         }
 
         if (value.head.version.isEmpty) {
@@ -441,10 +441,10 @@ class WalletController extends GetxController {
 
   Future<void> startTransaction(context,
       {required String txnTokenBy,
-      required orderId,
-      required double amount,
-      required callBackURL,
-      required isStaging}) async {
+        required orderId,
+        required double amount,
+        required callBackURL,
+        required isStaging}) async {
     // try {
     //   var response = AllInOneSdk.startTransaction(
     //     paymentModel.value.paytm!.paytmMID.toString(),
@@ -504,10 +504,10 @@ class WalletController extends GetxController {
     String callback = "";
     if (paymentModel.value.paytm!.isSandbox == true) {
       callback =
-          "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+      "${callback}https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
     } else {
       callback =
-          "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
+      "${callback}https://securegw.paytm.in/theia/paytmCallback?ORDER_ID=$orderId";
     }
     final response = await http.post(Uri.parse(initiateURL), headers: {}, body: {
       "mid": paymentModel.value.paytm!.paytmMID,
@@ -580,10 +580,10 @@ class WalletController extends GetxController {
       ShowToastDialog.closeLoader();
       if (model.id != null) {
         Get.to(() => XenditScreen(
-                  initialURl: model.invoiceUrl ?? '',
-                  transId: model.id ?? '',
-                  apiKey: paymentModel.value.xendit!.apiKey!.toString() ?? "",
-                ))!
+          initialURl: model.invoiceUrl ?? '',
+          transId: model.id ?? '',
+          apiKey: paymentModel.value.xendit!.apiKey!.toString() ?? "",
+        ))!
             .then((value) {
           if (value == true) {
             ShowToastDialog.showToast("Payment Successful!".tr);
@@ -604,7 +604,7 @@ class WalletController extends GetxController {
     var headers = {
       'Content-Type': 'application/json',
       'Authorization':
-          generateBasicAuthHeader(paymentModel.value.xendit!.apiKey!.toString()),
+      generateBasicAuthHeader(paymentModel.value.xendit!.apiKey!.toString()),
       // 'Cookie': '__cf_bm=yERkrx3xDITyFGiou0bbKY1bi7xEwovHNwxV1vCNbVc-1724155511-1.0.1.1-jekyYQmPCwY6vIJ524K0V6_CEw6O.dAwOmQnHtwmaXO_MfTrdnmZMka0KZvjukQgXu5B.K_6FJm47SGOPeWviQ',
     };
 
@@ -646,17 +646,17 @@ class WalletController extends GetxController {
     reset();
     var id = Constant.getUuid();
     var paymentURL =
-        await fetchToken(context: context, orderId: id, amount: amount, currency: 'USD');
+    await fetchToken(context: context, orderId: id, amount: amount, currency: 'USD');
     ShowToastDialog.closeLoader();
     if (paymentURL.toString() != '') {
       Get.to(() => OrangeMoneyScreen(
-                initialURl: paymentURL,
-                accessToken: accessToken,
-                amount: amount,
-                orangePay: paymentModel.value.orangePay!,
-                orderId: orderId,
-                payToken: payToken,
-              ))!
+        initialURl: paymentURL,
+        accessToken: accessToken,
+        amount: amount,
+        orangePay: paymentModel.value.orangePay!,
+        orderId: orderId,
+        payToken: payToken,
+      ))!
           .then((value) {
         if (value == true) {
           ShowToastDialog.showToast("Payment Successful!".tr);
@@ -673,9 +673,9 @@ class WalletController extends GetxController {
 
   Future fetchToken(
       {required String orderId,
-      required String currency,
-      required BuildContext context,
-      required String amount}) async {
+        required String currency,
+        required BuildContext context,
+        required String amount}) async {
     String apiUrl = 'https://api.orange.com/oauth/v3/token';
     Map<String, String> requestBody = {
       'grant_type': 'client_credentials',
@@ -712,9 +712,9 @@ class WalletController extends GetxController {
 
   Future webpayment(
       {required String orderIdData,
-      required BuildContext context,
-      required String currency,
-      required String amountData}) async {
+        required BuildContext context,
+        required String currency,
+        required String amountData}) async {
     orderId = orderIdData;
     amount = amountData;
     String apiUrl = paymentModel.value.orangePay!.isSandbox! == true
@@ -775,8 +775,8 @@ class WalletController extends GetxController {
       ShowToastDialog.closeLoader();
       if (url != '') {
         Get.to(() => MidtransScreen(
-                  initialURl: url,
-                ))!
+          initialURl: url,
+        ))!
             .then((value) {
           if (value == true) {
             ShowToastDialog.showToast("Payment Successful!".tr);
@@ -912,7 +912,8 @@ class WalletController extends GetxController {
       } else {
         print("My suppData is: ${supp.data!.toJson()}");
         print(jsonEncode(supp.toJson()));
-        // final errorMessage = supp.data?.error?.errors?.first.errorMessage ?? 'Unknown error';
+        // final errorMessage =
+        //     supp.data?.error?.errors?.first.errorMessage ?? 'Unknown error';
         // ShowToastDialog.showToast(errorMessage);
       }
     } catch (e) {
