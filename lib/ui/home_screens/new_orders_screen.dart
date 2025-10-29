@@ -152,8 +152,10 @@ class NewOrderScreen extends StatelessWidget {
                                               vertical: 10, horizontal: 10),
                                           child: Column(
                                             children: [
+                                              Text("Discription:${orderModel.description}",style: TextStyle(fontSize: 20,color: Colors.blue),),
 
                                               UserView(
+
                                                 userId: orderModel.userId,
                                                 amount: orderModel.offerRate,
                                                 distance: orderModel.distance,
@@ -170,40 +172,42 @@ class NewOrderScreen extends StatelessWidget {
                                                     .destinationLocationName
                                                     .toString(),
                                               ),
+
+
                                               Column(
                                                 children: [
                                                   const SizedBox(
                                                     height: 10,
                                                   ),
 
-                                                  Padding(
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 10, vertical: 5),
-                                                    child: Container(
-                                                      width: Responsive.width(100, context),
-                                                      decoration: BoxDecoration(
-                                                          color: themeChange.getThem()
-                                                              ? AppColors.darkGray
-                                                              : AppColors.gray,
-                                                          borderRadius: BorderRadius.all(
-                                                              Radius.circular(10))),
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.symmetric(
-                                                            horizontal: 10, vertical: 10),
-                                                        child: Center(
-                                                          child: Text(
-                                                            'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${((orderModel.distance.toString()))}',
-
-
-                              // 'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${double.parse(orderModel.distance.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.distanceType}',
-                                                            style: GoogleFonts.poppins(
-                                                                fontWeight: FontWeight.w500,
-                                                                color: Colors.black),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
+                              //                     Padding(
+                              //                       padding: const EdgeInsets.symmetric(
+                              //                           horizontal: 10, vertical: 5),
+                              //                       child: Container(
+                              //                         width: Responsive.width(100, context),
+                              //                         decoration: BoxDecoration(
+                              //                             color: themeChange.getThem()
+                              //                                 ? AppColors.darkGray
+                              //                                 : AppColors.gray,
+                              //                             borderRadius: BorderRadius.all(
+                              //                                 Radius.circular(10))),
+                              //                         child: Padding(
+                              //                           padding: const EdgeInsets.symmetric(
+                              //                               horizontal: 10, vertical: 10),
+                              //                           child: Center(
+                              //                             child: Text(
+                              //                               'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${((orderModel.distance.toString()))}',
+                              //
+                              //
+                              // // 'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${double.parse(orderModel.distance.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.distanceType}',
+                              //                               style: GoogleFonts.poppins(
+                              //                                   fontWeight: FontWeight.w500,
+                              //                                   color: Colors.black),
+                              //                             ),
+                              //                           ),
+                              //                         ),
+                              //                       ),
+                              //                     ),
                                                 ],
                                               )
                                             ],

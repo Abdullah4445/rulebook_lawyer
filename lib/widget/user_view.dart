@@ -12,7 +12,7 @@ class UserView extends StatelessWidget {
   final String? distance;
   final String? distanceType;
 
-  const UserView({Key? key, this.userId, this.amount, this.distance, this.distanceType}) : super(key: key);
+  const UserView({Key? key, this.userId, this.amount, this.distance, this.distanceType,}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

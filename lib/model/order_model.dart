@@ -37,6 +37,8 @@ class OrderModel {
   AdminCommission? adminCommission;
   ZoneModel? zone;
   String? zoneId;
+  String? description;
+
 
   /// 🔥 New fields for live tracking
   GeoPoint? driverLocation;
@@ -73,6 +75,7 @@ class OrderModel {
     this.driverLocation,
     this.customerIsWatchingLiveTracking,
     this.notifyUserIfDriverIsNotMovingEvenRideActive,
+    this.description
   });
 
   OrderModel.fromJson(Map<String, dynamic> json) {
@@ -114,6 +117,7 @@ class OrderModel {
     someOneElse =
         json['someOneElse'] != null ? ContactModel.fromJson(json['someOneElse']) : null;
     id = json['id'];
+    description=json['description'];
     userId = json['userId'];
     offerRate = json['offerRate'];
     finalRate = json['finalRate'];
@@ -186,6 +190,7 @@ class OrderModel {
     data['zoneId'] = zoneId;
     data['id'] = id;
     data['userId'] = userId;
+    data['description']=description;
     data['paymentType'] = paymentType;
     data['offerRate'] = offerRate;
     data['finalRate'] = finalRate;

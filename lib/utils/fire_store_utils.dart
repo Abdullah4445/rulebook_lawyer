@@ -440,76 +440,13 @@ class FireStoreUtils {
       print("📜 Order ID: ${doc.id}, Data: ${doc.data()}");
     }
   }
-  // Stream<List<OrderModel>> getOrders(
-  //     DriverUserModel driverUserModel, double? latitude, double? longLatitude) async* {
-  //
-  //   getNearestOrderRequestController =
-  //   StreamController<List<OrderModel>>.broadcast();
-  //   List<OrderModel> ordersList = [];
-  //
-  //   print("Current Driver details are:::😇:");
-  //   print(driverUserModel.serviceId);
-  //   print(driverUserModel.zoneIds);
-  //   print(Constant.ridePlaced);
-  //
-  //   Query<Map<String, dynamic>> query = fireStore
-  //       .collection(CollectionName.orders)
-  //       .where('serviceId', isEqualTo: driverUserModel.serviceId)
-  //       .where('zoneId', whereIn: driverUserModel.zoneIds)
-  //       .where('status', isEqualTo: Constant.ridePlaced);
-  //
-  //   print("Docs Found: ${await query.get().then((value) => value.docs.map((value) {
-  //     print("My value: ${value.data()}");
-  //   }))}");
-  //
-  //   // ❌👇 Ye part ab distance filter ke liye use nahi hoga
-  //   /*
-  // GeoFirePoint center =
-  //     Geoflutterfire().point(latitude: latitude ?? 0.0, longitude: longLatitude ?? 0.0);
-  // print("My radius is: ${Constant.radius}");
-  // Stream<List<DocumentSnapshot>> stream = Geoflutterfire()
-  //     .collection(collectionRef: query)
-  //     .within(
-  //         center: center,
-  //         radius: double.parse(Constant.radius),
-  //         field: 'position',
-  //         strictMode: false);
-  // print("My Stream: ${stream.toString()}");
-  // */
-  //
-  //   // ✅ Simple Firestore stream use kar rahe hain
-  //   Stream<QuerySnapshot<Map<String, dynamic>>> stream = query.snapshots();
-  //
-  //   stream.listen((snapshot) {
-  //     print("My doc list length: ${snapshot.docs.length}");
-  //     ordersList.clear();
-  //     for (var document in snapshot.docs) {
-  //       final data = document.data();
-  //       OrderModel orderModel = OrderModel.fromJson(data);
-  //       if (orderModel.acceptedDriverId != null &&
-  //           orderModel.acceptedDriverId!.isNotEmpty) {
-  //         if (!orderModel.acceptedDriverId!
-  //             .contains(FireStoreUtils.getCurrentUid())) {
-  //           ordersList.add(orderModel);
-  //         }
-  //       } else {
-  //         ordersList.add(orderModel);
-  //       }
-  //     }
-  //     getNearestOrderRequestController!.sink.add(ordersList);
-  //   });
-  //
-  //   print("🛰️ My Stream: ${stream.toString()}");
-  //
-  //   yield* getNearestOrderRequestController!.stream;
-  // }
-
-
   Stream<List<OrderModel>> getOrders(
-      DriverUserModel driverUserModel, double? latitude, double? longLatitude)
-  async* {
-    getNearestOrderRequestController = StreamController<List<OrderModel>>.broadcast();
+      DriverUserModel driverUserModel, double? latitude, double? longLatitude) async* {
+
+    getNearestOrderRequestController =
+    StreamController<List<OrderModel>>.broadcast();
     List<OrderModel> ordersList = [];
+
     print("Current Driver details are:::😇:");
     print(driverUserModel.serviceId);
     print(driverUserModel.zoneIds);
@@ -520,31 +457,39 @@ class FireStoreUtils {
         .where('serviceId', isEqualTo: driverUserModel.serviceId)
         .where('zoneId', whereIn: driverUserModel.zoneIds)
         .where('status', isEqualTo: Constant.ridePlaced);
+
     print("Docs Found: ${await query.get().then((value) => value.docs.map((value) {
-          print("My value: ${value.data()}");
-        }))}");
+      print("My value: ${value.data()}");
+    }))}");
 
-    GeoFirePoint center =
-        Geoflutterfire().point(latitude: latitude ?? 0.0, longitude: longLatitude ?? 0.0);
-    print("My radius is: ${Constant.radius}");
-    Stream<List<DocumentSnapshot>> stream = Geoflutterfire()
-        .collection(collectionRef: query)
-        .within(
-            center: center,
-            radius: double.parse(Constant.radius),
-            field: 'position',
-            strictMode: false);
-    print("My Stream: ${stream.toString()}");
+    // ❌👇 Ye part ab distance filter ke liye use nahi hoga
+    /*
+  GeoFirePoint center =
+      Geoflutterfire().point(latitude: latitude ?? 0.0, longitude: longLatitude ?? 0.0);
+  print("My radius is: ${Constant.radius}");
+  Stream<List<DocumentSnapshot>> stream = Geoflutterfire()
+      .collection(collectionRef: query)
+      .within(
+          center: center,
+          radius: double.parse(Constant.radius),
+          field: 'position',
+          strictMode: false);
+  print("My Stream: ${stream.toString()}");
+  */
 
-    stream.listen((List<DocumentSnapshot> documentList) {
-      print("My doc list length: ${documentList.length}");
+    // ✅ Simple Firestore stream use kar rahe hain
+    Stream<QuerySnapshot<Map<String, dynamic>>> stream = query.snapshots();
+
+    stream.listen((snapshot) {
+      print("My doc list length: ${snapshot.docs.length}");
       ordersList.clear();
-      for (var document in documentList) {
-        final data = document.data() as Map<String, dynamic>;
+      for (var document in snapshot.docs) {
+        final data = document.data();
         OrderModel orderModel = OrderModel.fromJson(data);
         if (orderModel.acceptedDriverId != null &&
             orderModel.acceptedDriverId!.isNotEmpty) {
-          if (!orderModel.acceptedDriverId!.contains(FireStoreUtils.getCurrentUid())) {
+          if (!orderModel.acceptedDriverId!
+              .contains(FireStoreUtils.getCurrentUid())) {
             ordersList.add(orderModel);
           }
         } else {
@@ -558,6 +503,61 @@ class FireStoreUtils {
 
     yield* getNearestOrderRequestController!.stream;
   }
+
+
+  // Stream<List<OrderModel>> getOrders(
+  //     DriverUserModel driverUserModel, double? latitude, double? longLatitude)
+  // async* {
+  //   getNearestOrderRequestController = StreamController<List<OrderModel>>.broadcast();
+  //   List<OrderModel> ordersList = [];
+  //   print("Current Driver details are:::😇:");
+  //   print(driverUserModel.serviceId);
+  //   print(driverUserModel.zoneIds);
+  //   print(Constant.ridePlaced);
+  //
+  //   Query<Map<String, dynamic>> query = fireStore
+  //       .collection(CollectionName.orders)
+  //       .where('serviceId', isEqualTo: driverUserModel.serviceId)
+  //       .where('zoneId', whereIn: driverUserModel.zoneIds)
+  //       .where('status', isEqualTo: Constant.ridePlaced);
+  //   print("Docs Found: ${await query.get().then((value) => value.docs.map((value) {
+  //         print("My value: ${value.data()}");
+  //       }))}");
+  //
+  //   GeoFirePoint center =
+  //       Geoflutterfire().point(latitude: latitude ?? 0.0, longitude: longLatitude ?? 0.0);
+  //   print("My radius is: ${Constant.radius}");
+  //   Stream<List<DocumentSnapshot>> stream = Geoflutterfire()
+  //       .collection(collectionRef: query)
+  //       .within(
+  //           center: center,
+  //           radius: double.parse(Constant.radius),
+  //           field: 'position',
+  //           strictMode: false);
+  //   print("My Stream: ${stream.toString()}");
+  //
+  //   stream.listen((List<DocumentSnapshot> documentList) {
+  //     print("My doc list length: ${documentList.length}");
+  //     ordersList.clear();
+  //     for (var document in documentList) {
+  //       final data = document.data() as Map<String, dynamic>;
+  //       OrderModel orderModel = OrderModel.fromJson(data);
+  //       if (orderModel.acceptedDriverId != null &&
+  //           orderModel.acceptedDriverId!.isNotEmpty) {
+  //         if (!orderModel.acceptedDriverId!.contains(FireStoreUtils.getCurrentUid())) {
+  //           ordersList.add(orderModel);
+  //         }
+  //       } else {
+  //         ordersList.add(orderModel);
+  //       }
+  //     }
+  //     getNearestOrderRequestController!.sink.add(ordersList);
+  //   });
+  //
+  //   print("🛰️ My Stream: ${stream.toString()}");
+  //
+  //   yield* getNearestOrderRequestController!.stream;
+  // }
 
   StreamController<List<InterCityOrderModel>>? getNearestFreightOrderRequestController;
 
