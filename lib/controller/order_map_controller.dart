@@ -28,7 +28,7 @@ class OrderMapController extends GetxController {
   @override
   void onInit() {
     if (Constant.selectedMapType == 'osm') {
-      ShowToastDialog.showLoader("Please wait").tr;
+      ShowToastDialog.showLoader("Please wait".tr); // ← YAHAN CORRECTION KI HAI
       mapOsmController = MapController(
           initPosition: GeoPoint(latitude: 20.9153, longitude: -100.7439),
           useExternalTracking: false); //OSM
@@ -67,8 +67,8 @@ class OrderMapController extends GetxController {
               token: value.fcmToken.toString(),
               title: 'New Driver Bid'.tr,
               body:
-                  'Driver has offered ${Constant.amountShow(amount: newAmount.value)} for your journey.🚗'
-                      .tr,
+              'Driver has offered ${Constant.amountShow(amount: newAmount.value)} for your journey.🚗'
+                  .tr,
               payload: {});
         }
       });
@@ -139,9 +139,9 @@ class OrderMapController extends GetxController {
   addMarkerSetup() async {
     if (Constant.selectedMapType == 'google') {
       final Uint8List departure =
-          await Constant().getBytesFromAsset('assets/images/pickup.png', 100);
+      await Constant().getBytesFromAsset('assets/images/pickup.png', 100);
       final Uint8List destination =
-          await Constant().getBytesFromAsset('assets/images/dropoff.png', 100);
+      await Constant().getBytesFromAsset('assets/images/dropoff.png', 100);
       departureIcon = BitmapDescriptor.fromBytes(departure);
       destinationIcon = BitmapDescriptor.fromBytes(destination);
     } else {
@@ -198,19 +198,19 @@ class OrderMapController extends GetxController {
 
   movePosition() async {
     double distance = double.parse((prefix.Geolocator.distanceBetween(
-              orderModel.value.sourceLocationLatLng!.latitude ?? 0.0,
-              orderModel.value.sourceLocationLatLng!.longitude ?? 0.0,
-              orderModel.value.destinationLocationLatLng!.latitude ?? 0.0,
-              orderModel.value.destinationLocationLatLng!.longitude ?? 0.0,
-            ) /
-            1609.32)
+      orderModel.value.sourceLocationLatLng!.latitude ?? 0.0,
+      orderModel.value.sourceLocationLatLng!.longitude ?? 0.0,
+      orderModel.value.destinationLocationLatLng!.latitude ?? 0.0,
+      orderModel.value.destinationLocationLatLng!.longitude ?? 0.0,
+    ) /
+        1609.32)
         .toString());
     LatLng center = LatLng(
       (orderModel.value.sourceLocationLatLng!.latitude! +
-              orderModel.value.destinationLocationLatLng!.latitude!) /
+          orderModel.value.destinationLocationLatLng!.latitude!) /
           2,
       (orderModel.value.sourceLocationLatLng!.longitude! +
-              orderModel.value.destinationLocationLatLng!.longitude!) /
+          orderModel.value.destinationLocationLatLng!.longitude!) /
           2,
     );
 
@@ -332,11 +332,11 @@ class OrderMapController extends GetxController {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await mapOsmController!
           .addMarker(departure,
-              markerIcon: MarkerIcon(iconWidget: departureOsmIcon),
-              angle: pi / 3,
-              iconAnchor: IconAnchor(
-                anchor: Anchor.top,
-              ))
+          markerIcon: MarkerIcon(iconWidget: departureOsmIcon),
+          angle: pi / 3,
+          iconAnchor: IconAnchor(
+            anchor: Anchor.top,
+          ))
           .then((v) {
         osmMarkers['Source'] = departure;
       });
@@ -347,11 +347,11 @@ class OrderMapController extends GetxController {
 
       await mapOsmController!
           .addMarker(destination,
-              markerIcon: MarkerIcon(iconWidget: destinationOsmIcon),
-              angle: pi / 3,
-              iconAnchor: IconAnchor(
-                anchor: Anchor.top,
-              ))
+          markerIcon: MarkerIcon(iconWidget: destinationOsmIcon),
+          angle: pi / 3,
+          iconAnchor: IconAnchor(
+            anchor: Anchor.top,
+          ))
           .then((v) {
         osmMarkers['Destination'] = destination;
       });

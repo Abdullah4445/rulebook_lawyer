@@ -25,8 +25,7 @@ class OrderMapScreen extends StatelessWidget {
     return GetX<OrderMapController>(
         init: OrderMapController(),
         builder: (controller) {
-          print(
-              "My current locations is: ${Constant.currentLocation?.longitude.toString()}");
+          print("My current locations is: ${Constant.currentLocation?.longitude.toString()}");
           return Scaffold(
             appBar: AppBar(
               backgroundColor: AppColors.primary,
@@ -41,372 +40,233 @@ class OrderMapScreen extends StatelessWidget {
             body: controller.isLoading.value
                 ? Constant.loader(context)
                 : Column(
-                    children: [
-                      Container(
-                        height: Responsive.width(10, context),
-                        width: Responsive.width(100, context),
-                        color: AppColors.primary,
-                      ),
-                      Expanded(
-                        child: Container(
-                          transform: Matrix4.translationValues(0.0, -20.0, 0.0),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.background,
-                              borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(25),
-                                  topRight: Radius.circular(25))),
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(30),
-                                topRight: Radius.circular(30)),
-                            child: Stack(
-                              children: [
-                                Constant.selectedMapType == 'osm'
-                                    ? myOsm.OSMFlutter(
-                                        controller: controller.mapOsmController ??
-                                            myOsm.MapController(
-                                                initPosition: myOsm.GeoPoint(
-                                                    latitude: 20.9153,
-                                                    longitude: -100.7439),
-                                                useExternalTracking: false),
-                                        osmOption: const myOsm.OSMOption(
-                                          userTrackingOption: myOsm.UserTrackingOption(
-                                            enableTracking: false,
-                                            unFollowUser: false,
-                                          ),
-                                          zoomOption: myOsm.ZoomOption(
-                                            initZoom: 12,
-                                            minZoomLevel: 2,
-                                            maxZoomLevel: 19,
-                                            stepZoom: 1.0,
-                                          ),
-                                          roadConfiguration: myOsm.RoadOption(
-                                            roadColor: Colors.yellowAccent,
-                                          ),
-                                        ),
-                                        onMapIsReady: (active) async {
-                                          if (active) {
-                                            controller
-                                                .getOSMPolyline(themeChange.getThem());
-                                            ShowToastDialog.closeLoader();
-                                          }
-                                        })
-                                    : GoogleMap(
-                                        myLocationEnabled: true,
-                                        myLocationButtonEnabled: true,
-                                        mapType: MapType.terrain,
-                                        zoomControlsEnabled: false,
-                                        polylines:
-                                            Set<Polyline>.of(controller.polyLines.values),
-                                        padding: const EdgeInsets.only(
-                                          top: 22.0,
-                                        ),
-                                        markers:
-                                            Set<Marker>.of(controller.markers.values),
-                                        onMapCreated:
-                                            (GoogleMapController mapController) {
-                                          controller.mapController
-                                              .complete(mapController);
-                                        },
-                                        initialCameraPosition: CameraPosition(
-                                          zoom: 15,
-                                          target: LatLng(
-                                            Constant.currentLocation?.latitude ?? 30.0421,
-                                            Constant.currentLocation?.longitude ??
-                                                72.3524,
-                                          ),
-                                          // target: LatLng(
-                                          //     Constant.currentLocation!.latitude ??
-                                          //         45.521563,
-                                          //     Constant.currentLocation!.longitude ??
-                                          //         -122.677433),
-                                        ),
-                                      ),
-                                Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: themeChange.getThem()
-                                            ? AppColors.darkContainerBackground
-                                            : AppColors.containerBackground,
-                                        borderRadius:
-                                            const BorderRadius.all(Radius.circular(10)),
-                                        border: Border.all(
-                                            color: themeChange.getThem()
-                                                ? AppColors.darkContainerBorder
-                                                : AppColors.containerBorder,
-                                            width: 0.5),
-                                        boxShadow: themeChange.getThem()
-                                            ? null
-                                            : [
-                                                BoxShadow(
-                                                  color: Colors.grey.withOpacity(0.5),
-                                                  blurRadius: 8,
-                                                  offset: const Offset(
-                                                      0, 2), // changes position of shadow
-                                                ),
-                                              ],
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            UserView(
-                                              userId: controller.orderModel.value.userId
-                                                  .toString(),
-                                              amount:
-                                                  controller.orderModel.value.offerRate,
-                                              distance:
-                                                  controller.orderModel.value.distance,
-                                              distanceType: controller
-                                                  .orderModel.value.distanceType,
-                                            ),
-                                            const Padding(
-                                              padding: EdgeInsets.symmetric(vertical: 5),
-                                              child: Divider(),
-                                            ),
-                                            LocationView(
-                                                sourceLocation: controller
-                                                    .orderModel.value.sourceLocationName
-                                                    .toString(),
-                                                destinationLocation: controller
-                                                                .orderModel
-                                                                .value
-                                                                .destinationLocationName ==
-                                                            null ||
-                                                        controller
-                                                            .orderModel
-                                                            .value
-                                                            .destinationLocationName!
-                                                            .isEmpty
-                                                    ? "Taxi Meter Preffered for this ride"
-                                                        .tr
-                                                    : controller.orderModel.value
-                                                        .destinationLocationName
-                                                        .toString()),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Visibility(
-                                              visible: controller.orderModel.value.service
-                                                      ?.offerRate ==
-                                                  true,
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: controller.orderModel.value
-                                                        .destinationLocationName!.isEmpty
-                                                    ? Container()
-                                                    : Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment.center,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment.center,
-                                                        children: [
-                                                          // InkWell(
-                                                          //
-                                                          //   child: Container(
-                                                          //     decoration: BoxDecoration(
-                                                          //         border: Border.all(
-                                                          //             color: AppColors
-                                                          //                 .textFieldBorder),
-                                                          //         borderRadius:
-                                                          //             const BorderRadius.all(
-                                                          //                 Radius.circular(6))),
-                                                          //     child: Padding(
-                                                          //       padding:
-                                                          //           const EdgeInsets.symmetric(
-                                                          //               horizontal: 10,
-                                                          //               vertical: 10),
-                                                          //       child: Text(
-                                                          //         "- 500",
-                                                          //         style: GoogleFonts.poppins(
-                                                          //             color: Colors.black),
-                                                          //       ),
-                                                          //     ),
-                                                          //   ),
-                                                          // ),
-
-                                                          ButtonThem.roundButton(
-                                                            context,
-                                                            title: "- 500",
-                                                            btnWidthRatio: 0.23,
-                                                            onPress: () {
-                                                              if (double.parse(controller
-                                                                      .newAmount.value) >=
-                                                                  10) {
-                                                                controller.newAmount
-                                                                    .value = (double.parse(
-                                                                            controller
-                                                                                .newAmount
-                                                                                .value) -
-                                                                        500)
-                                                                    .toString();
-
-                                                                controller
-                                                                        .enterOfferRateController
-                                                                        .value
-                                                                        .text =
-                                                                    controller
-                                                                        .newAmount.value;
-                                                              } else {
-                                                                controller.newAmount
-                                                                    .value = "0";
-                                                              }
-                                                            },
-                                                          ),
-
-                                                          const SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          Text(
-                                                              Constant.amountShow(
-                                                                  amount: controller
-                                                                      .newAmount.value
-                                                                      .toString()),
-                                                              style:
-                                                                  GoogleFonts.poppins()),
-                                                          const SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          ButtonThem.roundButton(
-                                                            context,
-                                                            title: "+ 500",
-                                                            btnWidthRatio: 0.23,
-                                                            onPress: () {
-                                                              controller.newAmount
-                                                                  .value = (double.parse(
-                                                                          controller
-                                                                              .newAmount
-                                                                              .value) +
-                                                                      500)
-                                                                  .toStringAsFixed(Constant
-                                                                      .currencyModel!
-                                                                      .decimalDigits!);
-                                                              controller
-                                                                      .enterOfferRateController
-                                                                      .value
-                                                                      .text =
-                                                                  controller
-                                                                      .newAmount.value;
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Visibility(
-                                              visible: controller.orderModel.value.service
-                                                      ?.offerRate ==
-                                                  true,
-                                              child: TextFieldThem
-                                                  .buildTextFiledWithPrefixIcon(
-                                                context,
-                                                hintText: controller.orderModel.value
-                                                        .destinationLocationName!.isEmpty
-                                                    ? "Enter Taxi Meter rate"
-                                                    : "Enter Fare rate".tr,
-                                                controller: controller
-                                                    .enterOfferRateController.value,
-                                                keyBoardType:
-                                                    const TextInputType.numberWithOptions(
-                                                        decimal: true, signed: false),
-                                                onChanged: (value) {
-                                                  if (value.isEmpty) {
-                                                    controller.newAmount.value = "0.0";
-                                                  } else {
-                                                    controller.newAmount.value = value;
-                                                  }
-                                                },
-                                                prefix: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(right: 10),
-                                                  child: Text(Constant
-                                                      .currencyModel!.symbol
-                                                      .toString()),
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            ButtonThem.buildButton(
-                                              context,
-                                              title:
-                                                  "Accept fare on  ${Constant.amountShow(amount: controller.newAmount.value)}"
-                                                      .tr,
-                                              onPress: () async {
-                                                if (controller
-                                                        .newAmount.value.isNotEmpty &&
-                                                    double.parse(controller
-                                                            .newAmount.value
-                                                            .toString()) >
-                                                        -1) {
-                                                  if (controller.driverModel.value
-                                                          .subscriptionTotalOrders ==
-                                                      "-1") {
-                                                    controller.acceptOrder();
-                                                  } else {
-                                                    if (Constant.isSubscriptionModelApplied ==
-                                                            false &&
-                                                        Constant.adminCommission!
-                                                                .isEnabled ==
-                                                            false) {
-                                                      controller.acceptOrder();
-                                                    } else {
-                                                      if ((controller.driverModel.value
-                                                                      .subscriptionExpiryDate !=
-                                                                  null &&
-                                                              controller.driverModel.value
-                                                                      .subscriptionExpiryDate!
-                                                                      .toDate()
-                                                                      .isBefore(DateTime
-                                                                          .now()) ==
-                                                                  false) ||
-                                                          controller
-                                                                  .driverModel
-                                                                  .value
-                                                                  .subscriptionPlan
-                                                                  ?.expiryDay ==
-                                                              '-1') {
-                                                        if (controller.driverModel.value
-                                                                .subscriptionTotalOrders !=
-                                                            '0') {
-                                                          controller.acceptOrder();
-                                                        } else {
-                                                          ShowToastDialog.showToast(
-                                                              "Your order limit has reached their maximum order capacity. Please subscribe another subscription");
-                                                        }
-                                                      } else {
-                                                        ShowToastDialog.showToast(
-                                                            "Your order limit has reached their maximum order capacity. Please subscribe another subscription");
-                                                      }
-                                                    }
-                                                  }
-                                                } else {
-                                                  ShowToastDialog.showToast(
-                                                      "Please enter valid offer rate".tr);
-                                                }
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+              children: [
+                Container(
+                  height: Responsive.width(10, context),
+                  width: Responsive.width(100, context),
+                  color: AppColors.primary,
+                ),
+                Expanded(
+                  child: Container(
+                    transform: Matrix4.translationValues(0.0, -20.0, 0.0),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.background,
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(25),
+                            topRight: Radius.circular(25))),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30)),
+                      child: Stack(
+                        children: [
+                          Constant.selectedMapType == 'osm'
+                              ? myOsm.OSMFlutter(
+                              controller: controller.mapOsmController ??
+                                  myOsm.MapController(
+                                      initPosition: myOsm.GeoPoint(
+                                          latitude: 20.9153,
+                                          longitude: -100.7439),
+                                      useExternalTracking: false),
+                              osmOption: const myOsm.OSMOption(
+                                userTrackingOption: myOsm.UserTrackingOption(
+                                  enableTracking: false,
+                                  unFollowUser: false,
                                 ),
-                              ],
+                                zoomOption: myOsm.ZoomOption(
+                                  initZoom: 12,
+                                  minZoomLevel: 2,
+                                  maxZoomLevel: 19,
+                                  stepZoom: 1.0,
+                                ),
+                                roadConfiguration: myOsm.RoadOption(
+                                  roadColor: Colors.yellowAccent,
+                                ),
+                              ),
+                              onMapIsReady: (active) async {
+                                if (active) {
+                                  controller.getOSMPolyline(themeChange.getThem());
+                                  ShowToastDialog.closeLoader();
+                                }
+                              })
+                              : GoogleMap(
+                            myLocationEnabled: true,
+                            myLocationButtonEnabled: true,
+                            mapType: MapType.terrain,
+                            zoomControlsEnabled: false,
+                            polylines: Set<Polyline>.of(controller.polyLines.values),
+                            padding: const EdgeInsets.only(
+                              top: 22.0,
+                            ),
+                            markers: Set<Marker>.of(controller.markers.values),
+                            onMapCreated: (GoogleMapController mapController) {
+                              controller.mapController.complete(mapController);
+                            },
+                            initialCameraPosition: CameraPosition(
+                              zoom: 15,
+                              target: LatLng(
+                                Constant.currentLocation?.latitude ?? 30.0421,
+                                Constant.currentLocation?.longitude ?? 72.3524,
+                              ),
                             ),
                           ),
-                        ),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: themeChange.getThem()
+                                      ? AppColors.darkContainerBackground
+                                      : AppColors.containerBackground,
+                                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                  border: Border.all(
+                                      color: themeChange.getThem()
+                                          ? AppColors.darkContainerBorder
+                                          : AppColors.containerBorder,
+                                      width: 0.5),
+                                  boxShadow: themeChange.getThem()
+                                      ? null
+                                      : [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      UserView(
+                                        userId: controller.orderModel.value.userId.toString(),
+                                        amount: controller.orderModel.value.offerRate,
+                                        distance: controller.orderModel.value.distance,
+                                        distanceType: controller.orderModel.value.distanceType,
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 5),
+                                        child: Divider(),
+                                      ),
+                                      LocationView(
+                                          sourceLocation: controller.orderModel.value.sourceLocationName.toString(),
+                                          destinationLocation: controller.orderModel.value.destinationLocationName == null ||
+                                              (controller.orderModel.value.destinationLocationName?.isEmpty ?? true) // ← NULL SAFE CHECK
+                                              ? "Taxi Meter Preffered for this ride".tr
+                                              : controller.orderModel.value.destinationLocationName.toString()),
+                                      const SizedBox(height: 10),
+                                      Visibility(
+                                        visible: controller.orderModel.value.service?.offerRate == true,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: (controller.orderModel.value.destinationLocationName?.isEmpty ?? true) // ← NULL SAFE CHECK
+                                              ? Container()
+                                              : Row(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              ButtonThem.roundButton(
+                                                context,
+                                                title: "- 500",
+                                                btnWidthRatio: 0.23,
+                                                onPress: () {
+                                                  if (bool.tryParse(controller.newAmount.value) ?? 0 >= 10) {
+                                                    controller.newAmount.value = ((double.tryParse(controller.newAmount.value) ?? 0) - 500).toString();
+                                                    controller.enterOfferRateController.value.text = controller.newAmount.value;
+                                                  } else {
+                                                    controller.newAmount.value = "0";
+                                                  }
+                                                },
+                                              ),
+                                              const SizedBox(width: 20),
+                                              Text(
+                                                  Constant.amountShow(amount: controller.newAmount.value.toString()),
+                                                  style: GoogleFonts.poppins()),
+                                              const SizedBox(width: 20),
+                                              ButtonThem.roundButton(
+                                                context,
+                                                title: "+ 500",
+                                                btnWidthRatio: 0.23,
+                                                onPress: () {
+                                                  final decimalDigits = Constant.currencyModel?.decimalDigits ?? 2; // ← NULL SAFE
+                                                  controller.newAmount.value = ((double.tryParse(controller.newAmount.value) ?? 0) + 500).toStringAsFixed(decimalDigits);
+                                                  controller.enterOfferRateController.value.text = controller.newAmount.value;
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Visibility(
+                                        visible: controller.orderModel.value.service?.offerRate == true,
+                                        child: TextFieldThem.buildTextFiledWithPrefixIcon(
+                                          context,
+                                          hintText: (controller.orderModel.value.destinationLocationName?.isEmpty ?? true) // ← NULL SAFE CHECK
+                                              ? "Enter Taxi Meter rate"
+                                              : "Enter Fare rate".tr,
+                                          controller: controller.enterOfferRateController.value,
+                                          keyBoardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                          onChanged: (value) {
+                                            controller.newAmount.value = value.isEmpty ? "0.0" : value;
+                                          },
+                                          prefix: Padding(
+                                            padding: const EdgeInsets.only(right: 10),
+                                            child: Text(Constant.currencyModel?.symbol ?? ''), // ← NULL SAFE
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      ButtonThem.buildButton(
+                                        context,
+                                        title: "Accept fare on ${Constant.amountShow(amount: controller.newAmount.value)}".tr,
+                                        onPress: () async {
+                                          final amountValue = double.tryParse(controller.newAmount.value) ?? -1;
+                                          if (controller.newAmount.value.isNotEmpty && amountValue > -1) {
+                                            if (controller.driverModel.value.subscriptionTotalOrders == "-1") {
+                                              controller.acceptOrder();
+                                            } else {
+                                              final isSubscriptionApplied = Constant.isSubscriptionModelApplied == false;
+                                              final isCommissionEnabled = Constant.adminCommission?.isEnabled == false; // ← NULL SAFE
+
+                                              if (isSubscriptionApplied && isCommissionEnabled) {
+                                                controller.acceptOrder();
+                                              } else {
+                                                final hasValidSubscription = controller.driverModel.value.subscriptionExpiryDate != null &&
+                                                    controller.driverModel.value.subscriptionExpiryDate!.toDate().isAfter(DateTime.now()) ||
+                                                    controller.driverModel.value.subscriptionPlan?.expiryDay == '-1';
+
+                                                if (hasValidSubscription) {
+                                                  if (controller.driverModel.value.subscriptionTotalOrders != '0') {
+                                                    controller.acceptOrder();
+                                                  } else {
+                                                    ShowToastDialog.showToast("Your order limit has reached their maximum order capacity. Please subscribe another subscription");
+                                                  }
+                                                } else {
+                                                  ShowToastDialog.showToast("Your order limit has reached their maximum order capacity. Please subscribe another subscription");
+                                                }
+                                              }
+                                            }
+                                          } else {
+                                            ShowToastDialog.showToast("Please enter valid offer rate".tr);
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
+                ),
+              ],
+            ),
           );
         });
   }
