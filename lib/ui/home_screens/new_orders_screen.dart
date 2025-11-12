@@ -77,6 +77,7 @@ class NewOrderScreen extends StatelessWidget {
                         children: [
                           InkWell(
                             onTap: () {
+                              print("saim beta");
                               Get.to(const OrderMapScreen(), arguments: {
                                 "orderModel": orderModel.id.toString()
                               })?.then((value) {

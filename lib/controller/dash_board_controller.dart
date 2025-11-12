@@ -30,35 +30,36 @@ class DashBoardController extends GetxController {
           return const HomeScreen();
         // case 1:
         //   return const OrderScreen();
-        case 1:
-          return const HomeIntercityScreen();
+        // case 1:
+        //   return const HomeIntercityScreen();
         // case 2:
         //   return const OrderIntercityScreen();
-        case 2:
-          return const FreightScreen();
-        case 3:
+        // case 2:
+        //   return const
+        //   FreightScreen();
+        case 1:
           return const WalletScreen();
-        case 4:
+        case 2:
           return const BankDetailsScreen();
-        case 5:
+        case 3:
           return const InboxScreen();
-        case 6:
+        case 4:
           return const ProfileScreen();
-        case 7:
+        case 5:
           return const OnlineRegistrationScreen();
-        case 8:
+        case 6:
           return const VehicleInformationScreen();
-        case 9:
+        case 7:
           return const SettingScreen();
-        case 10:
+        case 8:
           return const SubscriptionListScreen();
-        case 11:
+        case 9:
           return const SubscriptionHistory();
-        case 12:
+        case 10:
           return const TermsAndConditionScreen(
             type: 'terms',
           );
-        case 13:
+        case 11:
           return const TermsAndConditionScreen(
             type: 'privacy',
           );
@@ -150,7 +151,7 @@ class DashBoardController extends GetxController {
         DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
         DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"),
-        DrawerItem('Vehicle Information'.tr, "assets/icons/ic_city.svg"),
+        DrawerItem('Lawyer Information'.tr, "assets/icons/ic_city.svg"),
         DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
         DrawerItem('Subscription'.tr, "assets/icons/ic_subscription.svg"),
         DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
@@ -170,7 +171,7 @@ class DashBoardController extends GetxController {
         DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
         DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"),
-        DrawerItem('Vehicle Information'.tr, "assets/icons/ic_city.svg"),
+        DrawerItem('Lawyer Information'.tr, "assets/icons/ic_city.svg"),
         DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
         DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
         DrawerItem('Terms and Conditions', "assets/icons/ic_terms.svg"),
