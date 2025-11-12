@@ -119,9 +119,9 @@ class OrderScreen extends StatelessWidget {
                                             const SizedBox(
                                               height: 10,
                                             ),
-                                            orderModel.status == Constant.rideComplete ||
+                                            orderModel.status == Constant.caseComplete ||
                                                     orderModel.status ==
-                                                        Constant.rideActive
+                                                        Constant.caseActive
                                                 ? Container(
                                                     decoration: BoxDecoration(
                                                         color: themeChange.getThem()
@@ -219,7 +219,7 @@ class OrderScreen extends StatelessWidget {
                                                 ),
                                                 Visibility(
                                                   visible: orderModel.status ==
-                                                          Constant.rideComplete
+                                                          Constant.caseComplete
                                                       ? false
                                                       : true,
                                                   child: Row(
@@ -332,7 +332,7 @@ class OrderScreen extends StatelessWidget {
                                                         "Please wait..".tr);
                                                     orderModel.paymentStatus = true;
                                                     orderModel.status =
-                                                        Constant.rideComplete;
+                                                        Constant.caseComplete;
                                                     orderModel.updateDate =
                                                         Timestamp.now();
 

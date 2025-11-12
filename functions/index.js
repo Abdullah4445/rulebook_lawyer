@@ -249,7 +249,7 @@ exports.createRideFromWebhook = functions.https.onRequest(async (req, res) => {
 //      destinationLocationLatLng: new admin.firestore.GeoPoint(data.destination.latitude, data.destination.longitude),
       sourceLocationName: "Source via WhatsApp",
       destinationLocationName: "Destination via WhatsApp",
-      status: "Ride Placed",
+      status: "Case Placed",
       driverId: null,
       acceptedDriverId: null,
       rejectedDriverId: null,

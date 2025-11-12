@@ -78,7 +78,7 @@ class HomeController extends GetxController {
     FirebaseFirestore.instance
         .collection(CollectionName.orders)
         .where('driverId', isEqualTo: FireStoreUtils.getCurrentUid())
-        .where('status', whereIn: [Constant.rideInProgress, Constant.rideActive])
+        .where('status', whereIn: [Constant.caseInProgress, Constant.caseActive])
         .snapshots()
         .listen((event) {
       isActiveValue.value = event.size;
@@ -90,7 +90,7 @@ class HomeController extends GetxController {
   void getAvailableRides() {
     FirebaseFirestore.instance
         .collection(CollectionName.orders)
-        .where('status', isEqualTo: "ride Placed")
+        .where('status', isEqualTo: "Case Placed")
         .where('driverId', isNull: true)
         .snapshots()
         .listen((event) {

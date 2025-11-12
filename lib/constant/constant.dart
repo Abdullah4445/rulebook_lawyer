@@ -66,11 +66,11 @@ class Constant {
 
   static CurrencyModel? currencyModel;
 
-  static const String ridePlaced = "ride Placed";
-  static const String rideActive = "Ride Active";
-  static const String rideInProgress = "Ride InProgress";
-  static const String rideComplete = "Ride Completed";
-  static const String rideCanceled = "Ride Canceled";
+  static const String casePlaced = "Case Placed";
+  static const String caseActive = "Case Active";
+  static const String caseInProgress = "Case InProgress";
+  static const String caseComplete = "Case Completed";
+  static const String caseCanceled = "Case Canceled";
 
   static DriverUserModel? currentDriverUser;
 

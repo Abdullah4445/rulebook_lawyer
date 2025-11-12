@@ -58,8 +58,8 @@ class ActiveIntercityOrderScreen extends StatelessWidget {
                             .collection(CollectionName.ordersIntercity)
                             .where('driverId', isEqualTo: FireStoreUtils.getCurrentUid())
                             .where('status', whereIn: [
-                          Constant.rideInProgress,
-                          Constant.rideActive
+                          Constant.caseInProgress,
+                          Constant.caseActive
                         ]).snapshots(),
                         builder: (BuildContext context,
                             AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -85,9 +85,9 @@ class ActiveIntercityOrderScreen extends StatelessWidget {
                                     return InkWell(
                                       onTap: () {
                                         if (Constant.mapType == "inappmap") {
-                                          if (orderModel.status == Constant.rideActive ||
+                                          if (orderModel.status == Constant.caseActive ||
                                               orderModel.status ==
-                                                  Constant.rideInProgress) {
+                                                  Constant.caseInProgress) {
                                             Get.to(LiveTrackingScreen(), arguments: {
                                               "interCityOrderModel": orderModel,
                                               "type": "interCityOrderModel",
@@ -95,7 +95,7 @@ class ActiveIntercityOrderScreen extends StatelessWidget {
                                           }
                                         } else {
                                           if (orderModel.status ==
-                                              Constant.rideInProgress) {
+                                              Constant.caseInProgress) {
                                             Utils.redirectMap(
                                                 curName: orderModel.sourceLocationName!,
                                                 curLat: orderModel
@@ -309,7 +309,7 @@ class ActiveIntercityOrderScreen extends StatelessWidget {
                                                   children: [
                                                     Expanded(
                                                       child: orderModel.status ==
-                                                              Constant.rideInProgress
+                                                              Constant.caseInProgress
                                                           ? ButtonThem.buildBorderButton(
                                                               context,
                                                               title: "Complete Ride".tr,
@@ -317,7 +317,7 @@ class ActiveIntercityOrderScreen extends StatelessWidget {
                                                               iconVisibility: false,
                                                               onPress: () async {
                                                                 orderModel.status =
-                                                                    Constant.rideComplete;
+                                                                    Constant.caseComplete;
 
                                                                 await FireStoreUtils
                                                                         .getCustomer(
@@ -553,7 +553,7 @@ class ActiveIntercityOrderScreen extends StatelessWidget {
               if (orderModel.otp.toString() == controller.otpController.value.text) {
                 Get.back();
                 ShowToastDialog.showLoader("Please wait...".tr);
-                orderModel.status = Constant.rideInProgress;
+                orderModel.status = Constant.caseInProgress;
 
                 await FireStoreUtils.getCustomer(orderModel.userId.toString())
                     .then((value) async {

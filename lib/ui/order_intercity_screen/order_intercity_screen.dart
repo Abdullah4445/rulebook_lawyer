@@ -119,7 +119,7 @@ class OrderIntercityScreen extends StatelessWidget {
                                                       const SizedBox(
                                                         height: 10,
                                                       ),
-                                                      orderModel.status == Constant.rideComplete || orderModel.status == Constant.rideActive
+                                                      orderModel.status == Constant.caseComplete || orderModel.status == Constant.caseActive
                                                           ? Container(
                                                               decoration: BoxDecoration(
                                                                   color: themeChange.getThem() ? AppColors.darkGray : AppColors.gray,
@@ -174,7 +174,7 @@ class OrderIntercityScreen extends StatelessWidget {
                                                             width: 10,
                                                           ),
                                                           Visibility(
-                                                            visible: orderModel.status == Constant.rideComplete ? false : true,
+                                                            visible: orderModel.status == Constant.caseComplete ? false : true,
                                                             child: Row(
                                                               children: [
                                                                 InkWell(
@@ -246,7 +246,7 @@ class OrderIntercityScreen extends StatelessWidget {
                                                             onPress: () async {
                                                               ShowToastDialog.showLoader("Please wait..".tr);
                                                               orderModel.paymentStatus = true;
-                                                              orderModel.status = Constant.rideComplete;
+                                                              orderModel.status = Constant.caseComplete;
                                                               orderModel.updateDate = Timestamp.now();
 
                                                               String? couponAmount = "0.0";

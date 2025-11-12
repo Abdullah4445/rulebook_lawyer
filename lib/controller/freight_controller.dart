@@ -112,7 +112,7 @@ class FreightController extends GetxController {
     FirebaseFirestore.instance
         .collection(CollectionName.ordersIntercity)
         .where('driverId', isEqualTo: FireStoreUtils.getCurrentUid())
-        .where('status', whereIn: [Constant.rideInProgress, Constant.rideActive])
+        .where('status', whereIn: [Constant.caseInProgress, Constant.caseActive])
         .snapshots()
         .listen((event) {
       isActiveValue.value = event.size;

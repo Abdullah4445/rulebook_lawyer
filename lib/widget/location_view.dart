@@ -23,8 +23,8 @@ class LocationView extends StatelessWidget {
         Column(
           children: [
             SvgPicture.asset(themeChange.getThem() ? 'assets/icons/ic_source_dark.svg' : 'assets/icons/ic_source.svg', width: 18),
-            Dash(direction: Axis.vertical, length: Responsive.height(5, context), dashLength: 12, dashColor: AppColors.dottedDivider),
-            SvgPicture.asset(themeChange.getThem() ? 'assets/icons/ic_destination_dark.svg' : 'assets/icons/ic_destination.svg', width: 20),
+            // Dash(direction: Axis.vertical, length: Responsive.height(5, context), dashLength: 12, dashColor: AppColors.dottedDivider),
+            // SvgPicture.asset(themeChange.getThem() ? 'assets/icons/ic_destination_dark.svg' : 'assets/icons/ic_destination.svg', width: 20),
           ],
         ),
         const SizedBox(
@@ -39,11 +39,11 @@ class LocationView extends StatelessWidget {
                   height: calculateLineWraps(text: sourceLocation.toString(), textStyle: TextStyle(), maxWidth: Responsive.width(80, context)) == 2
                       ? Responsive.height(2.2, context)
                       : Responsive.height(4.4, context)),
-              Text(
-                destinationLocation.toString(),
-                maxLines: 2,
-                style: GoogleFonts.poppins(color: Colors.black),
-              )
+              // Text(
+              //   destinationLocation.toString(),
+              //   maxLines: 2,
+              //   style: GoogleFonts.poppins(color: Colors.black),
+              // )
             ],
           ),
         ),

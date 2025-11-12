@@ -94,7 +94,7 @@ class IntercityController extends GetxController {
             .where('destinationCity', isEqualTo: destinationCityController.value.text)
             .where('intercityServiceId', isNotEqualTo: "Kn2VEnPI3ikF58uK8YqY")
             .where('zoneId', whereIn: driverModel.value.zoneIds)
-            .where('status', isEqualTo: Constant.ridePlaced)
+            .where('status', isEqualTo: Constant.casePlaced)
             .get()
             .then((value) {
           isLoading.value = false;
@@ -119,7 +119,7 @@ class IntercityController extends GetxController {
             .where('intercityServiceId', isNotEqualTo: "Kn2VEnPI3ikF58uK8YqY")
             .where('whenDates', isEqualTo: DateFormat("dd-MMM-yyyy").format(dateAndTime!))
             .where('zoneId', whereIn: driverModel.value.zoneIds)
-            .where('status', isEqualTo: Constant.ridePlaced)
+            .where('status', isEqualTo: Constant.casePlaced)
             .get()
             .then((value) {
           isLoading.value = false;
@@ -143,7 +143,7 @@ class IntercityController extends GetxController {
             .where('sourceCity', isEqualTo: sourceCityController.value.text)
             .where('intercityServiceId', isNotEqualTo: "Kn2VEnPI3ikF58uK8YqY")
             .where('zoneId', whereIn: driverModel.value.zoneIds)
-            .where('status', isEqualTo: Constant.ridePlaced)
+            .where('status', isEqualTo: Constant.casePlaced)
             .get()
             .then((value) {
           isLoading.value = false;
@@ -165,7 +165,7 @@ class IntercityController extends GetxController {
             .where('sourceCity', isEqualTo: sourceCityController.value.text)
             .where('intercityServiceId', isNotEqualTo: "Kn2VEnPI3ikF58uK8YqY")
             .where('whenDates', isEqualTo: DateFormat("dd-MMM-yyyy").format(dateAndTime!))
-            .where('status', isEqualTo: Constant.ridePlaced)
+            .where('status', isEqualTo: Constant.casePlaced)
             .get()
             .then((value) {
           isLoading.value = false;

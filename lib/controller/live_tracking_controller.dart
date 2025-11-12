@@ -138,7 +138,7 @@ class LiveTrackingController extends GetxController {
               if (event.data() != null) {
                 driverUserModel.value = DriverUserModel.fromJson(event.data()!);
                 if (Constant.selectedMapType != 'osm') {
-                  if (orderModel.value.status == Constant.rideInProgress) {
+                  if (orderModel.value.status == Constant.caseInProgress) {
                     getPolyline(
                         sourceLatitude: driverUserModel.value.location!.latitude,
                         sourceLongitude: driverUserModel.value.location!.longitude,
@@ -156,7 +156,7 @@ class LiveTrackingController extends GetxController {
                             orderModel.value.sourceLocationLatLng!.longitude);
                   }
                 } else {
-                  if (orderModel.value.status == Constant.rideInProgress) {
+                  if (orderModel.value.status == Constant.caseInProgress) {
                     getOSMPolyline(
                       GeoPoint(
                           latitude: driverUserModel.value.location!.latitude!,
@@ -206,7 +206,7 @@ class LiveTrackingController extends GetxController {
               }
             });
 
-            if (orderModel.value.status == Constant.rideComplete) {
+            if (orderModel.value.status == Constant.caseComplete) {
               Get.back();
             }
           }
@@ -231,7 +231,7 @@ class LiveTrackingController extends GetxController {
               if (event.data() != null) {
                 driverUserModel.value = DriverUserModel.fromJson(event.data()!);
                 if (Constant.selectedMapType != 'osm') {
-                  if (intercityOrderModel.value.status == Constant.rideInProgress) {
+                  if (intercityOrderModel.value.status == Constant.caseInProgress) {
                     getPolyline(
                         sourceLatitude: driverUserModel.value.location!.latitude,
                         sourceLongitude: driverUserModel.value.location!.longitude,
@@ -249,7 +249,7 @@ class LiveTrackingController extends GetxController {
                             intercityOrderModel.value.sourceLocationLatLng!.longitude);
                   }
                 } else {
-                  if (intercityOrderModel.value.status == Constant.rideInProgress) {
+                  if (intercityOrderModel.value.status == Constant.caseInProgress) {
                     getOSMPolyline(
                       GeoPoint(
                           latitude: driverUserModel.value.location!.latitude!,
@@ -311,7 +311,7 @@ class LiveTrackingController extends GetxController {
               }
             });
 
-            if (intercityOrderModel.value.status == Constant.rideComplete) {
+            if (intercityOrderModel.value.status == Constant.caseComplete) {
               Get.back();
             }
           }

@@ -41,8 +41,8 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                   .where('driverId', isEqualTo: FireStoreUtils.getCurrentUid())
                   .where('intercityServiceId', isEqualTo: "Kn2VEnPI3ikF58uK8YqY")
                   .where('status', whereIn: [
-                Constant.rideInProgress,
-                Constant.rideActive
+                Constant.caseInProgress,
+                Constant.caseActive
               ]).snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
@@ -65,8 +65,8 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                           return InkWell(
                             onTap: () {
                               if (Constant.mapType == "inappmap") {
-                                if (orderModel.status == Constant.rideActive ||
-                                    orderModel.status == Constant.rideInProgress) {
+                                if (orderModel.status == Constant.caseActive ||
+                                    orderModel.status == Constant.caseInProgress) {
                                   Get.to(LiveTrackingScreen(), arguments: {
                                     "interCityOrderModel": orderModel,
                                     "type": "interCityOrderModel",
@@ -252,7 +252,7 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                         children: [
                                           Expanded(
                                             child: orderModel.status ==
-                                                    Constant.rideInProgress
+                                                    Constant.caseInProgress
                                                 ? ButtonThem.buildBorderButton(
                                                     context,
                                                     title: "Complete Order".tr,
@@ -260,7 +260,7 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                                                     iconVisibility: false,
                                                     onPress: () async {
                                                       orderModel.status =
-                                                          Constant.rideComplete;
+                                                          Constant.caseComplete;
 
                                                       await FireStoreUtils.getCustomer(
                                                               orderModel.userId
@@ -467,7 +467,7 @@ class ActiveFreightOrderScreen extends StatelessWidget {
               if (orderModel.otp.toString() == controller.otpController.value.text) {
                 Get.back();
                 ShowToastDialog.showLoader("Please wait...".tr);
-                orderModel.status = Constant.rideInProgress;
+                orderModel.status = Constant.caseInProgress;
 
                 await FireStoreUtils.getCustomer(orderModel.userId.toString())
                     .then((value) async {

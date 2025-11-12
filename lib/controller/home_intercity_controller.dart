@@ -55,7 +55,7 @@ class HomeIntercityController extends GetxController {
         .collection(CollectionName.ordersIntercity)
         .where('driverId', isEqualTo: FireStoreUtils.getCurrentUid())
         .where('intercityServiceId', isNotEqualTo: "Kn2VEnPI3ikF58uK8YqY")
-        .where('status', whereIn: [Constant.rideInProgress, Constant.rideActive])
+        .where('status', whereIn: [Constant.caseInProgress, Constant.caseActive])
         .snapshots()
         .listen((event) {
       isActiveValue.value = event.size;

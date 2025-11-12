@@ -38,6 +38,8 @@ import 'package:driver/widget/geoflutterfire/src/models/point.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class FireStoreUtils {
   static FirebaseFirestore fireStore = FirebaseFirestore.instance;
@@ -441,7 +443,8 @@ class FireStoreUtils {
     }
   }
   Stream<List<OrderModel>> getOrders(
-      DriverUserModel driverUserModel, double? latitude, double? longLatitude) async* {
+      DriverUserModel driverUserModel, double? latitude, double? longLatitude)
+  async* {
 
     getNearestOrderRequestController =
     StreamController<List<OrderModel>>.broadcast();
@@ -450,13 +453,13 @@ class FireStoreUtils {
     print("Current Driver details are:::😇:");
     print(driverUserModel.serviceId);
     print(driverUserModel.zoneIds);
-    print(Constant.ridePlaced);
+    print(Constant.casePlaced);
 
     Query<Map<String, dynamic>> query = fireStore
         .collection(CollectionName.orders)
         .where('serviceId', isEqualTo: driverUserModel.serviceId)
         .where('zoneId', whereIn: driverUserModel.zoneIds)
-        .where('status', isEqualTo: Constant.ridePlaced);
+        .where('status', isEqualTo: Constant.casePlaced);
 
     print("Docs Found: ${await query.get().then((value) => value.docs.map((value) {
       print("My value: ${value.data()}");
@@ -569,7 +572,7 @@ class FireStoreUtils {
     Query<Map<String, dynamic>> query = fireStore
         .collection(CollectionName.ordersIntercity)
         .where('intercityServiceId', isEqualTo: "Kn2VEnPI3ikF58uK8YqY")
-        .where('status', isEqualTo: Constant.ridePlaced);
+        .where('status', isEqualTo: Constant.casePlaced);
     GeoFirePoint center =
         Geoflutterfire().point(latitude: latitude ?? 0.0, longitude: longLatitude ?? 0.0);
     Stream<List<DocumentSnapshot>> stream = Geoflutterfire()
@@ -1178,3 +1181,7 @@ class FireStoreUtils {
     return subscriptionHistoryList;
   }
 }
+
+
+
+
