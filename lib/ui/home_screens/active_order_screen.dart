@@ -42,8 +42,8 @@ class ActiveOrderScreen extends StatelessWidget {
                   .collection(CollectionName.orders)
                   .where('driverId', isEqualTo: FireStoreUtils.getCurrentUid())
                   .where('status', whereIn: [
-                Constant.rideInProgress,
-                Constant.rideActive
+                Constant.caseInProgress,
+                Constant.caseActive
               ]).snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
@@ -73,22 +73,22 @@ class ActiveOrderScreen extends StatelessWidget {
                       print(orderModel.sourceLocationLatLng?.latitude.toString());
                       print(orderModel.sourceLocationLatLng?.longitude.toString());
 
-                      if ((orderModel.status == Constant.rideInProgress ||
-                          orderModel.status == Constant.rideActive)) {
+                      if ((orderModel.status == Constant.caseInProgress ||
+                          orderModel.status == Constant.caseActive)) {
                         controller.startLocationUpdates(orderModel);
                       }
                       return InkWell(
                         onTap: () {
                           if (Constant.mapType == "inappmap") {
-                            if (orderModel.status == Constant.rideActive ||
-                                orderModel.status == Constant.rideInProgress) {
+                            if (orderModel.status == Constant.caseActive ||
+                                orderModel.status == Constant.caseInProgress) {
                               Get.to(LiveTrackingScreen(), arguments: {
                                 "orderModel": orderModel,
                                 "type": "orderModel",
                               });
                             }
                           } else {
-                            if (orderModel.status == Constant.rideInProgress) {
+                            if (orderModel.status == Constant.caseInProgress) {
                               Utils.redirectMap(
                                   curName: orderModel.sourceLocationName!,
                                   curLat:
@@ -216,7 +216,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                     children: [
                                       Expanded(
                                         child: orderModel.status ==
-                                            Constant.rideInProgress
+                                            Constant.caseInProgress
                                             ? ButtonThem.buildBorderButton(
                                           context,
                                           title: "Complete Ride".tr,
@@ -224,7 +224,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                           iconVisibility: false,
                                           onPress: () async {
                                             orderModel.status =
-                                                Constant.rideComplete;
+                                                Constant.caseComplete;
 
                                             controller.stopLocationUpdates();
 
@@ -478,7 +478,7 @@ class ActiveOrderScreen extends StatelessWidget {
               if (orderModel.otp.toString() == controller.otpController.value.text) {
                 Get.back();
                 ShowToastDialog.showLoader("Please wait...".tr);
-                orderModel.status = Constant.rideInProgress;
+                orderModel.status = Constant.caseInProgress;
 
                 await FireStoreUtils.getCustomer(orderModel.userId.toString())
                     .then((value) async {
@@ -546,7 +546,7 @@ Future<void> _notifyCustomerAndCancelOrder(OrderModel orderModel) async {
   }
 
   // 2. THEN update order status to Canceled
-  orderModel.status = Constant.rideCanceled;
+  orderModel.status = Constant.caseCanceled;
   // Clear any driver associations as the ride is cancelled
   orderModel.acceptedDriverId = []; // Clear list of accepted drivers
   orderModel.driverId = null; // No active driver after cancellation
