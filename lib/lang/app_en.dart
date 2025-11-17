@@ -246,7 +246,7 @@ const Map<String, String> enUS = {
   'Inbox': 'Inbox',
   'Profile': 'Profile',
   'Online Registration': 'Online Registration',
-  'Vehicle Information': 'Vehicle Information',
+  'Lawyer Information': 'Lawyer Information',
   'Settings': 'Settings',
   'Log out': 'Log out',
   'Please enter valid offer rate': 'Please enter valid offer rate',
@@ -273,5 +273,13 @@ const Map<String, String> enUS = {
   'cancel_ride_message': 'Are you sure you want to cancel this ride?',
   'ride_cancelled_title': "Ride was cancelled by driver!",
   'ride_cancelled_body_customer':
-      "Sorry for inconvenience! But Ride was cancelled by driver!"
+      "Sorry for inconvenience! But Ride was cancelled by driver!",
+  'Taxi Meter Preffered for this ride': 'Taxi Meter Preffered for this ride',
+  'notification_sent': 'Notification sent',
+  'customer_notified_successfully': 'Customer notified successfully.',
+  'driver_arrived_title': 'Driver has arrived!',
+  'driver_arrived_body': 'Your driver has arrived at your pickup location.',
+
+  "Stop Taxi Meter": "Stop Taxi Meter",
+  "Start Taxi Meter": "Start Taxi Meter",
 };

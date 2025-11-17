@@ -241,7 +241,7 @@ const Map<String, String> arAR = {
   "Inbox": "البريد الوارد",
   "Profile": "الملف الشخصي",
   "Online Registration": "التسجيل عبر الإنترنت",
-  "Vehicle Information": "معلومات المركبة",
+  "Lawyer Information": "معلومات المركبة",
   "Settings": "الإعدادات",
   "Log out": "تسجيل الخروج"
 };

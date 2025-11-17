@@ -249,7 +249,7 @@ const Map<String, String> trFr = {
   'Inbox': 'Boîte de réception',
   'Profile': 'Profil',
   'Online Registration': 'Inscription en ligne',
-  'Vehicle Information': 'Informations sur le véhicule',
+  'Lawyer Information': 'Informations sur le véhicule',
   'Settings': 'Paramètres',
   'Log out': 'Se déconnecter',
 };

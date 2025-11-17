@@ -34,7 +34,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace 'com.ailab.rulebooklawyer'
-    compileSdkVersion 35
+    compileSdkVersion 36
     ndkVersion "29.0.13599879"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17 // Use VERSION_17 for now

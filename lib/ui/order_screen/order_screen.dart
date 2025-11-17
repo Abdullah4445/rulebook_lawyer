@@ -100,7 +100,7 @@ class OrderScreen extends StatelessWidget {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             UserView(
-                                              userId: orderModel.userId,
+                                              userId: orderModel.userId.toString(),
                                               amount: orderModel.finalRate,
                                               distance: orderModel.distance,
                                               distanceType: orderModel.distanceType,
@@ -140,7 +140,8 @@ class OrderScreen extends StatelessWidget {
                                                             Expanded(
                                                                 child: Text(
                                                                     orderModel.status
-                                                                        .toString().tr,
+                                                                        .toString()
+                                                                        .tr,
                                                                     style: GoogleFonts
                                                                         .poppins(
                                                                             color: Colors

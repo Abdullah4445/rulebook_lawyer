@@ -27,124 +27,124 @@ class DashBoardScreen extends StatelessWidget {
               backgroundColor: AppColors.primary,
               title: controller.selectedDrawerIndex.value == 0
                   ? StreamBuilder(
-                      stream: FireStoreUtils.fireStore
-                          .collection(CollectionName.driverUsers)
-                          .doc(FireStoreUtils.getCurrentUid())
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Something went wrong'.tr);
-                        }
+                  stream: FireStoreUtils.fireStore
+                      .collection(CollectionName.driverUsers)
+                      .doc(FireStoreUtils.getCurrentUid())
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Something went wrong'.tr);
+                    }
 
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return Constant.loader(context);
-                        }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Constant.loader(context);
+                    }
 
-                        DriverUserModel driverModel =
-                            DriverUserModel.fromJson(snapshot.data!.data()!);
-                        return Container(
-                          width: Responsive.width(50, context),
-                          height: Responsive.height(5.5, context),
-                          decoration: const BoxDecoration(
-                            color: AppColors.darkBackground,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(50.0),
+                    DriverUserModel driverModel =
+                    DriverUserModel.fromJson(snapshot.data!.data()!);
+                    return Container(
+                      width: Responsive.width(50, context),
+                      height: Responsive.height(5.5, context),
+                      decoration: const BoxDecoration(
+                        color: AppColors.darkBackground,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(50.0),
+                        ),
+                      ),
+                      child: Stack(
+                        children: [
+                          AnimatedAlign(
+                            alignment:
+                            Alignment(driverModel.isOnline == true ? -1 : 1, 0),
+                            duration: const Duration(milliseconds: 300),
+                            child: Container(
+                              width: Responsive.width(26, context),
+                              height: Responsive.height(8, context),
+                              decoration: const BoxDecoration(
+                                color: AppColors.darkModePrimary,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20.0),
+                                ),
+                              ),
                             ),
                           ),
-                          child: Stack(
-                            children: [
-                              AnimatedAlign(
-                                alignment:
-                                    Alignment(driverModel.isOnline == true ? -1 : 1, 0),
-                                duration: const Duration(milliseconds: 300),
-                                child: Container(
-                                  width: Responsive.width(26, context),
-                                  height: Responsive.height(8, context),
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.darkModePrimary,
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20.0),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () async {
-                                  ShowToastDialog.showLoader("Please wait".tr);
-                                  if (driverModel.documentVerification == false &&
-                                      Constant.isVerifyDocument == true) {
-                                    ShowToastDialog.closeLoader();
-                                    _showAlertDialog(context, "document");
-                                  } else if (driverModel.vehicleInformation == null ||
-                                      driverModel.serviceId == null) {
-                                    ShowToastDialog.closeLoader();
-                                    _showAlertDialog(context, "vehicleInformation");
-                                  } else {
-                                    driverModel.isOnline = true;
-                                    await FireStoreUtils.updateDriverUser(driverModel);
+                          GestureDetector(
+                            onTap: () async {
+                              ShowToastDialog.showLoader("Please wait".tr);
+                              if (driverModel.documentVerification == false &&
+                                  Constant.isVerifyDocument == true) {
+                                ShowToastDialog.closeLoader();
+                                _showAlertDialog(context, "document");
+                              } else if (driverModel.vehicleInformation == null ||
+                                  driverModel.serviceId == null) {
+                                ShowToastDialog.closeLoader();
+                                _showAlertDialog(context, "vehicleInformation");
+                              } else {
+                                driverModel.isOnline = true;
+                                await FireStoreUtils.updateDriverUser(driverModel);
 
-                                    ShowToastDialog.closeLoader();
-                                  }
-                                },
-                                child: Align(
-                                  alignment: const Alignment(-1, 0),
-                                  child: Container(
-                                    width: Responsive.width(26, context),
-                                    color: Colors.transparent,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Online'.tr,
-                                      style: GoogleFonts.poppins(
-                                          color: driverModel.isOnline == true
-                                              ? Colors.black
-                                              : Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14),
-                                    ),
-                                  ),
+                                ShowToastDialog.closeLoader();
+                              }
+                            },
+                            child: Align(
+                              alignment: const Alignment(-1, 0),
+                              child: Container(
+                                width: Responsive.width(26, context),
+                                color: Colors.transparent,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Online'.tr,
+                                  style: GoogleFonts.poppins(
+                                      color: driverModel.isOnline == true
+                                          ? Colors.black
+                                          : Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14),
                                 ),
                               ),
-                              GestureDetector(
-                                onTap: () async {
-                                  ShowToastDialog.showLoader("Please wait".tr);
-                                  driverModel.isOnline = false;
-                                  await FireStoreUtils.updateDriverUser(driverModel);
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              ShowToastDialog.showLoader("Please wait".tr);
+                              driverModel.isOnline = false;
+                              await FireStoreUtils.updateDriverUser(driverModel);
 
-                                  ShowToastDialog.closeLoader();
-                                },
-                                child: Align(
-                                  alignment: const Alignment(1, 0),
-                                  child: Container(
-                                    width: Responsive.width(26, context),
-                                    color: Colors.transparent,
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Offline'.tr,
-                                      style: GoogleFonts.poppins(
-                                          color: driverModel.isOnline == false
-                                              ? Colors.black
-                                              : Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14),
-                                    ),
-                                  ),
+                              ShowToastDialog.closeLoader();
+                            },
+                            child: Align(
+                              alignment: const Alignment(1, 0),
+                              child: Container(
+                                width: Responsive.width(26, context),
+                                color: Colors.transparent,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Offline'.tr,
+                                  style: GoogleFonts.poppins(
+                                      color: driverModel.isOnline == false
+                                          ? Colors.black
+                                          : Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        );
-                      })
-                  : (controller.selectedDrawerIndex.value != 12 &&
-                          controller.selectedDrawerIndex.value != 13 &&
-                          controller.selectedDrawerIndex.value != 14)
-                      ? Text(
-                          controller
-                              .drawerItems[controller.selectedDrawerIndex.value].title.tr,
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                          ),
-                        )
-                      : Text(""),
+                        ],
+                      ),
+                    );
+                  })
+                  : (controller.selectedDrawerIndex.value != 9 &&
+                  controller.selectedDrawerIndex.value != 10 &&
+                  controller.selectedDrawerIndex.value != 11)
+                  ? Text(
+                controller
+                    .drawerItems[controller.selectedDrawerIndex.value].title.tr,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                ),
+              )
+                  : Text(""),
               centerTitle: true,
               leading: Builder(builder: (context) {
                 return InkWell(
@@ -153,7 +153,7 @@ class DashBoardScreen extends StatelessWidget {
                   },
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(left: 10, right: 20, top: 20, bottom: 20),
+                    const EdgeInsets.only(left: 10, right: 20, top: 20, bottom: 20),
                     child: SvgPicture.asset('assets/icons/ic_humber.svg'),
                   ),
                 );
@@ -163,7 +163,7 @@ class DashBoardScreen extends StatelessWidget {
             body: WillPopScope(
                 onWillPop: controller.onWillPop,
                 child:
-                    controller.getDrawerItemWidget(controller.selectedDrawerIndex.value)),
+                controller.getDrawerItemWidget(controller.selectedDrawerIndex.value)),
           );
         });
   }
@@ -198,9 +198,9 @@ class DashBoardScreen extends StatelessWidget {
               child: Text('Yes'.tr),
               onPressed: () {
                 if (type == "document") {
-                  controllerDashBoard.onSelectItem(7);
+                  controllerDashBoard.onSelectItem(5); // Index update kiya
                 } else {
-                  controllerDashBoard.onSelectItem(8);
+                  controllerDashBoard.onSelectItem(6); // Index update kiya
                 }
               },
             ),
@@ -216,41 +216,30 @@ class DashBoardScreen extends StatelessWidget {
     if (Constant.isSubscriptionModelApplied == true) {
       drawerItems = [
         DrawerItem('City'.tr, "assets/icons/ic_city.svg"),
-        // DrawerItem('Rides'.tr, "assets/icons/ic_order.svg"),
-        DrawerItem('OutStation'.tr, "assets/icons/ic_intercity.svg"),
-        // DrawerItem('OutStation Rides'.tr, "assets/icons/ic_order.svg"),
-        DrawerItem('Freight'.tr, "assets/icons/ic_freight.svg"),
         DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
         DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
         DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"),
-        DrawerItem('Vehicle Information'.tr, "assets/icons/ic_city.svg"),
+        DrawerItem('Lawyer Information'.tr, "assets/icons/lawyer.svg"),
         DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
         DrawerItem('Subscription'.tr, "assets/icons/ic_subscription.svg"),
         DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
         DrawerItem('Terms and Conditions'.tr, "assets/icons/ic_terms.svg"),
         DrawerItem('Privacy Policy'.tr, "assets/icons/ic_terms.svg"),
-
         DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),
       ];
     } else {
       drawerItems = [
         DrawerItem('City'.tr, "assets/icons/ic_city.svg"),
-        // DrawerItem('Rides'.tr, "assets/icons/ic_order.svg"),
-        DrawerItem('OutStation'.tr, "assets/icons/ic_intercity.svg"),
-        // DrawerItem('OutStation Rides'.tr, "assets/icons/ic_order.svg"),
-        DrawerItem('Freight'.tr, "assets/icons/ic_freight.svg"),
         DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
         DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
         DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"),
-        DrawerItem('Vehicle Information'.tr, "assets/icons/ic_city.svg"),
+        DrawerItem('Lawyer Information'.tr, "assets/icons/ic_city.svg"),
         DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
         DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
-        DrawerItem('Terms and Conditions'.tr, "assets/icons/ic_terms.svg"),
-        DrawerItem('Privacy Policy'.tr, "assets/icons/ic_terms.svg"),
         DrawerItem('Terms and Conditions'.tr, "assets/icons/ic_terms.svg"),
         DrawerItem('Privacy Policy'.tr, "assets/icons/ic_terms.svg"),
         DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),
@@ -279,11 +268,11 @@ class DashBoardScreen extends StatelessWidget {
                   width: 20,
                   color: i == controller.selectedDrawerIndex.value
                       ? themeChange.getThem()
-                          ? Colors.black
-                          : Colors.white
+                      ? Colors.black
+                      : Colors.white
                       : themeChange.getThem()
-                          ? Colors.white
-                          : AppColors.drawerIcon,
+                      ? Colors.white
+                      : AppColors.drawerIcon,
                 ),
                 const SizedBox(
                   width: 20,
@@ -293,11 +282,11 @@ class DashBoardScreen extends StatelessWidget {
                   style: GoogleFonts.poppins(
                       color: i == controller.selectedDrawerIndex.value
                           ? themeChange.getThem()
-                              ? Colors.black
-                              : Colors.white
+                          ? Colors.black
+                          : Colors.white
                           : themeChange.getThem()
-                              ? Colors.white
-                              : Colors.black,
+                          ? Colors.white
+                          : Colors.black,
                       fontWeight: FontWeight.w500),
                 )
               ],
@@ -341,7 +330,7 @@ class DashBoardScreen extends StatelessWidget {
                               padding: const EdgeInsets.only(top: 6),
                               child: Text(driverModel.fullName.toString(),
                                   style:
-                                      GoogleFonts.poppins(fontWeight: FontWeight.w500)),
+                                  GoogleFonts.poppins(fontWeight: FontWeight.w500)),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 2),

@@ -28,16 +28,19 @@ class AcceptedOrders extends StatelessWidget {
         },
         builder: (controller) {
           return StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection(CollectionName.orders).where('acceptedDriverId', arrayContains: FireStoreUtils.getCurrentUid()).snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection(CollectionName.orders)
+                .where('acceptedDriverId', arrayContains: FireStoreUtils.getCurrentUid())
+                .snapshots(),
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
-                return  Text('Something went wrong'.tr);
+                return Text('Something went wrong'.tr);
               }
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Constant.loader(context);
               }
               return snapshot.data!.docs.isEmpty
-                  ?  Center(
+                  ? Center(
                       child: Text("No accepted ride found".tr),
                     )
                   : ListView.builder(
@@ -45,30 +48,39 @@ class AcceptedOrders extends StatelessWidget {
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        OrderModel orderModel = OrderModel.fromJson(snapshot.data!.docs[index].data() as Map<String, dynamic>);
+                        OrderModel orderModel = OrderModel.fromJson(
+                            snapshot.data!.docs[index].data() as Map<String, dynamic>);
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: themeChange.getThem() ? AppColors.darkContainerBackground : AppColors.containerBackground,
+                              color: themeChange.getThem()
+                                  ? AppColors.darkContainerBackground
+                                  : AppColors.containerBackground,
                               borderRadius: const BorderRadius.all(Radius.circular(10)),
-                              border: Border.all(color: themeChange.getThem() ? AppColors.darkContainerBorder : AppColors.containerBorder, width: 0.5),
+                              border: Border.all(
+                                  color: themeChange.getThem()
+                                      ? AppColors.darkContainerBorder
+                                      : AppColors.containerBorder,
+                                  width: 0.5),
                               boxShadow: themeChange.getThem()
                                   ? null
                                   : [
                                       BoxShadow(
                                         color: Colors.grey.withOpacity(0.5),
                                         blurRadius: 8,
-                                        offset: const Offset(0, 2), // changes position of shadow
+                                        offset: const Offset(
+                                            0, 2), // changes position of shadow
                                       ),
                                     ],
                             ),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
                               child: Column(
                                 children: [
                                   UserView(
-                                    userId: orderModel.userId,
+                                    userId: orderModel.userId.toString(),
                                     amount: orderModel.offerRate,
                                     distance: orderModel.distance,
                                     distanceType: orderModel.distanceType,
@@ -78,7 +90,9 @@ class AcceptedOrders extends StatelessWidget {
                                     child: Divider(),
                                   ),
                                   FutureBuilder<DriverIdAcceptReject?>(
-                                      future: FireStoreUtils.getAcceptedOrders(orderModel.id.toString(), FireStoreUtils.getCurrentUid()),
+                                      future: FireStoreUtils.getAcceptedOrders(
+                                          orderModel.id.toString(),
+                                          FireStoreUtils.getCurrentUid()),
                                       builder: (context, snapshot) {
                                         switch (snapshot.connectionState) {
                                           case ConnectionState.waiting:
@@ -87,21 +101,34 @@ class AcceptedOrders extends StatelessWidget {
                                             if (snapshot.hasError) {
                                               return Text(snapshot.error.toString());
                                             } else {
-                                              DriverIdAcceptReject driverIdAcceptReject = snapshot.data!;
+                                              DriverIdAcceptReject driverIdAcceptReject =
+                                                  snapshot.data!;
                                               return Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                                padding: const EdgeInsets.symmetric(
+                                                    horizontal: 10),
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: themeChange.getThem() ? AppColors.darkContainerBackground : AppColors.containerBackground,
-                                                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                                    border: Border.all(color: themeChange.getThem() ? AppColors.darkContainerBorder : AppColors.containerBorder, width: 0.5),
+                                                    color: themeChange.getThem()
+                                                        ? AppColors
+                                                            .darkContainerBackground
+                                                        : AppColors.containerBackground,
+                                                    borderRadius: const BorderRadius.all(
+                                                        Radius.circular(10)),
+                                                    border: Border.all(
+                                                        color: themeChange.getThem()
+                                                            ? AppColors
+                                                                .darkContainerBorder
+                                                            : AppColors.containerBorder,
+                                                        width: 0.5),
                                                     boxShadow: themeChange.getThem()
                                                         ? null
                                                         : [
                                                             BoxShadow(
-                                                              color: Colors.black.withOpacity(0.10),
+                                                              color: Colors.black
+                                                                  .withOpacity(0.10),
                                                               blurRadius: 5,
-                                                              offset: const Offset(0, 4), // changes position of shadow
+                                                              offset: const Offset(0,
+                                                                  4), // changes position of shadow
                                                             ),
                                                           ],
                                                   ),
@@ -109,8 +136,23 @@ class AcceptedOrders extends StatelessWidget {
                                                     padding: const EdgeInsets.all(8.0),
                                                     child: Row(
                                                       children: [
-                                                        Expanded(child: Text("Offer Rate".tr, style: GoogleFonts.poppins(fontWeight: FontWeight.w600,color: Colors.black))),
-                                                        Text(Constant.amountShow(amount:driverIdAcceptReject.offerAmount.toString()),style: TextStyle(color: Colors.black),),
+                                                        Expanded(
+                                                            child: Text("Offer Rate".tr,
+                                                                style:
+                                                                    GoogleFonts.poppins(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w600,
+                                                                        color: Colors
+                                                                            .black))),
+                                                        Text(
+                                                          Constant.amountShow(
+                                                              amount: driverIdAcceptReject
+                                                                  .offerAmount
+                                                                  .toString()),
+                                                          style: TextStyle(
+                                                              color: Colors.black),
+                                                        ),
                                                       ],
                                                     ),
                                                   ),
@@ -118,16 +160,22 @@ class AcceptedOrders extends StatelessWidget {
                                               );
                                             }
                                           default:
-                                            return  Text('Error'.tr);
+                                            return Text('Error'.tr);
                                         }
                                       }),
                                   const SizedBox(
                                     height: 10,
                                   ),
                                   LocationView(
-                                    sourceLocation: orderModel.sourceLocationName.toString(),
-                                    destinationLocation: orderModel.destinationLocationName.toString(),
-                                  ),
+                                      sourceLocation:
+                                          orderModel.sourceLocationName.toString(),
+                                      destinationLocation:
+                                          orderModel.destinationLocationName == null ||
+                                                  orderModel
+                                                      .destinationLocationName!.isEmpty
+                                              ? "Taxi Meter Preffered for this ride".tr
+                                              : orderModel.destinationLocationName
+                                                  .toString()),
                                 ],
                               ),
                             ),

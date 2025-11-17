@@ -249,7 +249,7 @@ const Map<String, String> esES = {
   'Inbox': 'Bandeja de entrada',
   'Profile': 'Perfil',
   'Online Registration': 'Registro en línea',
-  'Vehicle Information': 'Información del vehículo',
+  'Lawyer Information': 'Información del vehículo',
   'Settings': 'Ajustes',
   'Log out': 'Cerrar sesión',
   'Please enter valid offer rate': 'Por favor, introduce una tarifa válida',
@@ -344,5 +344,9 @@ const Map<String, String> esES = {
   'cancel_ride_message': '¿Estás seguro de que quieres cancelar este viaje?',
   'ride_cancelled_title': "¡El viaje fue cancelado por el conductor!",
   'ride_cancelled_body_customer':
-      "¡Lamentamos las molestias! Pero el viaje fue cancelado por el conductor."
+      "¡Lamentamos las molestias! Pero el viaje fue cancelado por el conductor.",
+  'Taxi Meter Preffered for this ride': 'Taxímetro preferido para este viaje',
+  'Enter fare rate': 'Introduce la tarifa',
+  "Stop Taxi Meter": "Detener taxímetro",
+  "Start Taxi Meter": "Iniciar taxímetro",
 };

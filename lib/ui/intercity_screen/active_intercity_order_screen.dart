@@ -156,7 +156,7 @@ class ActiveIntercityOrderScreen extends StatelessWidget {
                                             child: Column(
                                               children: [
                                                 UserView(
-                                                  userId: orderModel.userId,
+                                                  userId: orderModel.userId.toString(),
                                                   amount: orderModel.offerRate,
                                                   distance: orderModel.distance,
                                                   distanceType: orderModel.distanceType,

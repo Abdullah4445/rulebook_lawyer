@@ -71,10 +71,10 @@ exports.onRideCreated = onDocumentCreated(
         }
 
         const msg = {
-            notification: {
-                title: "🚖 New Ride Available",
-                body: `Order ${orderId}: a customer needs a ride.`,
-            },
+                   notification: {
+                       title: "🚖 Nuevo Viaje Disponible",
+                       body: `Pedido ${orderId}: un cliente necesita un viaje.`,
+                   },
             data: {
                 orderId,
                 type: "new_ride",
@@ -297,5 +297,21 @@ exports.createRideFromWebhook = functions.https.onRequest(async (req, res) => {
     console.error("❌ Error in createRideFromWebhook:", err);
     return res.status(500).send("Internal server error.");
   }
+});
+
+exports.deleteUser = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'The function must be called while authenticated.'
+        );
+    }
+    try {
+        await admin.auth().deleteUser(data.uid);
+        return { result: 'User successfully deleted' };
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        throw new functions.https.HttpsError('internal', error.message);
+    }
 });
 

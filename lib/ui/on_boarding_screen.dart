@@ -24,10 +24,10 @@ class OnBoardingScreen extends StatelessWidget {
               : Stack(
                   children: [
                     controller.selectedPageIndex.value == 0
-                        ? Image.asset("assets/images/onboarding_1.png")
+                        ? Image.asset("assets/images/onboarding1.jpg")
                         : controller.selectedPageIndex.value == 1
-                            ? Image.asset("assets/images/onboarding_2.png")
-                            : Image.asset("assets/images/onboarding_3.png"),
+                            ? Image.asset("assets/images/onboarding2.jpg")
+                            : Image.asset("assets/images/onboarding3.jpg"),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,

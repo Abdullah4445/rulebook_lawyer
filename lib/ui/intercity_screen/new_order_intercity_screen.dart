@@ -1,22 +1,19 @@
 import 'package:bottom_picker/bottom_picker.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/send_notification.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/controller/intercity_controller.dart';
 import 'package:driver/model/intercity_order_model.dart';
-import 'package:driver/model/order/driverId_accept_reject.dart';
 import 'package:driver/model/place_picker_model.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/themes/button_them.dart';
 import 'package:driver/themes/responsive.dart';
 import 'package:driver/themes/text_field_them.dart';
 import 'package:driver/ui/intercity_screen/pacel_details_screen.dart';
-import 'package:driver/widget/osm_map_search_place.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:driver/widget/google_map_search_place.dart';
 import 'package:driver/widget/location_view.dart';
+import 'package:driver/widget/osm_map_search_place.dart';
 import 'package:driver/widget/user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
@@ -49,7 +46,9 @@ class NewOrderInterCityScreen extends StatelessWidget {
                     height: Responsive.height(100, context),
                     width: Responsive.width(100, context),
                     decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background, borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+                        color: Theme.of(context).colorScheme.background,
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(25), topRight: Radius.circular(25))),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: Padding(
@@ -62,14 +61,17 @@ class NewOrderInterCityScreen extends StatelessWidget {
                                     Get.to(const OsmSearchPlacesApi())?.then((value) {
                                       if (value != null) {
                                         SearchInfo place = value;
-                                        controller.sourceCityController.value.text = place.address.toString();
+                                        controller.sourceCityController.value.text =
+                                            place.address.toString();
                                       }
                                     });
                                   } else {
-                                    Get.to(const GoogleMapSearchPlacesApi())!.then((value) async {
+                                    Get.to(const GoogleMapSearchPlacesApi())!
+                                        .then((value) async {
                                       if (value != null) {
                                         PlaceDetailsModel placeDetailsModel = value;
-                                        controller.sourceCityController.value.text = placeDetailsModel.result!.vicinity.toString();
+                                        controller.sourceCityController.value.text =
+                                            placeDetailsModel.result!.vicinity.toString();
                                       }
                                     });
                                   }
@@ -89,14 +91,17 @@ class NewOrderInterCityScreen extends StatelessWidget {
                                     Get.to(const OsmSearchPlacesApi())?.then((value) {
                                       if (value != null) {
                                         SearchInfo place = value;
-                                        controller.destinationCityController.value.text = place.address.toString();
+                                        controller.destinationCityController.value.text =
+                                            place.address.toString();
                                       }
                                     });
                                   } else {
-                                    Get.to(const GoogleMapSearchPlacesApi())!.then((value) async {
+                                    Get.to(const GoogleMapSearchPlacesApi())!
+                                        .then((value) async {
                                       if (value != null) {
                                         PlaceDetailsModel placeDetailsModel = value;
-                                        controller.destinationCityController.value.text = placeDetailsModel.result!.vicinity.toString();
+                                        controller.destinationCityController.value.text =
+                                            placeDetailsModel.result!.vicinity.toString();
                                       }
                                     });
                                   }
@@ -155,70 +160,127 @@ class NewOrderInterCityScreen extends StatelessWidget {
                                           child: Text("No Rides found".tr),
                                         )
                                       : ListView.builder(
-                                          itemCount: controller.intercityServiceOrder.length,
+                                          itemCount:
+                                              controller.intercityServiceOrder.length,
                                           shrinkWrap: true,
                                           itemBuilder: (context, index) {
-                                            InterCityOrderModel orderModel = controller.intercityServiceOrder[index];
+                                            InterCityOrderModel orderModel =
+                                                controller.intercityServiceOrder[index];
                                             String amount;
                                             if (Constant.distanceType == "Km") {
-                                              amount = Constant.amountCalculate(orderModel.intercityService!.kmCharge.toString(), orderModel.distance.toString())
-                                                  .toStringAsFixed(Constant.currencyModel!.decimalDigits!);
+                                              amount = Constant.amountCalculate(
+                                                      orderModel
+                                                          .intercityService!.kmCharge
+                                                          .toString(),
+                                                      orderModel.distance.toString())
+                                                  .toStringAsFixed(Constant
+                                                      .currencyModel!.decimalDigits!);
                                             } else {
-                                              amount = Constant.amountCalculate(orderModel.intercityService!.kmCharge.toString(), orderModel.distance.toString())
-                                                  .toStringAsFixed(Constant.currencyModel!.decimalDigits!);
+                                              amount = Constant.amountCalculate(
+                                                      orderModel
+                                                          .intercityService!.kmCharge
+                                                          .toString(),
+                                                      orderModel.distance.toString())
+                                                  .toStringAsFixed(Constant
+                                                      .currencyModel!.decimalDigits!);
                                             }
                                             return InkWell(
                                               onTap: () {
-                                                if (orderModel.acceptedDriverId != null && orderModel.acceptedDriverId!.contains(FireStoreUtils.getCurrentUid())) {
-                                                  ShowToastDialog.showToast("Ride already accepted".tr);
+                                                if (orderModel.acceptedDriverId != null &&
+                                                    orderModel.acceptedDriverId!.contains(
+                                                        FireStoreUtils.getCurrentUid())) {
+                                                  ShowToastDialog.showToast(
+                                                      "Ride already accepted".tr);
                                                 } else {
-                                                  controller.newAmount.value = orderModel.offerRate.toString();
-                                                  DateTime start = DateFormat("HH:mm").parse(orderModel.whenTime.toString());
+                                                  controller.newAmount.value =
+                                                      orderModel.offerRate.toString();
+                                                  DateTime start = DateFormat("HH:mm")
+                                                      .parse(
+                                                          orderModel.whenTime.toString());
                                                   controller.suggestedTime = start;
-                                                  controller.suggestedTimeController.value.text = DateFormat("hh:mm aa").format(controller.suggestedTime!);
-                                                  controller.enterOfferRateController.value.text = orderModel.offerRate.toString();
-                                                  offerAcceptDialog(context, controller, orderModel);
+                                                  controller.suggestedTimeController.value
+                                                          .text =
+                                                      DateFormat("hh:mm aa").format(
+                                                          controller.suggestedTime!);
+                                                  controller.enterOfferRateController
+                                                          .value.text =
+                                                      orderModel.offerRate.toString();
+                                                  offerAcceptDialog(
+                                                      context, controller, orderModel);
                                                 }
                                               },
                                               child: Padding(
                                                 padding: const EdgeInsets.all(8.0),
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: themeChange.getThem() ? AppColors.darkContainerBackground : AppColors.containerBackground,
-                                                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                                    border: Border.all(color: themeChange.getThem() ? AppColors.darkContainerBorder : AppColors.containerBorder, width: 0.5),
+                                                    color: themeChange.getThem()
+                                                        ? AppColors
+                                                            .darkContainerBackground
+                                                        : AppColors.containerBackground,
+                                                    borderRadius: const BorderRadius.all(
+                                                        Radius.circular(10)),
+                                                    border: Border.all(
+                                                        color: themeChange.getThem()
+                                                            ? AppColors
+                                                                .darkContainerBorder
+                                                            : AppColors.containerBorder,
+                                                        width: 0.5),
                                                     boxShadow: themeChange.getThem()
                                                         ? null
                                                         : [
                                                             BoxShadow(
-                                                              color: Colors.grey.withOpacity(0.5),
+                                                              color: Colors.grey
+                                                                  .withOpacity(0.5),
                                                               blurRadius: 8,
-                                                              offset: const Offset(0, 2), // changes position of shadow
+                                                              offset: const Offset(0,
+                                                                  2), // changes position of shadow
                                                             ),
                                                           ],
                                                   ),
                                                   child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                                    padding: const EdgeInsets.symmetric(
+                                                        vertical: 10, horizontal: 10),
                                                     child: Column(
                                                       children: [
                                                         UserView(
-                                                          userId: orderModel.userId,
+                                                          userId: orderModel.userId
+                                                              .toString(),
                                                           amount: orderModel.offerRate,
                                                           distance: orderModel.distance,
-                                                          distanceType: orderModel.distanceType,
+                                                          distanceType:
+                                                              orderModel.distanceType,
                                                         ),
                                                         const SizedBox(
                                                           height: 10,
                                                         ),
                                                         Row(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment.start,
                                                           children: [
-                                                            Text(Constant.amountShow(amount: orderModel.offerRate.toString()),
-                                                                style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18)),
-                                                            orderModel.intercityServiceId == "647f350983ba2"
+                                                            Text(
+                                                                Constant.amountShow(
+                                                                    amount: orderModel
+                                                                        .offerRate
+                                                                        .toString()),
+                                                                style:
+                                                                    GoogleFonts.poppins(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize: 18)),
+                                                            orderModel.intercityServiceId ==
+                                                                    "647f350983ba2"
                                                                 ? const SizedBox()
-                                                                : Text(" For ${orderModel.numberOfPassenger} Person".tr,
-                                                                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18)),
+                                                                : Text(
+                                                                    " For ${orderModel.numberOfPassenger} Person"
+                                                                        .tr,
+                                                                    style: GoogleFonts
+                                                                        .poppins(
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .bold,
+                                                                            fontSize:
+                                                                                18)),
                                                           ],
                                                         ),
                                                         const SizedBox(
@@ -231,10 +293,26 @@ class NewOrderInterCityScreen extends StatelessWidget {
                                                                 children: [
                                                                   Container(
                                                                     decoration: BoxDecoration(
-                                                                        color: Colors.grey.withOpacity(0.30), borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                                                        color: Colors.grey
+                                                                            .withOpacity(
+                                                                                0.30),
+                                                                        borderRadius:
+                                                                            const BorderRadius
+                                                                                .all(
+                                                                                Radius.circular(
+                                                                                    5))),
                                                                     child: Padding(
-                                                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                                                      child: Text(orderModel.paymentType.toString()),
+                                                                      padding:
+                                                                          const EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal:
+                                                                                  10,
+                                                                              vertical:
+                                                                                  4),
+                                                                      child: Text(
+                                                                          orderModel
+                                                                              .paymentType
+                                                                              .toString()),
                                                                     ),
                                                                   ),
                                                                   const SizedBox(
@@ -242,54 +320,112 @@ class NewOrderInterCityScreen extends StatelessWidget {
                                                                   ),
                                                                   Container(
                                                                     decoration: BoxDecoration(
-                                                                        color: AppColors.primary.withOpacity(0.30), borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                                                        color: AppColors
+                                                                            .primary
+                                                                            .withOpacity(
+                                                                                0.30),
+                                                                        borderRadius:
+                                                                            const BorderRadius
+                                                                                .all(
+                                                                                Radius.circular(
+                                                                                    5))),
                                                                     child: Padding(
-                                                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                                                      child: Text(Constant.localizationName(orderModel.intercityService!.name)),
+                                                                      padding:
+                                                                          const EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal:
+                                                                                  10,
+                                                                              vertical:
+                                                                                  4),
+                                                                      child: Text(Constant
+                                                                          .localizationName(
+                                                                              orderModel
+                                                                                  .intercityService!
+                                                                                  .name)),
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
                                                             Visibility(
-                                                              visible: orderModel.intercityServiceId == "647f350983ba2",
+                                                              visible: orderModel
+                                                                      .intercityServiceId ==
+                                                                  "647f350983ba2",
                                                               child: InkWell(
                                                                   onTap: () {
-                                                                    Get.to(const ParcelDetailsScreen(), arguments: {
-                                                                      "orderModel": orderModel,
-                                                                    });
+                                                                    Get.to(
+                                                                        const ParcelDetailsScreen(),
+                                                                        arguments: {
+                                                                          "orderModel":
+                                                                              orderModel,
+                                                                        });
                                                                   },
                                                                   child: Text(
                                                                     "View details".tr,
-                                                                    style: GoogleFonts.poppins(),
+                                                                    style: GoogleFonts
+                                                                        .poppins(),
                                                                   )),
                                                             )
                                                           ],
                                                         ),
                                                         Padding(
-                                                          padding: const EdgeInsets.symmetric(vertical: 14),
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                  vertical: 14),
                                                           child: Container(
                                                             decoration: BoxDecoration(
-                                                                color: themeChange.getThem() ? AppColors.darkGray : AppColors.gray,
-                                                                borderRadius: const BorderRadius.all(Radius.circular(10))),
+                                                                color: themeChange
+                                                                        .getThem()
+                                                                    ? AppColors.darkGray
+                                                                    : AppColors.gray,
+                                                                borderRadius:
+                                                                    const BorderRadius
+                                                                        .all(
+                                                                        Radius.circular(
+                                                                            10))),
                                                             child: Padding(
-                                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal: 10,
+                                                                    vertical: 12),
                                                                 child: Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
                                                                   children: [
-                                                                    Text(orderModel.whenDates.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                                                                    Text(
+                                                                        orderModel
+                                                                            .whenDates
+                                                                            .toString(),
+                                                                        style: GoogleFonts.poppins(
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .w600)),
                                                                     const SizedBox(
                                                                       width: 10,
                                                                     ),
-                                                                    Text(orderModel.whenTime.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                                                                    Text(
+                                                                        orderModel
+                                                                            .whenTime
+                                                                            .toString(),
+                                                                        style: GoogleFonts.poppins(
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .w600)),
                                                                   ],
                                                                 )),
                                                           ),
                                                         ),
                                                         LocationView(
-                                                          sourceLocation: orderModel.sourceLocationName.toString(),
-                                                          destinationLocation: orderModel.destinationLocationName.toString(),
+                                                          sourceLocation: orderModel
+                                                              .sourceLocationName
+                                                              .toString(),
+                                                          destinationLocation: orderModel
+                                                              .destinationLocationName
+                                                              .toString(),
                                                         ),
                                                         Column(
                                                           children: [
@@ -297,19 +433,39 @@ class NewOrderInterCityScreen extends StatelessWidget {
                                                               height: 10,
                                                             ),
                                                             Padding(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                              padding: const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal: 10,
+                                                                  vertical: 5),
                                                               child: Container(
-                                                                width: Responsive.width(100, context),
+                                                                width: Responsive.width(
+                                                                    100, context),
                                                                 decoration: BoxDecoration(
-                                                                    color: themeChange.getThem() ? AppColors.darkGray : AppColors.gray,
-                                                                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                                                                    color: themeChange
+                                                                            .getThem()
+                                                                        ? AppColors
+                                                                            .darkGray
+                                                                        : AppColors.gray,
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .all(Radius
+                                                                                .circular(
+                                                                                    10))),
                                                                 child: Padding(
-                                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                10,
+                                                                            vertical: 10),
                                                                     child: Center(
                                                                       child: Text(
                                                                         'Recommended Price is ${Constant.amountShow(amount: amount)}. Approx distance ${double.parse(orderModel.distance.toString()).toStringAsFixed(Constant.currencyModel!.decimalDigits!)} ${Constant.distanceType}'
                                                                             .tr,
-                                                                        style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                                                                        style: GoogleFonts.poppins(
+                                                                            fontWeight:
+                                                                                FontWeight
+                                                                                    .w500),
                                                                       ),
                                                                     )),
                                                               ),
@@ -337,7 +493,8 @@ class NewOrderInterCityScreen extends StatelessWidget {
         });
   }
 
-  offerAcceptDialog(BuildContext context, IntercityController controller, InterCityOrderModel orderModel) {
+  offerAcceptDialog(BuildContext context, IntercityController controller,
+      InterCityOrderModel orderModel) {
     return showModalBottomSheet(
         context: context,
         isDismissible: false,
@@ -345,8 +502,10 @@ class NewOrderInterCityScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         builder: (context) {
           return Container(
-            decoration:
-                BoxDecoration(color: Theme.of(context).colorScheme.background, borderRadius: const BorderRadius.only(topRight: Radius.circular(15), topLeft: Radius.circular(15))),
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.background,
+                borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(15), topLeft: Radius.circular(15))),
             child: StatefulBuilder(builder: (context, setState) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
@@ -358,7 +517,7 @@ class NewOrderInterCityScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         UserView(
-                          userId: orderModel.userId,
+                          userId: orderModel.userId.toString(),
                           amount: orderModel.offerRate,
                           distance: orderModel.distance,
                           distanceType: orderModel.distanceType,
@@ -369,7 +528,8 @@ class NewOrderInterCityScreen extends StatelessWidget {
                         ),
                         LocationView(
                           sourceLocation: orderModel.sourceLocationName.toString(),
-                          destinationLocation: orderModel.destinationLocationName.toString(),
+                          destinationLocation:
+                              orderModel.destinationLocationName.toString(),
                         ),
                         const SizedBox(
                           height: 10,
@@ -385,17 +545,25 @@ class NewOrderInterCityScreen extends StatelessWidget {
                                 InkWell(
                                   onTap: () {
                                     if (double.parse(controller.newAmount.value) >= 10) {
-                                      controller.newAmount.value = (double.parse(controller.newAmount.value) - 10).toString();
+                                      controller.newAmount.value =
+                                          (double.parse(controller.newAmount.value) - 10)
+                                              .toString();
 
-                                      controller.enterOfferRateController.value.text = controller.newAmount.value;
+                                      controller.enterOfferRateController.value.text =
+                                          controller.newAmount.value;
                                     } else {
                                       controller.newAmount.value = "0";
                                     }
                                   },
                                   child: Container(
-                                    decoration: BoxDecoration(border: Border.all(color: AppColors.textFieldBorder), borderRadius: const BorderRadius.all(Radius.circular(30))),
+                                    decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: AppColors.textFieldBorder),
+                                        borderRadius:
+                                            const BorderRadius.all(Radius.circular(30))),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 30, vertical: 10),
                                       child: Text(
                                         "- 10",
                                         style: GoogleFonts.poppins(),
@@ -406,7 +574,10 @@ class NewOrderInterCityScreen extends StatelessWidget {
                                 const SizedBox(
                                   width: 20,
                                 ),
-                                Text(Constant.amountShow(amount: controller.newAmount.toString()), style: GoogleFonts.poppins()),
+                                Text(
+                                    Constant.amountShow(
+                                        amount: controller.newAmount.toString()),
+                                    style: GoogleFonts.poppins()),
                                 const SizedBox(
                                   width: 20,
                                 ),
@@ -415,8 +586,12 @@ class NewOrderInterCityScreen extends StatelessWidget {
                                   title: "+ 10",
                                   btnWidthRatio: 0.22,
                                   onPress: () {
-                                    controller.newAmount.value = (double.parse(controller.newAmount.value) + 10).toStringAsFixed(Constant.currencyModel!.decimalDigits!);
-                                    controller.enterOfferRateController.value.text = controller.newAmount.value;
+                                    controller.newAmount.value =
+                                        (double.parse(controller.newAmount.value) + 10)
+                                            .toStringAsFixed(
+                                                Constant.currencyModel!.decimalDigits!);
+                                    controller.enterOfferRateController.value.text =
+                                        controller.newAmount.value;
                                   },
                                 ),
                               ],
@@ -432,7 +607,8 @@ class NewOrderInterCityScreen extends StatelessWidget {
                             context,
                             hintText: "Enter Fare rate".tr,
                             controller: controller.enterOfferRateController.value,
-                            keyBoardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                            keyBoardType: const TextInputType.numberWithOptions(
+                                decimal: true, signed: false),
                             onChanged: (value) {
                               if (value.isEmpty) {
                                 controller.newAmount.value = "0.0";
@@ -478,7 +654,8 @@ class NewOrderInterCityScreen extends StatelessWidget {
                                     enable: false,
                                     hintText: "Enter Fare rate".tr,
                                     controller: controller.suggestedTimeController.value,
-                                    keyBoardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                    keyBoardType: const TextInputType.numberWithOptions(
+                                        decimal: true, signed: false),
                                   ),
                                 )
                               ],
@@ -488,30 +665,48 @@ class NewOrderInterCityScreen extends StatelessWidget {
                         ),
                         ButtonThem.buildButton(
                           context,
-                          title: "Accept fare on ${Constant.amountShow(amount: controller.newAmount.value)}".tr,
+                          title:
+                              "Accept fare on ${Constant.amountShow(amount: controller.newAmount.value)}"
+                                  .tr,
                           onPress: () async {
-                            if (controller.newAmount.value.isNotEmpty && double.parse(controller.newAmount.value.toString()) > 0) {
-                              if (controller.driverModel.value.subscriptionTotalOrders == "-1") {
+                            if (controller.newAmount.value.isNotEmpty &&
+                                double.parse(controller.newAmount.value.toString()) > 0) {
+                              if (controller.driverModel.value.subscriptionTotalOrders ==
+                                  "-1") {
                                 controller.acceptOrder(orderModel);
                               } else {
-                                if (Constant.isSubscriptionModelApplied == false && Constant.adminCommission!.isEnabled == false) {
+                                if (Constant.isSubscriptionModelApplied == false &&
+                                    Constant.adminCommission!.isEnabled == false) {
                                   controller.acceptOrder(orderModel);
                                 } else {
-                                  if ((controller.driverModel.value.subscriptionExpiryDate != null &&
-                                          controller.driverModel.value.subscriptionExpiryDate!.toDate().isBefore(DateTime.now()) == false) ||
-                                      controller.driverModel.value.subscriptionPlan?.expiryDay == '-1') {
-                                    if (controller.driverModel.value.subscriptionTotalOrders != '0') {
+                                  if ((controller.driverModel.value
+                                                  .subscriptionExpiryDate !=
+                                              null &&
+                                          controller.driverModel.value
+                                                  .subscriptionExpiryDate!
+                                                  .toDate()
+                                                  .isBefore(DateTime.now()) ==
+                                              false) ||
+                                      controller.driverModel.value.subscriptionPlan
+                                              ?.expiryDay ==
+                                          '-1') {
+                                    if (controller
+                                            .driverModel.value.subscriptionTotalOrders !=
+                                        '0') {
                                       controller.acceptOrder(orderModel);
                                     } else {
-                                      ShowToastDialog.showToast("Your order limit has reached their maximum order capacity. Please subscribe another subscription");
+                                      ShowToastDialog.showToast(
+                                          "Your order limit has reached their maximum order capacity. Please subscribe another subscription");
                                     }
                                   } else {
-                                    ShowToastDialog.showToast("Your order limit has reached their maximum order capacity. Please subscribe another subscription");
+                                    ShowToastDialog.showToast(
+                                        "Your order limit has reached their maximum order capacity. Please subscribe another subscription");
                                   }
                                 }
                               }
                             } else {
-                              ShowToastDialog.showToast("Please enter valid offer rate".tr);
+                              ShowToastDialog.showToast(
+                                  "Please enter valid offer rate".tr);
                             }
                           },
                         ),

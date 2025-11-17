@@ -122,7 +122,7 @@ class NewOrderFreightScreen extends StatelessWidget {
                                       child: Column(
                                         children: [
                                           UserView(
-                                            userId: orderModel.userId,
+                                            userId: orderModel.userId.toString(),
                                             amount: orderModel.offerRate,
                                             distance: orderModel.distance,
                                             distanceType: orderModel.distanceType,
@@ -333,7 +333,7 @@ class NewOrderFreightScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         UserView(
-                          userId: orderModel.userId,
+                          userId: orderModel.userId.toString(),
                           amount: orderModel.offerRate,
                           distance: orderModel.distance,
                           distanceType: orderModel.distanceType,

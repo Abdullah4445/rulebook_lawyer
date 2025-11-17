@@ -1,6 +1,5 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:driver/constant/constant.dart';
-import 'package:driver/firebase_options.dart';
 import 'package:driver/ui/splash_screen.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,9 +11,11 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import 'controller/global_setting_conroller.dart';
+import 'firebase_options.dart';
 import 'services/localization_service.dart';
 import 'themes/Styles.dart';
 import 'utils/Preferences.dart';
+// not working
 
 /// Handles background notifications
 /// new code pushing

@@ -41,21 +41,29 @@ class AcceptedFreightOrders extends StatelessWidget {
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  InterCityOrderModel orderModel = InterCityOrderModel.fromJson(snapshot.data!.docs[index].data() as Map<String, dynamic>);
+                  InterCityOrderModel orderModel = InterCityOrderModel.fromJson(
+                      snapshot.data!.docs[index].data() as Map<String, dynamic>);
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: themeChange.getThem() ? AppColors.darkContainerBackground : AppColors.containerBackground,
+                        color: themeChange.getThem()
+                            ? AppColors.darkContainerBackground
+                            : AppColors.containerBackground,
                         borderRadius: const BorderRadius.all(Radius.circular(10)),
-                        border: Border.all(color: themeChange.getThem() ? AppColors.darkContainerBorder : AppColors.containerBorder, width: 0.5),
+                        border: Border.all(
+                            color: themeChange.getThem()
+                                ? AppColors.darkContainerBorder
+                                : AppColors.containerBorder,
+                            width: 0.5),
                         boxShadow: themeChange.getThem()
                             ? null
                             : [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.5),
                                   blurRadius: 8,
-                                  offset: const Offset(0, 2), // changes position of shadow
+                                  offset:
+                                      const Offset(0, 2), // changes position of shadow
                                 ),
                               ],
                       ),
@@ -65,7 +73,7 @@ class AcceptedFreightOrders extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             UserView(
-                              userId: orderModel.userId,
+                              userId: orderModel.userId.toString(),
                               amount: orderModel.offerRate,
                               distance: orderModel.distance,
                               distanceType: orderModel.distanceType,
@@ -74,8 +82,10 @@ class AcceptedFreightOrders extends StatelessWidget {
                               height: 10,
                             ),
                             Text(
-                              Constant.amountShow(amount: orderModel.offerRate.toString()),
-                              style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
+                              Constant.amountShow(
+                                  amount: orderModel.offerRate.toString()),
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
                               textAlign: TextAlign.left,
                             ),
                             const SizedBox(
@@ -87,9 +97,13 @@ class AcceptedFreightOrders extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       Container(
-                                        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.30), borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey.withOpacity(0.30),
+                                            borderRadius: const BorderRadius.all(
+                                                Radius.circular(5))),
                                         child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 4),
                                           child: Text(orderModel.paymentType.toString()),
                                         ),
                                       ),
@@ -97,10 +111,15 @@ class AcceptedFreightOrders extends StatelessWidget {
                                         width: 10,
                                       ),
                                       Container(
-                                        decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.30), borderRadius: const BorderRadius.all(Radius.circular(5))),
+                                        decoration: BoxDecoration(
+                                            color: AppColors.primary.withOpacity(0.30),
+                                            borderRadius: const BorderRadius.all(
+                                                Radius.circular(5))),
                                         child: Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                          child: Text(Constant.localizationName(orderModel.intercityService!.name)),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 4),
+                                          child: Text(Constant.localizationName(
+                                              orderModel.intercityService!.name)),
                                         ),
                                       ),
                                     ],
@@ -127,33 +146,45 @@ class AcceptedFreightOrders extends StatelessWidget {
                                 width: 10,
                               ),
                               Text(
-                                Constant.localizationName(orderModel.freightVehicle!.name),
-                                style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
+                                Constant.localizationName(
+                                    orderModel.freightVehicle!.name),
+                                style: GoogleFonts.poppins(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
                               )
                             ]),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               child: Container(
-                                decoration:
-                                    BoxDecoration(color: themeChange.getThem() ? AppColors.darkGray : AppColors.gray, borderRadius: const BorderRadius.all(Radius.circular(10))),
+                                decoration: BoxDecoration(
+                                    color: themeChange.getThem()
+                                        ? AppColors.darkGray
+                                        : AppColors.gray,
+                                    borderRadius:
+                                        const BorderRadius.all(Radius.circular(10))),
                                 child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 12),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
-                                        Text(orderModel.whenDates.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                                        Text(orderModel.whenDates.toString(),
+                                            style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w600)),
                                         const SizedBox(
                                           width: 10,
                                         ),
-                                        Text(orderModel.whenTime.toString(), style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                                        Text(orderModel.whenTime.toString(),
+                                            style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w600)),
                                       ],
                                     )),
                               ),
                             ),
                             LocationView(
                               sourceLocation: orderModel.sourceLocationName.toString(),
-                              destinationLocation: orderModel.destinationLocationName.toString(),
+                              destinationLocation:
+                                  orderModel.destinationLocationName.toString(),
                             ),
                           ],
                         ),
