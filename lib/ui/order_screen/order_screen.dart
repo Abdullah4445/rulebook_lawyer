@@ -429,7 +429,7 @@ class OrderScreen extends StatelessWidget {
                                                       }
                                                     });
                                                   },
-                                                ))
+                                                )),
                                           ],
                                         ),
                                       ),
