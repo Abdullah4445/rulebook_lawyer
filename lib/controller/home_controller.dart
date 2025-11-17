@@ -27,11 +27,15 @@ import 'package:app_settings/app_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../model/order_model.dart';
 import '../utils/notification_service.dart';
 import '../utils/utils.dart';
 import 'global_setting_conroller.dart';
 
 class HomeController extends GetxController {
+  // added new variable for testing
+  RxList<OrderModel> availableRides = <OrderModel>[].obs;
+
   RxInt selectedIndex = 0.obs;
   List<Widget> widgetOptions = <Widget>[const NewOrderScreen(), const AcceptedOrders(), const ActiveOrderScreen(),const OrderScreen()];
   DashBoardController dashboardController = Get.put(DashBoardController());
@@ -46,6 +50,8 @@ class HomeController extends GetxController {
     getDriver();
     getActiveRide();
     notificationInit();
+    /// added function in the oninit function
+    getAvailableRides();
 
     _listenToCallEvents();
 
@@ -80,6 +86,42 @@ class HomeController extends GetxController {
   }
 
   lo.Location location = lo.Location();
+/// added new function for checking and testing the available rides for driver
+  void getAvailableRides() {
+    FirebaseFirestore.instance
+        .collection(CollectionName.orders)
+        .where('status', isEqualTo: "ride Placed")
+        .where('driverId', isNull: true)
+        .snapshots()
+        .listen((event) {
+      print("🚖 Available Rides: ${event.docs.length}");
+      availableRides.value =
+          event.docs.map((e) => OrderModel.fromJson(e.data())).toList();
+    });
+  }
+  void acceptRide(String? rideId)
+  async {
+    try {
+      // get current driver info
+      final driver = driverModel.value;
+
+      // Firestore collection update
+      await FirebaseFirestore.instance
+          .collection(CollectionName.orders)
+          .doc(rideId)
+          .update({
+        'driverId': driver.id,
+        'status': 'accepted',
+        'acceptedAt': FieldValue.serverTimestamp(),
+      });
+
+      Get.snackbar("Success", "Ride accepted successfully!");
+    } catch (e) {
+      Get.snackbar("Error", "Failed to accept ride: $e");
+    }
+  }
+
+
 
   updateCurrentLocation() async {
     print("BILAL getting driver details: location");

@@ -249,7 +249,7 @@ const Map<String, String> esES = {
   'Inbox': 'Bandeja de entrada',
   'Profile': 'Perfil',
   'Online Registration': 'Registro en línea',
-  'Vehicle Information': 'Información del vehículo',
+  'Lawyer Information': 'Información del vehículo',
   'Settings': 'Ajustes',
   'Log out': 'Cerrar sesión',
   'Please enter valid offer rate': 'Por favor, introduce una tarifa válida',

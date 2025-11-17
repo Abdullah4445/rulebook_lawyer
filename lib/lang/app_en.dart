@@ -246,7 +246,7 @@ const Map<String, String> enUS = {
   'Inbox': 'Inbox',
   'Profile': 'Profile',
   'Online Registration': 'Online Registration',
-  'Vehicle Information': 'Vehicle Information',
+  'Lawyer Information': 'Lawyer Information',
   'Settings': 'Settings',
   'Log out': 'Log out',
   'Please enter valid offer rate': 'Please enter valid offer rate',

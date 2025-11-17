@@ -33,6 +33,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
+import '../model/admin_commission.dart';
 import '../model/driver_user_model.dart';
 import '../utils/utils.dart';
 
@@ -65,7 +66,7 @@ class Constant {
 
   static CurrencyModel? currencyModel;
 
-  static const String ridePlaced = "Ride Placed";
+  static const String ridePlaced = "ride Placed";
   static const String rideActive = "Ride Active";
   static const String rideInProgress = "Ride InProgress";
   static const String rideComplete = "Ride Completed";
