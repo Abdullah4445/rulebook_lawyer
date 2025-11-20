@@ -37,7 +37,7 @@ class HomeController extends GetxController {
   RxList<OrderModel> availableRides = <OrderModel>[].obs;
 
   RxInt selectedIndex = 0.obs;
-  List<Widget> widgetOptions = <Widget>[const NewOrderScreen(), const AcceptedOrders(),  ActiveOrderScreen(),const OrderScreen()];
+  List<Widget> widgetOptions = <Widget>[const NewOrderScreen(), const AcceptedOrders(),     ActiveOrderScreen(),const OrderScreen()];
   DashBoardController dashboardController = Get.put(DashBoardController());
 
   void onItemTapped(int index) {

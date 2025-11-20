@@ -215,7 +215,7 @@ class DashBoardScreen extends StatelessWidget {
     List<DrawerItem> drawerItems = [];
     if (Constant.isSubscriptionModelApplied == true) {
       drawerItems = [
-        DrawerItem('City'.tr, "assets/icons/ic_city.svg"),
+        DrawerItem('Cases'.tr, "assets/icons/cases.svg"),
         DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
         DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
@@ -231,7 +231,7 @@ class DashBoardScreen extends StatelessWidget {
       ];
     } else {
       drawerItems = [
-        DrawerItem('City'.tr, "assets/icons/ic_city.svg"),
+        DrawerItem('City'.tr, "assets/icons/cases.svg"),
         DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
         DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
