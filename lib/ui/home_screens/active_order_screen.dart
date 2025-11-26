@@ -24,6 +24,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
+import '../../model/order/driverId_accept_reject.dart';
+import '../faredetails_screen/faredetails_screen.dart';
+
 class ActiveOrderScreen extends StatelessWidget {
   const ActiveOrderScreen({Key? key}) : super(key: key);
 
@@ -157,47 +160,47 @@ class ActiveOrderScreen extends StatelessWidget {
                                     padding: EdgeInsets.symmetric(vertical: 5),
                                     child: Divider(),
                                   ),
-                                  ButtonThem.buildBorderButton(
-                                    context,
-                                    title: "Show Route to Customer".tr,
-                                    btnHeight: 44,
-                                    iconVisibility: false,
-                                    onPress: () async {
-                                      // print("My order details are: ");
-                                      // print( orderModel.toJson());
-
-                                      Get.to(
-                                        LiveTrackingScreen(
-                                          orderModel: orderModel,
-                                        ),
-                                        arguments: {
-                                          "driverLatLng": LatLng(
-                                            Constant.currentLocation?.latitude ??
-                                                0.0,
-                                            Constant.currentLocation?.longitude ??
-                                                0.0,
-                                          ),
-                                          "customerLatLng": LatLng(
-                                            orderModel.sourceLocationLatLng
-                                                ?.latitude ??
-                                                0.0,
-                                            orderModel.sourceLocationLatLng
-                                                ?.longitude ??
-                                                0.0,
-                                          ),
-                                          "type": "routeOnly",
-                                        },
-                                      );
-                                      // Get.to(
-                                      //   const LiveTrackingScreen(),
-                                      //   arguments: {
-                                      //     "driverLatLng": Constant.currentLocation,
-                                      //     "customerLatLng": orderModel.sourceLocationLatLng,
-                                      //     "type": "routeOnly",
-                                      //   },
-                                      // );
-                                    },
-                                  ),
+                                  // ButtonThem.buildBorderButton(
+                                  //   context,
+                                  //   title: "Show Route to Customer".tr,
+                                  //   btnHeight: 44,
+                                  //   iconVisibility: false,
+                                  //   onPress: () async {
+                                  //     // print("My order details are: ");
+                                  //     // print( orderModel.toJson());
+                                  //
+                                  //     Get.to(
+                                  //       LiveTrackingScreen(
+                                  //         orderModel: orderModel,
+                                  //       ),
+                                  //       arguments: {
+                                  //         "driverLatLng": LatLng(
+                                  //           Constant.currentLocation?.latitude ??
+                                  //               0.0,
+                                  //           Constant.currentLocation?.longitude ??
+                                  //               0.0,
+                                  //         ),
+                                  //         "customerLatLng": LatLng(
+                                  //           orderModel.sourceLocationLatLng
+                                  //               ?.latitude ??
+                                  //               0.0,
+                                  //           orderModel.sourceLocationLatLng
+                                  //               ?.longitude ??
+                                  //               0.0,
+                                  //         ),
+                                  //         "type": "routeOnly",
+                                  //       },
+                                  //     );
+                                  //     // Get.to(
+                                  //     //   const LiveTrackingScreen(),
+                                  //     //   arguments: {
+                                  //     //     "driverLatLng": Constant.currentLocation,
+                                  //     //     "customerLatLng": orderModel.sourceLocationLatLng,
+                                  //     //     "type": "routeOnly",
+                                  //     //   },
+                                  //     // );
+                                  //   },
+                                  // ),
                                   const Padding(
                                     padding: EdgeInsets.symmetric(vertical: 5),
                                     child: Divider(),
@@ -205,13 +208,149 @@ class ActiveOrderScreen extends StatelessWidget {
                                   LocationView(
                                     sourceLocation:
                                     orderModel.sourceLocationName.toString(),
-                                    destinationLocation: orderModel
-                                        .destinationLocationName
-                                        .toString(),
+                                    // destinationLocation: orderModel
+                                    //     .destinationLocationName
+                                    //     .toString(),
                                   ),
                                   const SizedBox(
                                     height: 10,
                                   ),
+
+
+                                  FutureBuilder<DriverIdAcceptReject?>(
+                                    future: FireStoreUtils.getAcceptedOrders(
+                                      orderModel.id.toString(),
+                                      FireStoreUtils.getCurrentUid(),
+                                    ),
+                                    builder: (context, snapshot) {
+                                      switch (snapshot.connectionState) {
+                                        case ConnectionState.waiting:
+                                          return Constant.loader(context);
+
+                                        case ConnectionState.done:
+                                          if (snapshot.hasError) {
+                                            return Text(snapshot.error.toString());
+                                          } else if (!snapshot.hasData || snapshot.data == null) {
+                                            return SizedBox();
+                                          } else {
+                                            final driverIdAcceptReject = snapshot.data!;
+
+                                            // 🔥 Fare Details container
+                                            if (driverIdAcceptReject.fareDetails != null) {
+                                              final fareDetails = driverIdAcceptReject.fareDetails!;
+                                              final steps = fareDetails['steps'] != null
+                                                  ? List<Map<String, dynamic>>.from(fareDetails['steps'])
+                                                  : <Map<String, dynamic>>[];
+
+                                              return Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    Get.to(() => FareDetailsScreen(
+                                                      fareDetails: driverIdAcceptReject.fareDetails,
+
+                                                    ));
+
+
+                                                  },
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: themeChange.getThem()
+                                                          ? AppColors.darkContainerBackground
+                                                          : AppColors.containerBackground,
+                                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                      border: Border.all(
+                                                        color: themeChange.getThem()
+                                                            ? AppColors.darkContainerBorder
+                                                            : AppColors.containerBorder,
+                                                        width: 0.5,
+                                                      ),
+                                                      boxShadow: themeChange.getThem()
+                                                          ? null
+                                                          : [
+                                                        BoxShadow(
+                                                          color: Colors.black.withOpacity(0.10),
+                                                          blurRadius: 5,
+                                                          offset: const Offset(0, 4),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(12),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(
+                                                            "Fare Details".tr,
+                                                            style: GoogleFonts.poppins(
+                                                                fontSize: 16,
+                                                                fontWeight: FontWeight.w600,
+                                                                color: Colors.black),
+                                                          ),
+                                                          const SizedBox(height: 8),
+
+                                                          // Steps
+                                                          ...steps.map(
+                                                                (step) => Padding(
+                                                              padding: const EdgeInsets.symmetric(vertical: 2),
+                                                              child: Row(
+                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                children: [
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      step['title']?.toString() ?? '',
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize: 14, color: Colors.black87),
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    Constant.amountShow(
+                                                                        amount: step['price']?.toString() ?? '0'),
+                                                                    style: GoogleFonts.poppins(
+                                                                        fontWeight: FontWeight.w600,
+                                                                        color: Colors.black),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+
+                                                          const Divider(height: 20),
+
+                                                          // Total
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                "Total".tr,
+                                                                style: GoogleFonts.poppins(
+                                                                    fontSize: 15, fontWeight: FontWeight.bold,color: Colors.black),
+                                                              ),
+                                                              Text(
+                                                                Constant.amountShow(
+                                                                    amount: fareDetails['total']?.toString() ?? '0'),
+                                                                style: GoogleFonts.poppins(
+                                                                    fontSize: 15, fontWeight: FontWeight.bold,color: Colors.black),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              return SizedBox();
+                                            }
+                                          }
+
+                                        default:
+                                          return Text('Error'.tr);
+                                      }
+                                    },
+                                  ),
+                                  SizedBox(height: 10,),
                                   Row(
                                     children: [
                                       Expanded(
@@ -270,7 +409,8 @@ class ActiveOrderScreen extends StatelessWidget {
                                             });
                                           },
                                         )
-                                            : ButtonThem.buildBorderButton(
+                                            :
+                                        ButtonThem.buildBorderButton(
                                           context,
                                           title: "Pickup Customer".tr,
                                           btnHeight: 44,

@@ -89,80 +89,205 @@ class AcceptedOrders extends StatelessWidget {
                                     padding: EdgeInsets.symmetric(vertical: 5),
                                     child: Divider(),
                                   ),
-                                  FutureBuilder<DriverIdAcceptReject?>(
-                                      future: FireStoreUtils.getAcceptedOrders(
-                                          orderModel.id.toString(),
-                                          FireStoreUtils.getCurrentUid()),
-                                      builder: (context, snapshot) {
-                                        switch (snapshot.connectionState) {
-                                          case ConnectionState.waiting:
-                                            return Constant.loader(context);
-                                          case ConnectionState.done:
-                                            if (snapshot.hasError) {
-                                              return Text(snapshot.error.toString());
-                                            } else {
-                                              DriverIdAcceptReject driverIdAcceptReject =
-                                                  snapshot.data!;
-                                              return Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 10),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: themeChange.getThem()
-                                                        ? AppColors
-                                                            .darkContainerBackground
-                                                        : AppColors.containerBackground,
-                                                    borderRadius: const BorderRadius.all(
-                                                        Radius.circular(10)),
-                                                    border: Border.all(
-                                                        color: themeChange.getThem()
-                                                            ? AppColors
-                                                                .darkContainerBorder
-                                                            : AppColors.containerBorder,
-                                                        width: 0.5),
-                                                    boxShadow: themeChange.getThem()
-                                                        ? null
-                                                        : [
-                                                            BoxShadow(
-                                                              color: Colors.black
-                                                                  .withOpacity(0.10),
-                                                              blurRadius: 5,
-                                                              offset: const Offset(0,
-                                                                  4), // changes position of shadow
-                                                            ),
-                                                          ],
+                            FutureBuilder<DriverIdAcceptReject?>(
+                              future: FireStoreUtils.getAcceptedOrders(
+                                orderModel.id.toString(),
+                                FireStoreUtils.getCurrentUid(),
+                              ),
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                    return Constant.loader(context);
+
+                                  case ConnectionState.done:
+                                    if (snapshot.hasError) {
+                                      return Text(snapshot.error.toString());
+                                    } else if (!snapshot.hasData || snapshot.data == null) {
+                                      return SizedBox();
+                                    } else {
+                                      final driverIdAcceptReject = snapshot.data!;
+
+                                      // 🔥 Fare Details container
+                                      if (driverIdAcceptReject.fareDetails != null) {
+                                        final fareDetails = driverIdAcceptReject.fareDetails!;
+                                        final steps = fareDetails['steps'] != null
+                                            ? List<Map<String, dynamic>>.from(fareDetails['steps'])
+                                            : <Map<String, dynamic>>[];
+
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: themeChange.getThem()
+                                                  ? AppColors.darkContainerBackground
+                                                  : AppColors.containerBackground,
+                                              borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                              border: Border.all(
+                                                color: themeChange.getThem()
+                                                    ? AppColors.darkContainerBorder
+                                                    : AppColors.containerBorder,
+                                                width: 0.5,
+                                              ),
+                                              boxShadow: themeChange.getThem()
+                                                  ? null
+                                                  : [
+                                                BoxShadow(
+                                                  color: Colors.black.withOpacity(0.10),
+                                                  blurRadius: 5,
+                                                  offset: const Offset(0, 4),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(12),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Fare Details".tr,
+                                                    style: GoogleFonts.poppins(
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Colors.black),
                                                   ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Expanded(
-                                                            child: Text("Offer Rate".tr,
-                                                                style:
-                                                                    GoogleFonts.poppins(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w600,
-                                                                        color: Colors
-                                                                            .black))),
-                                                        Text(
-                                                          Constant.amountShow(
-                                                              amount: driverIdAcceptReject
-                                                                  .offerAmount
-                                                                  .toString()),
-                                                          style: TextStyle(
-                                                              color: Colors.black),
-                                                        ),
-                                                      ],
+                                                  const SizedBox(height: 8),
+
+                                                  // Steps
+                                                  ...steps.map(
+                                                        (step) => Padding(
+                                                      padding: const EdgeInsets.symmetric(vertical: 2),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              step['title']?.toString() ?? '',
+                                                              style: GoogleFonts.poppins(
+                                                                  fontSize: 14, color: Colors.black87),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            Constant.amountShow(
+                                                                amount: step['price']?.toString() ?? '0'),
+                                                            style: GoogleFonts.poppins(
+                                                                fontWeight: FontWeight.w600,
+                                                                color: Colors.black),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              );
-                                            }
-                                          default:
-                                            return Text('Error'.tr);
-                                        }
-                                      }),
+
+                                                  const Divider(height: 20),
+
+                                                  // Total
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        "Total".tr,
+                                                        style: GoogleFonts.poppins(
+                                                            fontSize: 15, fontWeight: FontWeight.bold,color: Colors.black),
+                                                      ),
+                                                      Text(
+                                                        Constant.amountShow(
+                                                            amount: fareDetails['total']?.toString() ?? '0'),
+                                                        style: GoogleFonts.poppins(
+                                                            fontSize: 15, fontWeight: FontWeight.bold,color: Colors.black),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        return SizedBox();
+                                      }
+                                    }
+
+                                  default:
+                                    return Text('Error'.tr);
+                                }
+                              },
+                            ),
+
+
+                            // FutureBuilder<DriverIdAcceptReject?>(
+                                  //     future: FireStoreUtils.getAcceptedOrders(
+                                  //         orderModel.id.toString(),
+                                  //         FireStoreUtils.getCurrentUid()),
+                                  //     builder: (context, snapshot) {
+                                  //       switch (snapshot.connectionState) {
+                                  //         case ConnectionState.waiting:
+                                  //           return Constant.loader(context);
+                                  //         case ConnectionState.done:
+                                  //           if (snapshot.hasError) {
+                                  //             return Text(snapshot.error.toString());
+                                  //           } else {
+                                  //             DriverIdAcceptReject driverIdAcceptReject =
+                                  //                 snapshot.data!;
+                                  //             return Padding(
+                                  //               padding: const EdgeInsets.symmetric(
+                                  //                   horizontal: 10),
+                                  //               child: Container(
+                                  //                 decoration: BoxDecoration(
+                                  //                   color: themeChange.getThem()
+                                  //                       ? AppColors
+                                  //                           .darkContainerBackground
+                                  //                       : AppColors.containerBackground,
+                                  //                   borderRadius: const BorderRadius.all(
+                                  //                       Radius.circular(10)),
+                                  //                   border: Border.all(
+                                  //                       color: themeChange.getThem()
+                                  //                           ? AppColors
+                                  //                               .darkContainerBorder
+                                  //                           : AppColors.containerBorder,
+                                  //                       width: 0.5),
+                                  //                   boxShadow: themeChange.getThem()
+                                  //                       ? null
+                                  //                       : [
+                                  //                           BoxShadow(
+                                  //                             color: Colors.black
+                                  //                                 .withOpacity(0.10),
+                                  //                             blurRadius: 5,
+                                  //                             offset: const Offset(0,
+                                  //                                 4), // changes position of shadow
+                                  //                           ),
+                                  //                         ],
+                                  //                 ),
+                                  //                 child: Padding(
+                                  //                   padding: const EdgeInsets.all(8.0),
+                                  //                   child: Row(
+                                  //                     children: [
+                                  //                       Expanded(
+                                  //                           child: Text("Offer Rate".tr,
+                                  //                               style:
+                                  //                                   GoogleFonts.poppins(
+                                  //                                       fontWeight:
+                                  //                                           FontWeight
+                                  //                                               .w600,
+                                  //                                       color: Colors
+                                  //                                           .black))),
+                                  //                       Text(
+                                  //                         Constant.amountShow(
+                                  //                             amount: driverIdAcceptReject
+                                  //                                 .offerAmount
+                                  //                                 .toString()),
+                                  //                         style: TextStyle(
+                                  //                             color: Colors.black),
+                                  //                       ),
+                                  //                     ],
+                                  //                   ),
+                                  //                 ),
+                                  //               ),
+                                  //             );
+                                  //           }
+                                  //         default:
+                                  //           return Text('Error'.tr);
+                                  //       }
+                                  //     }),
                                   const SizedBox(
                                     height: 10,
                                   ),

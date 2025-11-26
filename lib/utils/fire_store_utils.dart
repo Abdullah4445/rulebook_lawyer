@@ -241,7 +241,8 @@ class FireStoreUtils {
   }
 
   static Future<DriverIdAcceptReject?> getAcceptedOrders(
-      String orderId, String driverId) async {
+      String orderId, String driverId)
+  async {
     DriverIdAcceptReject? driverIdAcceptReject;
     await fireStore
         .collection(CollectionName.orders)
