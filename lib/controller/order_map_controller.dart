@@ -97,10 +97,22 @@ class OrderMapController extends GetxController {
       final Map<String, dynamic> offerData = {};
 
       if (selectedButton.value == 0) {
-        // Case total
+        // Case total as single step
+        double totalAmount = double.tryParse(newAmount.value) ?? 0.0;
+
         offerData['type'] = "case_total";
-        offerData['title'] = titleController.value.text.trim();
-        offerData['amount'] = double.tryParse(newAmount.value) ?? 0.0;
+        offerData['total'] = totalAmount;
+
+        // Wrap into steps array to keep same structure
+        offerData['steps'] = [
+          {
+            "title": titleController.value.text.trim(),
+            "price": totalAmount,
+            "customerStatus": "pending",
+            "lawyerStatus": "pending",
+          }
+        ];
+
       } else if (selectedButton.value == 1) {
         // Multi steps
         double totalPrice = double.tryParse(totalPriceController.value.text.trim()) ?? 0.0;
@@ -113,17 +125,19 @@ class OrderMapController extends GetxController {
 
         double stepPrice = totalPrice / stepCount;
 
-        final List<Map<String, dynamic>> stepData = steps
+        // Steps array with statuses for each step
+        offerData['steps'] = steps
             .where((s) => s.titleController.text.trim().isNotEmpty)
             .map((s) => {
           "title": s.titleController.text.trim(),
           "price": stepPrice,
+          "customerStatus": "pending",
+          "lawyerStatus": "pending",
         })
             .toList();
 
         offerData['type'] = "multi_steps";
         offerData['total'] = totalPrice;
-        offerData['steps'] = stepData;
       }
 
       // 2️⃣ Add current driver to acceptedDriverId list
@@ -145,7 +159,7 @@ class OrderMapController extends GetxController {
         driverId: FireStoreUtils.getCurrentUid(),
         acceptedRejectTime: cloudFirestore.Timestamp.now(),
         offerAmount: newAmount.value,
-        fareDetails: offerData, // Stores fare info for this driver
+        fareDetails: offerData,
       );
 
       // 5️⃣ Save accepted driver info inside order document
@@ -180,6 +194,99 @@ class OrderMapController extends GetxController {
       print("❌ Error in acceptOrder: $e");
     }
   }
+
+
+  // acceptOrder() async {
+  //   try {
+  //     ShowToastDialog.showLoader("Please wait".tr);
+  //
+  //     // 1️⃣ Prepare fare details
+  //     final Map<String, dynamic> offerData = {};
+  //
+  //     if (selectedButton.value == 0) {
+  //       // Case total
+  //       offerData['type'] = "case_total";
+  //       offerData['title'] = titleController.value.text.trim();
+  //       offerData['total'] = double.tryParse(newAmount.value) ?? 0.0;
+  //     } else if (selectedButton.value == 1) {
+  //       // Multi steps
+  //       double totalPrice = double.tryParse(totalPriceController.value.text.trim()) ?? 0.0;
+  //       int stepCount = steps.where((s) => s.titleController.text.trim().isNotEmpty).length;
+  //
+  //       if (stepCount == 0) {
+  //         ShowToastDialog.showToast("Please enter at least one step title".tr);
+  //         return;
+  //       }
+  //
+  //       double stepPrice = totalPrice / stepCount;
+  //
+  //       final List<Map<String, dynamic>> stepData = steps
+  //           .where((s) => s.titleController.text.trim().isNotEmpty)
+  //           .map((s) => {
+  //         "title": s.titleController.text.trim(),
+  //         "price": stepPrice,
+  //       })
+  //           .toList();
+  //
+  //       offerData['type'] = "multi_steps";
+  //       offerData['total'] = totalPrice;
+  //       offerData['steps'] = stepData;
+  //     }
+  //
+  //     // 2️⃣ Add current driver to acceptedDriverId list
+  //     List<dynamic> newAcceptedDriverId = orderModel.value.acceptedDriverId ?? [];
+  //     newAcceptedDriverId.add(FireStoreUtils.getCurrentUid());
+  //     orderModel.value.acceptedDriverId = newAcceptedDriverId;
+  //
+  //     // 3️⃣ Save fare details in order document
+  //     await cloudFirestore.FirebaseFirestore.instance
+  //         .collection("orders")
+  //         .doc(orderModel.value.id)
+  //         .set({
+  //       "fareDetails": offerData,
+  //       "acceptedDriverId": newAcceptedDriverId,
+  //     }, cloudFirestore.SetOptions(merge: true));
+  //
+  //     // 4️⃣ Prepare accepted driver info with fare details
+  //     DriverIdAcceptReject driverIdAcceptReject = DriverIdAcceptReject(
+  //       driverId: FireStoreUtils.getCurrentUid(),
+  //       acceptedRejectTime: cloudFirestore.Timestamp.now(),
+  //       offerAmount: newAmount.value,
+  //       fareDetails: offerData, // Stores fare info for this driver
+  //     );
+  //
+  //     // 5️⃣ Save accepted driver info inside order document
+  //     await FireStoreUtils.acceptRide(orderModel.value, driverIdAcceptReject);
+  //
+  //     // 6️⃣ Notify customer
+  //     final customer =
+  //     await FireStoreUtils.getCustomer(orderModel.value.userId.toString());
+  //     if (customer != null) {
+  //       await SendNotification.sendOneNotification(
+  //         token: customer.fcmToken.toString(),
+  //         title: 'New Driver Bid'.tr,
+  //         body:
+  //         'Driver has offered ${Constant.amountShow(amount: newAmount.value)} for your journey.🚗'.tr,
+  //         payload: {},
+  //       );
+  //     }
+  //
+  //     // 7️⃣ Subscription order deduction
+  //     if (driverModel.value.subscriptionTotalOrders != "-1") {
+  //       driverModel.value.subscriptionTotalOrders =
+  //           (int.parse(driverModel.value.subscriptionTotalOrders.toString()) - 1)
+  //               .toString();
+  //       await FireStoreUtils.updateDriverUser(driverModel.value);
+  //     }
+  //
+  //     ShowToastDialog.closeLoader();
+  //     ShowToastDialog.showToast("Ride Accepted".tr);
+  //     Get.back(result: true);
+  //   } catch (e) {
+  //     ShowToastDialog.closeLoader();
+  //     print("❌ Error in acceptOrder: $e");
+  //   }
+  // }
 
 
 
