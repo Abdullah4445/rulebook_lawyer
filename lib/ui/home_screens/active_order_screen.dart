@@ -247,9 +247,12 @@ class ActiveOrderScreen extends StatelessWidget {
                                                 child: GestureDetector(
                                                   onTap: () {
                                                     Get.to(() => FareDetailsScreen(
-                                                      fareDetails: driverIdAcceptReject.fareDetails,
-
+                                                      orderId: orderModel.id?.toString() ?? "",
+                                                      acceptedDriverId: driverIdAcceptReject.driverId?.toString() ?? "",
+                                                      fareDetails: driverIdAcceptReject.fareDetails ?? {},
                                                     ));
+
+
 
 
                                                   },
