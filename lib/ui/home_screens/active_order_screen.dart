@@ -415,7 +415,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                             :
                                         ButtonThem.buildBorderButton(
                                           context,
-                                          title: "Pickup Customer".tr,
+                                          title: "Case completed".tr,
                                           btnHeight: 44,
                                           iconVisibility: false,
                                           onPress: () async {
