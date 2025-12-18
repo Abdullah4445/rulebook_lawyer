@@ -144,6 +144,146 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
     await fetchFareDetails();
   }
 
+  // Update customer status for a specific step (or case_total)
+  Future<void> updateCustomerStatus(int stepIndex, String newStatus) async {
+    setState(() {
+      loading = true;
+    });
+
+    final docRef = FirebaseFirestore.instance
+        .collection("orders")
+        .doc(widget.orderId)
+        .collection("acceptedDriver")
+        .doc(widget.acceptedDriverId);
+
+    final snapshot = await docRef.get();
+    if (!snapshot.exists) {
+      setState(() {
+        loading = false;
+      });
+      return;
+    }
+
+    try {
+      final data = snapshot.data() as Map<String, dynamic>;
+      final fare = data['fareDetails'];
+
+      if (fare['type'] == "case_total") {
+        // For case_total, set the top-level customerStatus
+        // If setting to pending, also clear any driverConfirmed flag
+        if (newStatus == 'pending' || newStatus == 'done') {
+          // Clear driverConfirmed when customer changes status (either back to pending or marks done again)
+          final Map<String, Object?> updates = {"fareDetails.customerStatus": newStatus};
+          if (fare.containsKey('driverConfirmed')) {
+            updates['fareDetails.driverConfirmed'] = FieldValue.delete();
+          }
+          await docRef.update(updates);
+        } else {
+          await docRef.update({"fareDetails.customerStatus": newStatus});
+        }
+        await fetchFareDetails();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(newStatus == 'done' ? 'Customer payment confirmed' : 'Customer status set to pending')));
+        return;
+      }
+
+      // For multi_steps
+      List steps = [];
+      if (fare['steps'] is List) {
+        steps = List<Map<String, dynamic>>.from(fare['steps']);
+      } else if (fare['steps'] is Map) {
+        steps = (fare['steps'] as Map).values
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+      } else {
+        return;
+      }
+
+      if (stepIndex < 0 || stepIndex >= steps.length) return;
+
+      // If setting to pending OR customer marks done again, clear driverConfirmed for that step so buttons reappear
+      steps[stepIndex]['customerStatus'] = newStatus;
+      if (newStatus == 'pending' || newStatus == 'done') {
+        steps[stepIndex].remove('driverConfirmed');
+      }
+
+      await docRef.update({"fareDetails.steps": steps});
+      await fetchFareDetails();
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(newStatus == 'done' ? 'Customer payment confirmed' : 'Customer status set to pending')));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ' + e.toString())));
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  // Confirm payment action by driver: set driverConfirmed flag for the step and ensure customerStatus is 'done'
+  Future<void> confirmPayment(int stepIndex) async {
+    setState(() {
+      loading = true;
+    });
+
+    final docRef = FirebaseFirestore.instance
+        .collection("orders")
+        .doc(widget.orderId)
+        .collection("acceptedDriver")
+        .doc(widget.acceptedDriverId);
+
+    final snapshot = await docRef.get();
+    if (!snapshot.exists) {
+      setState(() {
+        loading = false;
+      });
+      return;
+    }
+
+    try {
+      final data = snapshot.data() as Map<String, dynamic>;
+      final fare = data['fareDetails'];
+
+      // For case_total, set top-level driverConfirmed and customerStatus
+      if (fare['type'] == 'case_total') {
+        await docRef.update({
+          'fareDetails.customerStatus': 'done',
+          'fareDetails.driverConfirmed': true,
+        });
+        await fetchFareDetails();
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Customer payment confirmed')));
+        return;
+      }
+
+      // For multi_steps
+      List steps = [];
+      if (fare['steps'] is List) {
+        steps = List<Map<String, dynamic>>.from(fare['steps']);
+      } else if (fare['steps'] is Map) {
+        steps = (fare['steps'] as Map).values
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+      } else {
+        return;
+      }
+
+      if (stepIndex < 0 || stepIndex >= steps.length) return;
+
+      steps[stepIndex]['customerStatus'] = 'done';
+      steps[stepIndex]['driverConfirmed'] = true;
+
+      await docRef.update({'fareDetails.steps': steps});
+      await fetchFareDetails();
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Customer payment confirmed')));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ' + e.toString())));
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final steps = getSteps();
@@ -198,6 +338,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                     price: step['price'] ?? 0,
                     customerStatus: step['customerStatus'] ?? "pending",
                     lawyerStatus: step['lawyerStatus'] ?? "pending",
+                    driverConfirmed: (step['driverConfirmed'] == true),
                     onMarkDone: () => updateLawyerStatus(index),
                   );
                 },
@@ -244,6 +385,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
     required dynamic price,
     required String lawyerStatus,
     required String customerStatus,
+    required bool driverConfirmed,
     required VoidCallback onMarkDone,
   }) {
     return Container(
@@ -255,7 +397,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withAlpha(26), // replaced withOpacity(0.1)
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -278,7 +420,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(lawyerStatus).withOpacity(0.1),
+                  color: _getStatusColor(lawyerStatus).withAlpha(26),
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(color: _getStatusColor(lawyerStatus)),
                 ),
@@ -342,7 +484,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(customerStatus).withOpacity(0.1),
+                      color: _getStatusColor(customerStatus).withAlpha(26),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -361,7 +503,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
 
           const SizedBox(height: 16),
 
-          // Action Button
+          // Action Button(s)
           if (lawyerStatus != "done")
             SizedBox(
               width: double.infinity,
@@ -407,50 +549,110 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                 ],
               ),
             ),
-        ],
-      ),
-    );
-  }
 
-  Widget fareRow(String title, String value, {bool isBold = false, bool isTotal = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              color: isTotal ? Colors.blue[700] : Colors.black87,
-              fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
-              fontSize: isTotal ? 18 : 14,
-            ),
-          ),
-          Text(
-            "Rs $value",
-            style: GoogleFonts.poppins(
-              color: isTotal ? Colors.blue[700] : Colors.black87,
-              fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-              fontSize: isTotal ? 18 : 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+          const SizedBox(height: 12),
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'done':
-        return Colors.green;
-      case 'pending':
-        return Colors.orange;
-      case 'in progress':
-        return Colors.blue;
-      default:
-        return Colors.grey;
-    }
-  }
+          // If customer marked the step as done AND driver has not yet confirmed, show Confirm / Cancel buttons for driver
+          if (customerStatus.toLowerCase() == 'done' && !driverConfirmed)
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // Confirm payment -> mark driverConfirmed for this step
+                      await confirmPayment(index);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green[700],
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Confirm Payment',
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Are you sure?'),
+                          content: const Text('This will set the customer status back to pending.'),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('No')),
+                            TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Yes')),
+                          ],
+                        ),
+                      );
+
+                      if (confirm == true) {
+                        await updateCustomerStatus(index, 'pending');
+                      }
+                    },
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.poppins(color: Colors.black87, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          // But hide buttons if driver already confirmed that step (handled by the condition above)
+         ],
+       ),
+     );
+   }
+
+   Widget fareRow(String title, String value, {bool isBold = false, bool isTotal = false}) {
+     return Padding(
+       padding: const EdgeInsets.symmetric(vertical: 4),
+       child: Row(
+         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+         children: [
+           Text(
+             title,
+             style: GoogleFonts.poppins(
+               color: isTotal ? Colors.blue[700] : Colors.black87,
+               fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
+               fontSize: isTotal ? 18 : 14,
+             ),
+           ),
+           Text(
+             "Rs $value",
+             style: GoogleFonts.poppins(
+               color: isTotal ? Colors.blue[700] : Colors.black87,
+               fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+               fontSize: isTotal ? 18 : 14,
+             ),
+           ),
+         ],
+       ),
+     );
+   }
+
+   Color _getStatusColor(String status) {
+     switch (status.toLowerCase()) {
+       case 'done':
+         return Colors.green;
+       case 'pending':
+         return Colors.orange;
+       case 'in progress':
+         return Colors.blue;
+       default:
+         return Colors.grey;
+     }
+   }
 }
 
 
@@ -707,7 +909,6 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
 //     ),
 //   );
 // }
-//
 //
 //
 //

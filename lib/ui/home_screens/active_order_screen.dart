@@ -17,7 +17,6 @@ import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/location_view.dart';
 import 'package:driver/widget/user_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -136,7 +135,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                   ? null
                                   : [
                                 BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
+                                  color: Colors.grey.withAlpha(128), // replaced withOpacity(0.5)
                                   blurRadius: 8,
                                   offset: const Offset(
                                       0, 2), // changes position of shadow
@@ -242,103 +241,113 @@ class ActiveOrderScreen extends StatelessWidget {
 
                                               return Padding(
                                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    Get.to(() => FareDetailsScreen(
-                                                      orderId: orderModel.id?.toString() ?? "",
-                                                      acceptedDriverId: driverIdAcceptReject.driverId?.toString() ?? "",
-                                                      fareDetails: driverIdAcceptReject.fareDetails ?? {},
-                                                    ));
-
-
-
-
-                                                  },
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: themeChange.getThem()
-                                                          ? AppColors.darkContainerBackground
-                                                          : AppColors.containerBackground,
-                                                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                                                      border: Border.all(
-                                                        color: themeChange.getThem()
-                                                            ? AppColors.darkContainerBorder
-                                                            : AppColors.containerBorder,
-                                                        width: 0.5,
-                                                      ),
-                                                      boxShadow: themeChange.getThem()
-                                                          ? null
-                                                          : [
-                                                        BoxShadow(
-                                                          color: Colors.black.withOpacity(0.10),
-                                                          blurRadius: 5,
-                                                          offset: const Offset(0, 4),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.all(12),
-                                                      child: Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text(
-                                                            "Fare Details".tr,
-                                                            style: GoogleFonts.poppins(
-                                                                fontSize: 16,
-                                                                fontWeight: FontWeight.w600,
-                                                                color: Colors.black),
+                                                child: StatefulBuilder(
+                                                  builder: (context, setState) {
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        Get.to(() => FareDetailsScreen(
+                                                          orderId: orderModel.id?.toString() ?? "",
+                                                          acceptedDriverId: driverIdAcceptReject.driverId?.toString() ?? "",
+                                                          fareDetails: driverIdAcceptReject.fareDetails ?? {},
+                                                        ));
+                                                      },
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          color: themeChange.getThem()
+                                                              ? AppColors.darkContainerBackground
+                                                              : AppColors.containerBackground,
+                                                          borderRadius: const BorderRadius.all(Radius.circular(10)),
+                                                          border: Border.all(
+                                                            color: themeChange.getThem()
+                                                                ? AppColors.darkContainerBorder
+                                                                : AppColors.containerBorder,
+                                                            width: 0.5,
                                                           ),
-                                                          const SizedBox(height: 8),
+                                                          boxShadow: themeChange.getThem()
+                                                              ? null
+                                                              : [
+                                                            BoxShadow(
+                                                              color: Colors.black.withAlpha(26), // replaced withOpacity(0.10)
+                                                              blurRadius: 5,
+                                                              offset: const Offset(0, 4),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(12),
+                                                          child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Text(
+                                                                "Fare Details".tr,
+                                                                style: GoogleFonts.poppins(
+                                                                    fontSize: 16,
+                                                                    fontWeight: FontWeight.w600,
+                                                                    color: Colors.black),
+                                                              ),
+                                                              const SizedBox(height: 8),
 
-                                                          // Steps
-                                                          ...steps.map(
-                                                                (step) => Padding(
-                                                              padding: const EdgeInsets.symmetric(vertical: 2),
-                                                              child: Row(
+                                                              // Steps
+                                                              ...steps.map((stepEntry) {
+                                                                final step = Map<String, dynamic>.from(stepEntry);
+                                                                return Column(
+                                                                  children: [
+                                                                    Padding(
+                                                                      padding: const EdgeInsets.symmetric(vertical: 2),
+                                                                      child: Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Expanded(
+                                                                            child: Text(
+                                                                              step['title']?.toString() ?? '',
+                                                                              style: GoogleFonts.poppins(
+                                                                                  fontSize: 14, color: Colors.black87),
+                                                                            ),
+                                                                          ),
+                                                                          Text(
+                                                                            Constant.amountShow(
+                                                                                amount: step['price']?.toString() ?? '0'),
+                                                                            style: GoogleFonts.poppins(
+                                                                                fontWeight: FontWeight.w600,
+                                                                                color: Colors.black),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+
+                                                                    // per-step buttons removed to show single pair inside fare container
+
+                                                                  ],
+                                                                );
+                                                              }).toList(),
+
+                                                              const Divider(height: 20),
+
+                                                              // Total
+                                                              Row(
                                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                 children: [
-                                                                  Expanded(
-                                                                    child: Text(
-                                                                      step['title']?.toString() ?? '',
-                                                                      style: GoogleFonts.poppins(
-                                                                          fontSize: 14, color: Colors.black87),
-                                                                    ),
+                                                                  Text(
+                                                                    "Total".tr,
+                                                                    style: GoogleFonts.poppins(
+                                                                        fontSize: 15, fontWeight: FontWeight.bold,color: Colors.black),
                                                                   ),
                                                                   Text(
                                                                     Constant.amountShow(
-                                                                        amount: step['price']?.toString() ?? '0'),
+                                                                        amount: fareDetails['total']?.toString() ?? '0'),
                                                                     style: GoogleFonts.poppins(
-                                                                        fontWeight: FontWeight.w600,
-                                                                        color: Colors.black),
+                                                                        fontSize: 15, fontWeight: FontWeight.bold,color: Colors.black),
                                                                   ),
                                                                 ],
                                                               ),
-                                                            ),
-                                                          ),
 
-                                                          const Divider(height: 20),
-
-                                                          // Total
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                            children: [
-                                                              Text(
-                                                                "Total".tr,
-                                                                style: GoogleFonts.poppins(
-                                                                    fontSize: 15, fontWeight: FontWeight.bold,color: Colors.black),
-                                                              ),
-                                                              Text(
-                                                                Constant.amountShow(
-                                                                    amount: fareDetails['total']?.toString() ?? '0'),
-                                                                style: GoogleFonts.poppins(
-                                                                    fontSize: 15, fontWeight: FontWeight.bold,color: Colors.black),
-                                                              ),
+                                                              const SizedBox(height: 12),
                                                             ],
                                                           ),
-                                                        ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
+                                                    );
+                                                  },
                                                 ),
                                               );
                                             } else {
