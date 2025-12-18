@@ -20,8 +20,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/order/driverId_accept_reject.dart';
@@ -357,77 +355,105 @@ class ActiveOrderScreen extends StatelessWidget {
                                   Row(
                                     children: [
                                       Expanded(
-                                        child: orderModel.status ==
-                                            Constant.caseInProgress
-                                            ? ButtonThem.buildBorderButton(
-                                          context,
-                                          title: "Complete Ride".tr,
-                                          btnHeight: 44,
-                                          iconVisibility: false,
-                                          onPress: () async {
-                                            orderModel.status =
-                                                Constant.caseComplete;
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          alignment: Alignment.centerLeft,
+                                          child: orderModel.status == Constant.caseInProgress
+                                              ? ButtonThem.buildBorderButton(
+                                                  context,
+                                                  title: "Complete Ride".tr,
+                                                  btnHeight: 44,
+                                                  iconVisibility: false,
+                                                  onPress: () async {
+                                                    ShowToastDialog.showLoader("Please wait...".tr);
+                                                    // Require fare approval from both lawyer and customer before completing
+                                                    final approved = await _isFareFullyApproved(orderModel.id);
+                                                    if (!approved) {
+                                                      ShowToastDialog.closeLoader();
+                                                      ShowToastDialog.showToast(
+                                                          "Please complete billing from customer and lawyer before completing the case".tr);
+                                                      return;
+                                                    }
+                                                    // Immediately complete the order
+                                                    orderModel.status = Constant.caseComplete;
+                                                    try {
+                                                      controller.stopLocationUpdates();
+                                                    } catch (e) {
+                                                      print(e);
+                                                    }
+                                                    try {
+                                                      final customer = await FireStoreUtils.getCustomer(orderModel.userId.toString());
+                                                      if (customer != null && (customer.fcmToken ?? '').isNotEmpty) {
+                                                        final playLoad = {"type": "city_order_complete", "orderId": orderModel.id};
+                                                        await SendNotification.sendOneNotification(
+                                                          token: customer.fcmToken.toString(),
+                                                          title: 'Ride complete!'.tr,
+                                                          body: 'Please complete your payment.'.tr,
+                                                          payload: playLoad,
+                                                        );
+                                                      }
+                                                    } catch (e) {
+                                                      print('Notification error: $e');
+                                                    }
+                                                    orderModel.updateDate = Timestamp.now();
+                                                    final success = await FireStoreUtils.setOrder(orderModel);
+                                                    ShowToastDialog.closeLoader();
+                                                    if (success == true) {
+                                                      ShowToastDialog.showToast("Ride Complete successfully".tr);
+                                                      controller.homeController.selectedIndex.value = 3;
+                                                    } else {
+                                                      ShowToastDialog.showToast("Failed to complete ride".tr);
+                                                    }
+                                                  },
+                                                )
+                                              : ButtonThem.buildBorderButton(
+                                                  context,
+                                                  title: "Case completed".tr,
+                                                  btnHeight: 74,
+                                                  iconVisibility: false,
+                                                  onPress: () async {
+                                                    // Require fare approval from both lawyer and customer before completing
+                                                    ShowToastDialog.showLoader("Please wait...".tr);
+                                                    final approved = await _isFareFullyApproved(orderModel.id);
+                                                    if (!approved) {
+                                                      ShowToastDialog.closeLoader();
+                                                      ShowToastDialog.showToast(
+                                                          "Please complete billing from customer and lawyer before completing the case".tr);
+                                                      return;
+                                                    }
 
-                                            controller.stopLocationUpdates();
-
-                                            await FireStoreUtils.getCustomer(
-                                                orderModel.userId
-                                                    .toString())
-                                                .then((value) async {
-                                              if (value != null) {
-                                                if (value.fcmToken != null) {
-                                                  Map<String, dynamic>
-                                                  playLoad =
-                                                  <String, dynamic>{
-                                                    "type":
-                                                    "city_order_complete",
-                                                    "orderId": orderModel.id
-                                                  };
-
-                                                  await SendNotification
-                                                      .sendOneNotification(
-                                                      token: value.fcmToken
-                                                          .toString(),
-                                                      title:
-                                                      'Ride complete!'
-                                                          .tr,
-                                                      body:
-                                                      'Please complete your payment.'
-                                                          .tr,
-                                                      payload: playLoad);
-                                                }
-                                              }
-                                            });
-
-                                            await FireStoreUtils.setOrder(
-                                                orderModel)
-                                                .then((value) {
-                                              if (value == true) {
-                                                ShowToastDialog.showToast(
-                                                    "Ride Complete successfully"
-                                                        .tr);
-                                                controller.homeController
-                                                    .selectedIndex.value = 3;
-                                              }
-                                            });
-                                          },
-                                        )
-                                            :
-                                        ButtonThem.buildBorderButton(
-                                          context,
-                                          title: "Case completed".tr,
-                                          btnHeight: 44,
-                                          iconVisibility: false,
-                                          onPress: () async {
-                                            showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) =>
-                                                    otpDialog(
-                                                        context,
-                                                        controller,
-                                                        orderModel));
-                                          },
+                                                    // Immediately complete the order
+                                                    orderModel.status = Constant.caseComplete;
+                                                    try {
+                                                      controller.stopLocationUpdates();
+                                                    } catch (e) {
+                                                      print(e);
+                                                    }
+                                                    try {
+                                                      final customer = await FireStoreUtils.getCustomer(orderModel.userId.toString());
+                                                      if (customer != null && (customer.fcmToken ?? '').isNotEmpty) {
+                                                        final playLoad = {"type": "city_order_complete", "orderId": orderModel.id};
+                                                        await SendNotification.sendOneNotification(
+                                                          token: customer.fcmToken.toString(),
+                                                          title: 'Ride complete!'.tr,
+                                                          body: 'Please complete your payment.'.tr,
+                                                          payload: playLoad,
+                                                        );
+                                                      }
+                                                    } catch (e) {
+                                                      print('Notification error: $e');
+                                                    }
+                                                    orderModel.updateDate = Timestamp.now();
+                                                    final success = await FireStoreUtils.setOrder(orderModel);
+                                                    ShowToastDialog.closeLoader();
+                                                    if (success == true) {
+                                                      ShowToastDialog.showToast("Ride Complete successfully".tr);
+                                                      controller.homeController.selectedIndex.value = 3;
+                                                    } else {
+                                                      ShowToastDialog.showToast("Failed to complete ride".tr);
+                                                    }
+                                                  },
+                                                ),
                                         ),
                                       ),
                                       const SizedBox(
@@ -556,105 +582,6 @@ class ActiveOrderScreen extends StatelessWidget {
             );
           });
   }
-
-  otpDialog(
-      BuildContext context, ActiveOrderController controller, OrderModel orderModel) {
-    final themeChange = Provider.of<DarkThemeProvider>(context);
-
-    return Dialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0)), //this right here
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(
-              height: 10,
-            ),
-            Text("OTP verify from customer".tr,
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600, color: Colors.black)),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: PinCodeTextField(
-                textStyle: TextStyle(color: Colors.black87),
-                length: 6,
-                appContext: context,
-                keyboardType: TextInputType.phone,
-                pinTheme: PinTheme(
-                  fieldHeight: 40,
-                  fieldWidth: 40,
-                  activeColor: themeChange.getThem()
-                      ? AppColors.darkTextFieldBorder
-                      : AppColors.textFieldBorder,
-                  selectedColor: themeChange.getThem()
-                      ? AppColors.darkTextFieldBorder
-                      : AppColors.textFieldBorder,
-                  inactiveColor: themeChange.getThem()
-                      ? AppColors.darkTextFieldBorder
-                      : AppColors.textFieldBorder,
-                  activeFillColor: themeChange.getThem()
-                      ? AppColors.darkTextField
-                      : AppColors.textField,
-                  inactiveFillColor: themeChange.getThem()
-                      ? AppColors.darkTextField
-                      : AppColors.textField,
-                  selectedFillColor: themeChange.getThem()
-                      ? AppColors.darkTextField
-                      : AppColors.textField,
-                  shape: PinCodeFieldShape.box,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                enableActiveFill: true,
-                cursorColor: AppColors.primary,
-                controller: controller.otpController.value,
-                onCompleted: (v) async {},
-                onChanged: (value) {},
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ButtonThem.buildButton(context, title: "OTP verify".tr, onPress: () async {
-              if (orderModel.otp.toString() == controller.otpController.value.text) {
-                Get.back();
-                ShowToastDialog.showLoader("Please wait...".tr);
-                orderModel.status = Constant.caseInProgress;
-
-                await FireStoreUtils.getCustomer(orderModel.userId.toString())
-                    .then((value) async {
-                  if (value != null) {
-                    await SendNotification.sendOneNotification(
-                        token: value.fcmToken.toString(),
-                        title: 'Ride Started'.tr,
-                        body:
-                        'The ride has officially started. Please follow the designated route to the destination.'
-                            .tr,
-                        payload: {});
-                  }
-                });
-
-                await FireStoreUtils.setOrder(orderModel).then((value) {
-                  if (value == true) {
-                    ShowToastDialog.closeLoader();
-                    ShowToastDialog.showToast("Customer pickup successfully".tr);
-                  }
-                });
-              } else {
-                ShowToastDialog.showToast("OTP Invalid".tr,
-                    position: EasyLoadingToastPosition.center);
-              }
-            }),
-            const SizedBox(
-              height: 10,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 Future<void> _notifyCustomerAndCancelOrder(OrderModel orderModel) async {
@@ -703,5 +630,59 @@ Future<void> _notifyCustomerAndCancelOrder(OrderModel orderModel) async {
     print("Error updating order ${orderModel.id} status to cancelled in Firestore: $e");
     // Handle this error appropriately - the order might be cancelled in the app
     // but not in the database, which could lead to inconsistencies.
+  }
+}
+
+// Helper: check that fare details (for the acceptedDriver record) are marked done by both lawyer and customer
+Future<bool> _isFareFullyApproved(String? orderId) async {
+  if (orderId == null) return false;
+  try {
+    final accepted = await FireStoreUtils.getAcceptedOrders(orderId.toString(), FireStoreUtils.getCurrentUid());
+    if (accepted == null) return false;
+    final fareDetails = accepted.fareDetails;
+    if (fareDetails == null) return false;
+
+    List steps = [];
+    final type = fareDetails['type']?.toString();
+
+    if (type == 'multi_steps') {
+      if (fareDetails['steps'] is List) {
+        steps = List<Map<String, dynamic>>.from(fareDetails['steps']);
+      } else if (fareDetails['steps'] is Map) {
+        steps = (fareDetails['steps'] as Map).values
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+      }
+    } else {
+      // case_total or unspecified -> try to normalize
+      if (fareDetails['steps'] is List) {
+        steps = List<Map<String, dynamic>>.from(fareDetails['steps']);
+      } else if (fareDetails['steps'] is Map) {
+        steps = (fareDetails['steps'] as Map).values
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+      } else {
+        // build single-step from top-level fields if present
+        steps = [
+          {
+            'lawyerStatus': fareDetails['lawyerStatus'] ?? 'pending',
+            'customerStatus': fareDetails['customerStatus'] ?? 'pending',
+          }
+        ];
+      }
+    }
+
+    if (steps.isEmpty) return false;
+
+    for (var s in steps) {
+      final lawyer = (s['lawyerStatus'] ?? s['lawyerstatus'] ?? '').toString().toLowerCase();
+      final customer = (s['customerStatus'] ?? s['customerstatus'] ?? '').toString().toLowerCase();
+      if (lawyer != 'done' || customer != 'done') return false;
+    }
+
+    return true;
+  } catch (e) {
+    print('Error checking fare approval: $e');
+    return false;
   }
 }

@@ -10,8 +10,8 @@ import 'package:driver/model/order/location_lat_lng.dart';
 import 'package:driver/model/order/positions.dart';
 import 'package:driver/ui/home_screens/accepted_orders.dart';
 import 'package:driver/ui/home_screens/active_order_screen.dart';
+import 'package:driver/ui/home_screens/completed_orders.dart';
 import 'package:driver/ui/home_screens/new_orders_screen.dart';
-import 'package:driver/ui/order_screen/order_screen.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:driver/widget/geoflutterfire/src/geoflutterfire.dart';
 import 'package:driver/widget/geoflutterfire/src/models/point.dart';
@@ -37,7 +37,7 @@ class HomeController extends GetxController {
   RxList<OrderModel> availableRides = <OrderModel>[].obs;
 
   RxInt selectedIndex = 0.obs;
-  List<Widget> widgetOptions = <Widget>[const NewOrderScreen(), const AcceptedOrders(),     ActiveOrderScreen(),const OrderScreen()];
+  List<Widget> widgetOptions = <Widget>[const NewOrderScreen(), const AcceptedOrders(),     ActiveOrderScreen(),const CompletedOrders()];
   DashBoardController dashboardController = Get.put(DashBoardController());
 
   void onItemTapped(int index) {

@@ -50,7 +50,7 @@ class ButtonThem {
     BuildContext context, {
     required String title,
     double btnHeight = 50,
-    double txtSize = 14,
+    double txtSize = 18,
     double btnWidthRatio = 0.9,
     double borderRadius = 10,
     required Function() onPress,
