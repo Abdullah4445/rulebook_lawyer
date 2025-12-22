@@ -38,7 +38,6 @@ import 'package:driver/widget/geoflutterfire/src/models/point.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class FireStoreUtils {
@@ -621,7 +620,7 @@ class FireStoreUtils {
     await fireStore
         .collection(CollectionName.orders)
         .doc(orderModel.id)
-        .set(orderModel.toJson())
+        .set(orderModel.toJson(), SetOptions(merge: true))
         .then((value) {
       isAdded = true;
     }).catchError((error) {
@@ -1182,7 +1181,4 @@ class FireStoreUtils {
     return subscriptionHistoryList;
   }
 }
-
-
-
 
