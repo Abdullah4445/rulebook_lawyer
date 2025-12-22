@@ -26,7 +26,7 @@ class CompleteOrderScreen extends StatelessWidget {
           return Scaffold(
               appBar: AppBar(
                 backgroundColor: AppColors.primary,
-                title:  Text("Ride Details".tr),
+                title:  Text("Case Details".tr),
                 leading: InkWell(
                     onTap: () {
                       Get.back();
@@ -82,7 +82,7 @@ class CompleteOrderScreen extends StatelessWidget {
                                                   children: [
                                                     Expanded(
                                                       child: Text(
-                                                        "Ride ID".tr,
+                                                        "Case ID".tr,
                                                         style: GoogleFonts.poppins(
                                                           fontWeight: FontWeight.w600,
                                                         ),
@@ -134,7 +134,7 @@ class CompleteOrderScreen extends StatelessWidget {
                                           child: Divider(thickness: 1),
                                         ),
                                         Text(
-                                          "Pickup and drop-off locations".tr,
+                                          "Case Location".tr,
                                           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                                         ),
                                         const SizedBox(
@@ -201,7 +201,7 @@ class CompleteOrderScreen extends StatelessWidget {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  "Booking summary".tr,
+                                                  "Billing summary".tr,
                                                   style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                                                 ),
                                                 const Divider(
@@ -211,7 +211,7 @@ class CompleteOrderScreen extends StatelessWidget {
                                                   children: [
                                                     Expanded(
                                                       child: Text(
-                                                        "Ride Amount".tr,
+                                                        "Case Amount".tr,
                                                         style: GoogleFonts.poppins(color: AppColors.subTitleColor),
                                                       ),
                                                     ),
@@ -355,7 +355,7 @@ class CompleteOrderScreen extends StatelessWidget {
                                                   height: 10,
                                                 ),
                                                 Text(
-                                                  "Note : Admin commission will be debited from your wallet balance. \n Admin commission will apply on Ride Amount minus Discount(if applicable).".tr,
+                                                  "Note : Admin commission will be debited from your wallet balance. \n Admin commission will apply on Case Amount minus Discount(if applicable).".tr,
                                                   style: GoogleFonts.poppins(color: Colors.red),
                                                 )
                                               ],
