@@ -385,6 +385,8 @@ class ActiveOrderScreen extends StatelessWidget {
                                                     }
                                                     // Immediately complete the order
                                                     orderModel.status = Constant.caseComplete;
+                                                    // Also mark payment as confirmed when driver completes the case
+                                                    orderModel.paymentStatus = true;
                                                     try {
                                                       controller.stopLocationUpdates();
                                                     } catch (e) {
@@ -433,6 +435,8 @@ class ActiveOrderScreen extends StatelessWidget {
 
                                                     // Immediately complete the order
                                                     orderModel.status = Constant.caseComplete;
+                                                    // Also mark payment as confirmed when driver completes the case
+                                                    orderModel.paymentStatus = true;
                                                     try {
                                                       controller.stopLocationUpdates();
                                                     } catch (e) {
