@@ -72,13 +72,13 @@ class FreightController extends GetxController {
       await FireStoreUtils.getCustomer(orderModel.userId.toString()).then((value) async {
         if (value != null) {
           await SendNotification.sendOneNotification(
-              token: value.fcmToken.toString(), title: 'New Bids'.tr, body: 'Driver requested your ride.'.tr, payload: {});
+              token: value.fcmToken.toString(), title: 'New Bids'.tr, body: 'Lawyer requested your case.'.tr, payload: {});
         }
       });
 
       await FireStoreUtils.acceptInterCityRide(orderModel, driverIdAcceptReject).then((value) async {
         ShowToastDialog.closeLoader();
-        ShowToastDialog.showToast("Ride Accepted".tr);
+        ShowToastDialog.showToast("Case Accepted".tr);
         Get.back();
         if (value != null && value == true) {
           if(driverModel.value.subscriptionTotalOrders != "-1"){

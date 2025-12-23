@@ -41,7 +41,7 @@ class AcceptedOrders extends StatelessWidget {
               }
               return snapshot.data!.docs.isEmpty
                   ? Center(
-                      child: Text("No accepted ride found".tr),
+                      child: Text("No accepted case found".tr),
                     )
                   : ListView.builder(
                       itemCount: snapshot.data!.docs.length,

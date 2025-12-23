@@ -474,9 +474,9 @@ class ActiveFreightOrderScreen extends StatelessWidget {
                   if (value != null) {
                     await SendNotification.sendOneNotification(
                         token: value.fcmToken.toString(),
-                        title: 'Ride Started'.tr,
+                        title: 'Case Started'.tr,
                         body:
-                            'The ride has officially started. Please follow the designated route to the destination.'
+                            'The case has officially started. Please follow the designated steps of the case.'
                                 .tr,
                         payload: {});
                   }

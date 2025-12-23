@@ -171,9 +171,9 @@ class OrderMapController extends GetxController {
       if (customer != null) {
         await SendNotification.sendOneNotification(
           token: customer.fcmToken.toString(),
-          title: 'New Driver Bid'.tr,
+          title: 'New Lawyer Bid'.tr,
           body:
-          'Driver has offered ${Constant.amountShow(amount: newAmount.value)} for your journey.🚗'.tr,
+          'Lawyer has offered ${Constant.amountShow(amount: newAmount.value)} for your case'.tr,
           payload: {},
         );
       }
@@ -187,7 +187,7 @@ class OrderMapController extends GetxController {
       }
 
       ShowToastDialog.closeLoader();
-      ShowToastDialog.showToast("Ride Accepted".tr);
+      ShowToastDialog.showToast("Case Accepted".tr);
       Get.back(result: true);
     } catch (e) {
       ShowToastDialog.closeLoader();

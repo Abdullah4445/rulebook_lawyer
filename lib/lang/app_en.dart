@@ -255,11 +255,11 @@ const Map<String, String> enUS = {
       ' wallet amount to Accept Order and place a bid',
 
   // Ride Statuses
-  'Ride Placed': 'Ride Placed', // Or "Ride Requested", "Order Placed"
-  'Ride Active': 'Ride Active',
-  'Ride InProgress': 'Ride In Progress', // Standard capitalization for "In Progress"
-  'Ride Complete': 'Ride Completed', // Or "Ride Finished"
-  'Ride Canceled': 'Ride Canceled', // Or "Ride Cancelled" (UK English)
+  'Ride Placed': 'Case Placed', // Or "Ride Requested", "Order Placed"
+  'Ride Active': 'Case Active',
+  'Ride InProgress': 'Case In Progress', // Standard capitalization for "In Progress"
+  'Ride Complete': 'Case Completed', // Or "Ride Finished"
+  'Ride Canceled': 'Case Canceled', // Or "Ride Cancelled" (UK English)
   'notify_customer_button': "Notify Customer About Arrival",
   "Subscription History": "Subscription History",
   "Subscription": "Subscription",
@@ -269,11 +269,11 @@ const Map<String, String> enUS = {
   "Payment Failed!": "Payment Failed!",
   'commission_text': 'Pay a commission of @amount on each order.',
   'booking_limit_text': 'Accept booking limits: @limit',
-  'cancel_ride_title': 'Cancel Ride',
-  'cancel_ride_message': 'Are you sure you want to cancel this ride?',
-  'ride_cancelled_title': "Ride was cancelled by driver!",
+  'cancel_ride_title': 'Cancel Case',
+  'cancel_ride_message': 'Are you sure you want to cancel this case?',
+  'ride_cancelled_title': "Case was cancelled by Lawyer!",
   'ride_cancelled_body_customer':
-      "Sorry for inconvenience! But Ride was cancelled by driver!",
+      "Sorry for inconvenience! But Case was cancelled by lawyer!",
   'Taxi Meter Preffered for this ride': 'Taxi Meter Preffered for this ride',
   'notification_sent': 'Notification sent',
   'customer_notified_successfully': 'Customer notified successfully.',

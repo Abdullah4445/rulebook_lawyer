@@ -401,7 +401,7 @@ class OrderScreen extends StatelessWidget {
                                                                     'Cash Payment confirmed'
                                                                         .tr,
                                                                 body:
-                                                                    'Driver has confirmed your cash payment'
+                                                                    'Lawyer has confirmed your cash payment'
                                                                         .tr,
                                                                 payload: {});
                                                       }

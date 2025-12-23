@@ -38,7 +38,7 @@ class CompletedOrders extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) return Constant.loader(context);
 
           final docs = snapshot.data!.docs;
-          if (docs.isEmpty) return Center(child: Text('No Ride found'.tr));
+          if (docs.isEmpty) return Center(child: Text('No Case found'.tr));
 
           return ListView.builder(
             itemCount: docs.length,

@@ -54,7 +54,7 @@ class ActiveOrderScreen extends StatelessWidget {
                 }
                 return snapshot.data!.docs.isEmpty
                     ? Center(
-                  child: Text("No active rides Found".tr),
+                  child: Text("No active cases Found".tr),
                 )
                     : ListView.builder(
                     itemCount: snapshot.data!.docs.length,
@@ -279,7 +279,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             children: [
                                                               Text(
-                                                                "Fare Details".tr,
+                                                                "Billing Details".tr,
                                                                 style: GoogleFonts.poppins(
                                                                     fontSize: 16,
                                                                     fontWeight: FontWeight.w600,
@@ -370,7 +370,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                           child: orderModel.status == Constant.caseInProgress
                                               ? ButtonThem.buildBorderButton(
                                                   context,
-                                                  title: "Complete Ride".tr,
+                                                  title: "Complete Case".tr,
                                                   btnHeight: 44,
                                                   iconVisibility: false,
                                                   onPress: () async {
@@ -398,7 +398,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                                         final playLoad = {"type": "city_order_complete", "orderId": orderModel.id};
                                                         await SendNotification.sendOneNotification(
                                                           token: customer.fcmToken.toString(),
-                                                          title: 'Ride complete!'.tr,
+                                                          title: 'Case complete!'.tr,
                                                           body: 'Please complete your payment.'.tr,
                                                           payload: playLoad,
                                                         );
@@ -410,10 +410,10 @@ class ActiveOrderScreen extends StatelessWidget {
                                                     final success = await FireStoreUtils.setOrder(orderModel);
                                                     ShowToastDialog.closeLoader();
                                                     if (success == true) {
-                                                      ShowToastDialog.showToast("Ride Complete successfully".tr);
+                                                      ShowToastDialog.showToast("Case Complete successfully".tr);
                                                       controller.homeController.selectedIndex.value = 3;
                                                     } else {
-                                                      ShowToastDialog.showToast("Failed to complete ride".tr);
+                                                      ShowToastDialog.showToast("Failed to complete case".tr);
                                                     }
                                                   },
                                                 )
@@ -448,7 +448,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                                         final playLoad = {"type": "city_order_complete", "orderId": orderModel.id};
                                                         await SendNotification.sendOneNotification(
                                                           token: customer.fcmToken.toString(),
-                                                          title: 'Ride complete!'.tr,
+                                                          title: 'Case complete!'.tr,
                                                           body: 'Please complete your payment.'.tr,
                                                           payload: playLoad,
                                                         );
@@ -460,10 +460,10 @@ class ActiveOrderScreen extends StatelessWidget {
                                                     final success = await FireStoreUtils.setOrder(orderModel);
                                                     ShowToastDialog.closeLoader();
                                                     if (success == true) {
-                                                      ShowToastDialog.showToast("Ride Complete successfully".tr);
+                                                      ShowToastDialog.showToast("Case Complete successfully".tr);
                                                       controller.homeController.selectedIndex.value = 3;
                                                     } else {
-                                                      ShowToastDialog.showToast("Failed to complete ride".tr);
+                                                      ShowToastDialog.showToast("Failed to complete case".tr);
                                                     }
                                                   },
                                                 ),

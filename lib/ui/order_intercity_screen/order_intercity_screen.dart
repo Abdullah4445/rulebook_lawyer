@@ -287,7 +287,7 @@ class OrderIntercityScreen extends StatelessWidget {
                                                                   await SendNotification.sendOneNotification(
                                                                       token: value.fcmToken.toString(),
                                                                       title: 'Cash Payment confirmed'.tr,
-                                                                      body: 'Driver has confirmed your cash payment'.tr,
+                                                                      body: 'Lawyer has confirmed your cash payment'.tr,
                                                                       payload: {});
                                                                 }
                                                               });

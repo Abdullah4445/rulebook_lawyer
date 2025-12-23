@@ -341,7 +341,7 @@ class ActiveIntercityOrderScreen extends StatelessWidget {
                                                                                 .fcmToken
                                                                                 .toString(),
                                                                             title:
-                                                                                'Ride complete!'
+                                                                                'Case complete!'
                                                                                     .tr,
                                                                             body:
                                                                                 'Please complete your payment.'
@@ -560,9 +560,9 @@ class ActiveIntercityOrderScreen extends StatelessWidget {
                   if (value != null) {
                     await SendNotification.sendOneNotification(
                         token: value.fcmToken.toString(),
-                        title: 'Ride Started'.tr,
+                        title: 'Case Started'.tr,
                         body:
-                            'The ride has officially started. Please follow the designated route to the destination.'
+                            'The case has officially started. Please follow the designated steps of the case.'
                                 .tr,
                         payload: {});
                   }
