@@ -111,7 +111,7 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/appicon/lawyer_splash.jpg"
+  image_path: "assets/appicon/lawyer_splash1.png"
   min_sdk_android: 21
 
   web:
@@ -133,7 +133,7 @@ flutter_launcher_icons:
 flutter_native_splash:
   color: "#ffffff"
   color_dark: "#000000"
-  image: assets/appicon/lawyer_splash1.png
+  image: assets/appicon/lawyer_splash2.png
   android_12:
     color: "#ffffff"
     color_dark: "#000000"

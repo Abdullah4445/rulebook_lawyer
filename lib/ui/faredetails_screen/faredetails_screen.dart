@@ -298,23 +298,23 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                     ),
                   ),
                   // Small refresh button
-                  IconButton(
-                    onPressed: refreshing ? null : refreshData,
-                    icon: refreshing
-                        ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.black,
-                      ),
-                    )
-                        : const Icon(
-                      Icons.refresh,
-                      size: 24,
-                    ),
-                    tooltip: 'Refresh',
-                  ),
+                  // IconButton(
+                  //   onPressed: refreshing ? null : refreshData,
+                  //   icon: refreshing
+                  //       ? const SizedBox(
+                  //     width: 20,
+                  //     height: 20,
+                  //     child: CircularProgressIndicator(
+                  //       strokeWidth: 2,
+                  //       color: Colors.black,
+                  //     ),
+                  //   )
+                  //       : const Icon(
+                  //     Icons.refresh,
+                  //     size: 24,
+                  //   ),
+                  //   tooltip: 'Refresh',
+                  // ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -341,18 +341,18 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
         ),
       ),
       // Floating Action Button for refresh
-      floatingActionButton: FloatingActionButton(
-        onPressed: refreshing ? null : refreshData,
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        child: refreshing
-            ? const CircularProgressIndicator(
-          color: Colors.white,
-          strokeWidth: 2,
-        )
-            : const Icon(Icons.refresh),
-        tooltip: 'Refresh Data',
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: refreshing ? null : refreshData,
+      //   backgroundColor: Colors.black,
+      //   foregroundColor: Colors.white,
+      //   child: refreshing
+      //       ? const CircularProgressIndicator(
+      //     color: Colors.white,
+      //     strokeWidth: 2,
+      //   )
+      //       : const Icon(Icons.refresh),
+      //   tooltip: 'Refresh Data',
+      // ),
     );
   }
 

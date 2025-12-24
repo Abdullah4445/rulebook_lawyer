@@ -231,7 +231,7 @@ class DashBoardScreen extends StatelessWidget {
       ];
     } else {
       drawerItems = [
-        DrawerItem('City'.tr, "assets/icons/cases.svg"),
+        DrawerItem('City'.tr, "assets/icons/cases1.svg"),
         DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
         DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),

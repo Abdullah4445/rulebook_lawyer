@@ -96,8 +96,8 @@ class HomeScreen extends StatelessWidget {
                   BottomNavigationBarItem(
                     icon: Padding(
                       padding: const EdgeInsets.all(6.0),
-                      child: Image.asset("assets/icons/ic_accepted.png",
-                          width: 18,
+                      child: Image.asset("assets/icons/active_case.png",
+                          width: 24,
                           color: controller.selectedIndex.value == 1
                               ? AppColors.darkModePrimary
                               : Colors.white),
@@ -109,7 +109,7 @@ class HomeScreen extends StatelessWidget {
                       badgeContent: Text(controller.isActiveValue.value.toString()),
                       child: Padding(
                         padding: const EdgeInsets.all(6.0),
-                        child: Image.asset("assets/icons/ic_active.png",
+                        child: Image.asset("assets/icons/active.png",
                             width: 18,
                             color: controller.selectedIndex.value == 2
                                 ? AppColors.darkModePrimary
