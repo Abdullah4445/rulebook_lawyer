@@ -6,6 +6,7 @@ import 'package:driver/themes/button_them.dart';
 import 'package:driver/themes/responsive.dart';
 import 'package:driver/themes/text_field_them.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
+import 'package:driver/utils/case_duration_utils.dart';
 import 'package:driver/widget/location_view.dart';
 import 'package:driver/widget/user_view.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ class OrderMapScreen extends StatelessWidget {
                         child: Container(
                           transform: Matrix4.translationValues(0.0, -20.0, 0.0),
                           decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.background,
+                              color: Theme.of(context).colorScheme.surface,
                               borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(25),
                                   topRight: Radius.circular(25))),
@@ -142,8 +143,8 @@ class OrderMapScreen extends StatelessWidget {
                                             ? null
                                             : [
                                                 BoxShadow(
-                                                  color: Colors.grey
-                                                      .withOpacity(0.5),
+                                                  color: const Color.fromRGBO(
+                                                      128, 128, 128, 0.5),
                                                   blurRadius: 8,
                                                   offset: const Offset(0, 2),
                                                 ),
@@ -230,10 +231,11 @@ class OrderMapScreen extends StatelessWidget {
                                                               btnWidthRatio:
                                                                   0.23,
                                                               onPress: () {
-                                                                if (bool.tryParse(controller
-                                                                        .newAmount
-                                                                        .value) ??
-                                                                    0 >= 10) {
+                                                                if ((double.tryParse(controller
+                                                                            .newAmount
+                                                                            .value) ??
+                                                                        0) >=
+                                                                    10) {
                                                                   controller
                                                                       .newAmount
                                                                       .value = ((double.tryParse(controller.newAmount.value) ??
@@ -727,7 +729,7 @@ class OrderMapScreen extends StatelessWidget {
 
 
 class FareButtonsSection extends StatelessWidget {
-  final OrderMapController controller = Get.put(OrderMapController());
+  final OrderMapController controller = Get.find<OrderMapController>();
 
   @override
   Widget build(BuildContext context) {
@@ -747,6 +749,14 @@ class FareButtonsSection extends StatelessWidget {
                   onPress: () {
                     controller.selectedButton.value =
                     controller.selectedButton.value == 0 ? -1 : 0;
+
+                    if (controller.selectedButton.value == 0 &&
+                        controller.totalPriceController.value.text.trim().isNotEmpty) {
+                      controller.enterOfferRateController.value.text =
+                          controller.totalPriceController.value.text.trim();
+                      controller.newAmount.value =
+                          controller.totalPriceController.value.text.trim();
+                    }
                   },
                 ),
               ),
@@ -806,19 +816,43 @@ class FareButtonsSection extends StatelessWidget {
                 Padding(
                   padding:
                   const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: TextFieldThem.buildTextFiledWithPrefixIcon(
-                    context,
-                    hintText: "Enter Total Price",
-                    controller: controller.totalPriceController.value,
-                    keyBoardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                    prefix: Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: Text(Constant.currencyModel?.symbol ?? ''),
+                  child: Column(
+                    children: [
+                      TextFieldThem.buildTextFiledWithPrefixIcon(
+                        context,
+                        hintText: "Enter Total Price",
+                        controller: controller.totalPriceController.value,
+                        keyBoardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                        prefix: Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Text(Constant.currencyModel?.symbol ?? ''),
+                        ),
+                        onChanged: (value) {
+                          controller.onTotalPriceChanged();
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _buildDurationSection(
+                        context: context,
+                        title: "Estimated Case Time",
+                        valueController: controller.caseDurationValueController.value,
+                        selectedUnit: controller.caseDurationUnit.value,
+                        onUnitChanged: controller.updateCaseDurationUnit,
+                        helperText:
+                            "Optional: set how long the full case may take in days, weeks, or months.",
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Text(
+                    "Tip: total price auto-splits into the step amounts. You can still edit any step price manually and the total will update automatically.",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade700,
                     ),
-                    onChanged: (value) {
-                      controller.onTotalPriceChanged();
-                    },
                   ),
                 ),
 
@@ -929,6 +963,19 @@ class FareButtonsSection extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 10),
                 child: Text(Constant.currencyModel?.symbol ?? ''),
               ),
+              onChanged: (value) {
+                controller.newAmount.value = value.trim().isEmpty ? "0.0" : value.trim();
+              },
+            ),
+            const SizedBox(height: 12),
+            _buildDurationSection(
+              context: context,
+              title: "Estimated Case Time",
+              valueController: controller.caseDurationValueController.value,
+              selectedUnit: controller.caseDurationUnit.value,
+              onUnitChanged: controller.updateCaseDurationUnit,
+              helperText:
+                  "Optional: set how long this complete case may take in days, weeks, or months.",
             ),
           ],
         ),
@@ -986,12 +1033,142 @@ class FareButtonsSection extends StatelessWidget {
                 child: Text(Constant.currencyModel?.symbol ?? ''),
               ),
               onChanged: (value) {
-                controller.onTotalPriceChanged();
+                controller.onStepPriceChanged();
               },
+            ),
+            const SizedBox(height: 12),
+            _buildDurationSection(
+              context: context,
+              title: "Estimated Step Time",
+              valueController: stepModel.durationValueController,
+              selectedUnit: stepModel.durationUnit.value,
+              onUnitChanged: stepModel.updateDurationUnit,
+              helperText:
+                  "Optional: set how long this step may take in days, weeks, or months.",
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildDurationSection({
+    required BuildContext context,
+    required String title,
+    required TextEditingController valueController,
+    required String selectedUnit,
+    required ValueChanged<String?> onUnitChanged,
+    String? helperText,
+  }) {
+    final OutlineInputBorder border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(4),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    );
+    final String previewText = CaseDurationUtils.formatDuration(
+      CaseDurationUtils.buildDuration(
+        valueText: valueController.text,
+        unit: selectedUnit,
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: TextFieldThem.buildTextFiledWithPrefixIcon(
+                context,
+                hintText: "Enter value",
+                controller: valueController,
+                keyBoardType: TextInputType.number,
+                prefix: const Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: Icon(Icons.schedule),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: DropdownButtonFormField<String>(
+                initialValue: selectedUnit,
+                items: CaseDurationUtils.units
+                    .map(
+                      (unit) => DropdownMenuItem<String>(
+                        value: unit,
+                        child: Text(CaseDurationUtils.unitLabel(unit)),
+                      ),
+                    )
+                    .toList(),
+                onChanged: onUnitChanged,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.grey.shade100,
+                  contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  enabledBorder: border,
+                  focusedBorder: border,
+                  border: border,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Text(
+          "Leave the value empty if you do not want to set time.",
+          style: TextStyle(
+            fontSize: 11,
+            color: Colors.grey.shade600,
+          ),
+        ),
+        if ((helperText ?? '').isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Text(
+            helperText!,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade700,
+            ),
+          ),
+        ],
+        if (previewText.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color.fromRGBO(33, 150, 243, 0.08),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              "Preview:",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            previewText,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: AppColors.primary,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

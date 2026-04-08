@@ -6,7 +6,6 @@ import 'package:driver/model/intercity_order_model.dart';
 import 'package:driver/model/order_model.dart';
 import 'package:driver/model/wallet_transaction_model.dart';
 import 'package:driver/model/withdraw_model.dart';
-import 'package:driver/payment/rozorpayConroller.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/themes/button_them.dart';
 import 'package:driver/themes/responsive.dart';
@@ -378,105 +377,16 @@ class WalletScreen extends StatelessWidget {
                                   "Select Payment Option".tr,
                                   style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                                 ),
-                                Visibility(
-                                  visible:
-                                      controller.paymentModel.value.strip!.enable == true,
-                                  child: Obx(
-                                    () => Column(
-                                      children: [
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            controller.selectedPaymentMethod.value =
-                                                controller.paymentModel.value.strip!.name
-                                                    .toString();
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.all(
-                                                  Radius.circular(10)),
-                                              border: Border.all(
-                                                  color: controller.selectedPaymentMethod
-                                                              .value ==
-                                                          controller.paymentModel.value
-                                                              .strip!.name
-                                                              .toString()
-                                                      ? themeChange.getThem()
-                                                          ? AppColors.darkModePrimary
-                                                          : AppColors.primary
-                                                      : AppColors.textFieldBorder,
-                                                  width: 1),
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 10, vertical: 10),
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    height: 40,
-                                                    width: 80,
-                                                    decoration: const BoxDecoration(
-                                                        color: AppColors.lightGray,
-                                                        borderRadius: BorderRadius.all(
-                                                            Radius.circular(5))),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.all(8.0),
-                                                      child: Image.asset(
-                                                          'assets/images/stripe.png'),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
-                                                      controller
-                                                          .paymentModel.value.strip!.name
-                                                          .toString(),
-                                                      style: GoogleFonts.poppins(),
-                                                    ),
-                                                  ),
-                                                  Radio(
-                                                    value: controller
-                                                        .paymentModel.value.strip!.name
-                                                        .toString(),
-                                                    groupValue: controller
-                                                        .selectedPaymentMethod.value,
-                                                    activeColor: themeChange.getThem()
-                                                        ? AppColors.darkModePrimary
-                                                        : AppColors.primary,
-                                                    onChanged: (value) {
-                                                      controller.selectedPaymentMethod
-                                                              .value =
-                                                          controller.paymentModel.value
-                                                              .strip!.name
-                                                              .toString();
-                                                    },
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                const SizedBox(
+                                  height: 10,
                                 ),
-                                Visibility(
-                                  visible: controller.paymentModel.value.paypal!.enable ==
-                                      true,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
+                                controller.paymentModel.value.payfast?.enable == true
+                                    ? InkWell(
                                         onTap: () {
                                           controller.selectedPaymentMethod.value =
-                                              controller.paymentModel.value.paypal!.name
-                                                  .toString();
+                                              controller.paymentModel.value.payfast?.name
+                                                      ?.trim() ??
+                                                  'PayFast';
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
@@ -485,443 +395,11 @@ class WalletScreen extends StatelessWidget {
                                             border: Border.all(
                                                 color: controller.selectedPaymentMethod
                                                             .value ==
-                                                        controller.paymentModel.value
-                                                            .paypal!.name
-                                                            .toString()
-                                                    ? themeChange.getThem()
-                                                        ? AppColors.darkModePrimary
-                                                        : AppColors.primary
-                                                    : AppColors.textFieldBorder,
-                                                width: 1),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  width: 80,
-                                                  decoration: const BoxDecoration(
-                                                      color: AppColors.lightGray,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(5))),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset(
-                                                        'assets/images/paypal.png'),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    controller
-                                                        .paymentModel.value.paypal!.name
-                                                        .toString(),
-                                                    style: GoogleFonts.poppins(),
-                                                  ),
-                                                ),
-                                                Radio(
-                                                  value: controller
-                                                      .paymentModel.value.paypal!.name
-                                                      .toString(),
-                                                  groupValue: controller
-                                                      .selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem()
-                                                      ? AppColors.darkModePrimary
-                                                      : AppColors.primary,
-                                                  onChanged: (value) {
-                                                    controller
-                                                            .selectedPaymentMethod.value =
-                                                        controller.paymentModel.value
-                                                            .paypal!.name
-                                                            .toString();
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                //epayco added
-                                Visibility(
-                                  visible: controller.paymentModel.value.epayco?.enable ==
-                                      true,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 10),
-                                      InkWell(
-                                        onTap: () {
-                                          controller.selectedPaymentMethod.value =
-                                              controller.paymentModel.value.epayco!.name
-                                                  .toString();
-
-                                          print(
-                                              "Selectred Payments are:  ${controller.selectedPaymentMethod.value}");
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(10)),
-                                            border: Border.all(
-                                              color: controller
-                                                      .selectedPaymentMethod.value
-                                                      .startsWith('epayco')
-                                                  ? themeChange.getThem()
-                                                      ? AppColors.darkModePrimary
-                                                      : AppColors.primary
-                                                  : AppColors.textFieldBorder,
-                                              width: 1,
-                                            ),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  width: 80,
-                                                  decoration: const BoxDecoration(
-                                                    color: AppColors.lightGray,
-                                                    borderRadius: BorderRadius.all(
-                                                        Radius.circular(5)),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset(
-                                                        'assets/images/epayco.png'),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 10),
-                                                Expanded(
-                                                  child: Text(
-                                                    controller.selectedPaymentMethod
-                                                                .value ==
-                                                            'epayco_card'
-                                                        ? 'Epayco (Card)'
-                                                        : controller.selectedPaymentMethod
-                                                                    .value ==
-                                                                'epayco_pse'
-                                                            ? 'Epayco (Bank)'
-                                                            : 'Epayco',
-                                                    style: GoogleFonts.poppins(),
-                                                  ),
-                                                ),
-                                                Radio(
-                                                  value: controller
-                                                      .paymentModel.value.epayco!.name
-                                                      .toString(),
-                                                  groupValue: controller
-                                                      .selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem()
-                                                      ? AppColors.darkModePrimary
-                                                      : AppColors.primary,
-                                                  onChanged: (value) {
-                                                    controller
-                                                            .selectedPaymentMethod.value =
-                                                        controller.paymentModel.value
-                                                            .epayco!.name
-                                                            .toString();
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                Visibility(
-                                  visible:
-                                      controller.paymentModel.value.payStack!.enable ==
-                                          true,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          controller.selectedPaymentMethod.value =
-                                              controller.paymentModel.value.payStack!.name
-                                                  .toString();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(10)),
-                                            border: Border.all(
-                                                color: controller.selectedPaymentMethod
-                                                            .value ==
-                                                        controller.paymentModel.value
-                                                            .payStack!.name
-                                                            .toString()
-                                                    ? themeChange.getThem()
-                                                        ? AppColors.darkModePrimary
-                                                        : AppColors.primary
-                                                    : AppColors.textFieldBorder,
-                                                width: 1),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  width: 80,
-                                                  decoration: const BoxDecoration(
-                                                      color: AppColors.lightGray,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(5))),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset(
-                                                        'assets/images/paystack.png'),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    controller
-                                                        .paymentModel.value.payStack!.name
-                                                        .toString(),
-                                                    style: GoogleFonts.poppins(),
-                                                  ),
-                                                ),
-                                                Radio(
-                                                  value: controller
-                                                      .paymentModel.value.payStack!.name
-                                                      .toString(),
-                                                  groupValue: controller
-                                                      .selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem()
-                                                      ? AppColors.darkModePrimary
-                                                      : AppColors.primary,
-                                                  onChanged: (value) {
-                                                    controller
-                                                            .selectedPaymentMethod.value =
-                                                        controller.paymentModel.value
-                                                            .payStack!.name
-                                                            .toString();
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible:
-                                      controller.paymentModel.value.mercadoPago!.enable ==
-                                          true,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          controller.selectedPaymentMethod.value =
-                                              controller
-                                                  .paymentModel.value.mercadoPago!.name
-                                                  .toString();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(10)),
-                                            border: Border.all(
-                                                color: controller.selectedPaymentMethod
-                                                            .value ==
-                                                        controller.paymentModel.value
-                                                            .mercadoPago!.name
-                                                            .toString()
-                                                    ? themeChange.getThem()
-                                                        ? AppColors.darkModePrimary
-                                                        : AppColors.primary
-                                                    : AppColors.textFieldBorder,
-                                                width: 1),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  width: 80,
-                                                  decoration: const BoxDecoration(
-                                                      color: AppColors.lightGray,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(5))),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset(
-                                                        'assets/images/mercadopago.png'),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    controller.paymentModel.value
-                                                        .mercadoPago!.name
-                                                        .toString(),
-                                                    style: GoogleFonts.poppins(),
-                                                  ),
-                                                ),
-                                                Radio(
-                                                  value: controller.paymentModel.value
-                                                      .mercadoPago!.name
-                                                      .toString(),
-                                                  groupValue: controller
-                                                      .selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem()
-                                                      ? AppColors.darkModePrimary
-                                                      : AppColors.primary,
-                                                  onChanged: (value) {
-                                                    controller
-                                                            .selectedPaymentMethod.value =
-                                                        controller.paymentModel.value
-                                                            .mercadoPago!.name
-                                                            .toString();
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible:
-                                      controller.paymentModel.value.flutterWave!.enable ==
-                                          true,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          controller.selectedPaymentMethod.value =
-                                              controller
-                                                  .paymentModel.value.flutterWave!.name
-                                                  .toString();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(10)),
-                                            border: Border.all(
-                                                color: controller.selectedPaymentMethod
-                                                            .value ==
-                                                        controller.paymentModel.value
-                                                            .flutterWave!.name
-                                                            .toString()
-                                                    ? themeChange.getThem()
-                                                        ? AppColors.darkModePrimary
-                                                        : AppColors.primary
-                                                    : AppColors.textFieldBorder,
-                                                width: 1),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  width: 80,
-                                                  decoration: const BoxDecoration(
-                                                      color: AppColors.lightGray,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(5))),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset(
-                                                        'assets/images/flutterwave.png'),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    controller.paymentModel.value
-                                                        .flutterWave!.name
-                                                        .toString(),
-                                                    style: GoogleFonts.poppins(),
-                                                  ),
-                                                ),
-                                                Radio(
-                                                  value: controller.paymentModel.value
-                                                      .flutterWave!.name
-                                                      .toString(),
-                                                  groupValue: controller
-                                                      .selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem()
-                                                      ? AppColors.darkModePrimary
-                                                      : AppColors.primary,
-                                                  onChanged: (value) {
-                                                    controller
-                                                            .selectedPaymentMethod.value =
-                                                        controller.paymentModel.value
-                                                            .flutterWave!.name
-                                                            .toString();
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible:
-                                      controller.paymentModel.value.payfast!.enable ==
-                                          true,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          controller.selectedPaymentMethod.value =
-                                              controller.paymentModel.value.payfast!.name
-                                                  .toString();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(10)),
-                                            border: Border.all(
-                                                color: controller.selectedPaymentMethod
-                                                            .value ==
-                                                        controller.paymentModel.value
-                                                            .payfast!.name
-                                                            .toString()
+                                                        (controller.paymentModel.value
+                                                                .payfast?.name
+                                                                ?.trim()
+                                                            ??
+                                                            'PayFast')
                                                     ? themeChange.getThem()
                                                         ? AppColors.darkModePrimary
                                                         : AppColors.primary
@@ -951,467 +429,58 @@ class WalletScreen extends StatelessWidget {
                                                 ),
                                                 Expanded(
                                                   child: Text(
-                                                    controller
-                                                        .paymentModel.value.payfast!.name
-                                                        .toString(),
+                                                    controller.paymentModel.value.payfast
+                                                            ?.name
+                                                            ?.trim()
+                                                            .isNotEmpty ==
+                                                        true
+                                                        ? controller.paymentModel.value
+                                                            .payfast!.name!
+                                                            .trim()
+                                                        : 'PayFast',
                                                     style: GoogleFonts.poppins(),
                                                   ),
                                                 ),
                                                 Radio(
-                                                  value: controller
-                                                      .paymentModel.value.payfast!.name
-                                                      .toString(),
+                                                  value: controller.paymentModel.value
+                                                              .payfast?.name
+                                                              ?.trim()
+                                                              .isNotEmpty ==
+                                                          true
+                                                      ? controller.paymentModel.value
+                                                          .payfast!.name!
+                                                          .trim()
+                                                      : 'PayFast',
                                                   groupValue: controller
                                                       .selectedPaymentMethod.value,
                                                   activeColor: themeChange.getThem()
                                                       ? AppColors.darkModePrimary
                                                       : AppColors.primary,
                                                   onChanged: (value) {
-                                                    controller
-                                                            .selectedPaymentMethod.value =
-                                                        controller.paymentModel.value
-                                                            .payfast!.name
-                                                            .toString();
+                                                    controller.selectedPaymentMethod
+                                                        .value = value.toString();
                                                   },
                                                 )
                                               ],
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible:
-                                      controller.paymentModel.value.paytm!.enable == true,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          controller.selectedPaymentMethod.value =
-                                              controller.paymentModel.value.paytm!.name
-                                                  .toString();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(10)),
-                                            border: Border.all(
-                                                color: controller.selectedPaymentMethod
-                                                            .value ==
-                                                        controller.paymentModel.value
-                                                            .paytm!.name
-                                                            .toString()
-                                                    ? themeChange.getThem()
-                                                        ? AppColors.darkModePrimary
-                                                        : AppColors.primary
-                                                    : AppColors.textFieldBorder,
-                                                width: 1),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  width: 80,
-                                                  decoration: const BoxDecoration(
-                                                      color: AppColors.lightGray,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(5))),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset(
-                                                        'assets/images/paytam.png'),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    controller
-                                                        .paymentModel.value.paytm!.name
-                                                        .toString(),
-                                                    style: GoogleFonts.poppins(),
-                                                  ),
-                                                ),
-                                                Radio(
-                                                  value: controller
-                                                      .paymentModel.value.paytm!.name
-                                                      .toString(),
-                                                  groupValue: controller
-                                                      .selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem()
-                                                      ? AppColors.darkModePrimary
-                                                      : AppColors.primary,
-                                                  onChanged: (value) {
-                                                    controller
-                                                            .selectedPaymentMethod.value =
-                                                        controller.paymentModel.value
-                                                            .paytm!.name
-                                                            .toString();
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          ),
+                                      )
+                                    : Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                          border: Border.all(
+                                              color: AppColors.textFieldBorder, width: 1),
+                                        ),
+                                        child: Text(
+                                          'PayFast is not enabled in admin payment settings.'
+                                              .tr,
+                                          style: GoogleFonts.poppins(),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                Visibility(
-                                  visible:
-                                      controller.paymentModel.value.razorpay!.enable ==
-                                          true,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          controller.selectedPaymentMethod.value =
-                                              controller.paymentModel.value.razorpay!.name
-                                                  .toString();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(10)),
-                                            border: Border.all(
-                                                color: controller.selectedPaymentMethod
-                                                            .value ==
-                                                        controller.paymentModel.value
-                                                            .razorpay!.name
-                                                            .toString()
-                                                    ? themeChange.getThem()
-                                                        ? AppColors.darkModePrimary
-                                                        : AppColors.primary
-                                                    : AppColors.textFieldBorder,
-                                                width: 1),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  width: 80,
-                                                  decoration: const BoxDecoration(
-                                                      color: AppColors.lightGray,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(5))),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset(
-                                                        'assets/images/razorpay.png'),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    controller
-                                                        .paymentModel.value.razorpay!.name
-                                                        .toString(),
-                                                    style: GoogleFonts.poppins(),
-                                                  ),
-                                                ),
-                                                Radio(
-                                                  value: controller
-                                                      .paymentModel.value.razorpay!.name
-                                                      .toString(),
-                                                  groupValue: controller
-                                                      .selectedPaymentMethod.value,
-                                                  activeColor: themeChange.getThem()
-                                                      ? AppColors.darkModePrimary
-                                                      : AppColors.primary,
-                                                  onChanged: (value) {
-                                                    controller
-                                                            .selectedPaymentMethod.value =
-                                                        controller.paymentModel.value
-                                                            .razorpay!.name
-                                                            .toString();
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                controller.paymentModel.value.midtrans != null &&
-                                        controller.paymentModel.value.midtrans!.enable ==
-                                            true
-                                    ? Column(
-                                        children: [
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              controller.selectedPaymentMethod.value =
-                                                  controller
-                                                      .paymentModel.value.midtrans!.name
-                                                      .toString();
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: const BorderRadius.all(
-                                                    Radius.circular(10)),
-                                                border: Border.all(
-                                                    color: controller
-                                                                .selectedPaymentMethod
-                                                                .value ==
-                                                            controller.paymentModel.value
-                                                                .midtrans!.name
-                                                                .toString()
-                                                        ? themeChange.getThem()
-                                                            ? AppColors.darkModePrimary
-                                                            : AppColors.primary
-                                                        : AppColors.textFieldBorder,
-                                                    width: 1),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 10, vertical: 10),
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      height: 40,
-                                                      width: 80,
-                                                      decoration: const BoxDecoration(
-                                                          color: AppColors.lightGray,
-                                                          borderRadius: BorderRadius.all(
-                                                              Radius.circular(5))),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(8.0),
-                                                        child: Image.asset(
-                                                            'assets/images/midtrans.png'),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        controller.paymentModel.value
-                                                            .midtrans!.name
-                                                            .toString(),
-                                                        style: GoogleFonts.poppins(),
-                                                      ),
-                                                    ),
-                                                    Radio(
-                                                      value: controller.paymentModel.value
-                                                          .midtrans!.name
-                                                          .toString(),
-                                                      groupValue: controller
-                                                          .selectedPaymentMethod.value,
-                                                      activeColor: themeChange.getThem()
-                                                          ? AppColors.darkModePrimary
-                                                          : AppColors.primary,
-                                                      onChanged: (value) {
-                                                        controller.selectedPaymentMethod
-                                                                .value =
-                                                            controller.paymentModel.value
-                                                                .midtrans!.name
-                                                                .toString();
-                                                      },
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : const SizedBox(),
-                                controller.paymentModel.value.xendit != null &&
-                                        controller.paymentModel.value.xendit!.enable ==
-                                            true
-                                    ? Column(
-                                        children: [
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              controller.selectedPaymentMethod.value =
-                                                  controller
-                                                      .paymentModel.value.xendit!.name
-                                                      .toString();
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: const BorderRadius.all(
-                                                    Radius.circular(10)),
-                                                border: Border.all(
-                                                    color: controller
-                                                                .selectedPaymentMethod
-                                                                .value ==
-                                                            controller.paymentModel.value
-                                                                .xendit!.name
-                                                                .toString()
-                                                        ? themeChange.getThem()
-                                                            ? AppColors.darkModePrimary
-                                                            : AppColors.primary
-                                                        : AppColors.textFieldBorder,
-                                                    width: 1),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 10, vertical: 10),
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      height: 40,
-                                                      width: 80,
-                                                      decoration: const BoxDecoration(
-                                                          color: AppColors.lightGray,
-                                                          borderRadius: BorderRadius.all(
-                                                              Radius.circular(5))),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(8.0),
-                                                        child: Image.asset(
-                                                            'assets/images/xendit.png'),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        controller.paymentModel.value
-                                                            .xendit!.name
-                                                            .toString(),
-                                                        style: GoogleFonts.poppins(),
-                                                      ),
-                                                    ),
-                                                    Radio(
-                                                      value: controller
-                                                          .paymentModel.value.xendit!.name
-                                                          .toString(),
-                                                      groupValue: controller
-                                                          .selectedPaymentMethod.value,
-                                                      activeColor: themeChange.getThem()
-                                                          ? AppColors.darkModePrimary
-                                                          : AppColors.primary,
-                                                      onChanged: (value) {
-                                                        controller.selectedPaymentMethod
-                                                                .value =
-                                                            controller.paymentModel.value
-                                                                .xendit!.name
-                                                                .toString();
-                                                      },
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : const SizedBox(),
-                                controller.paymentModel.value.orangePay != null &&
-                                        controller.paymentModel.value.orangePay!.enable ==
-                                            true
-                                    ? Column(
-                                        children: [
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              controller.selectedPaymentMethod.value =
-                                                  controller
-                                                      .paymentModel.value.orangePay!.name
-                                                      .toString();
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: const BorderRadius.all(
-                                                    Radius.circular(10)),
-                                                border: Border.all(
-                                                    color: controller
-                                                                .selectedPaymentMethod
-                                                                .value ==
-                                                            controller.paymentModel.value
-                                                                .orangePay!.name
-                                                                .toString()
-                                                        ? themeChange.getThem()
-                                                            ? AppColors.darkModePrimary
-                                                            : AppColors.primary
-                                                        : AppColors.textFieldBorder,
-                                                    width: 1),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 10, vertical: 10),
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      height: 40,
-                                                      width: 80,
-                                                      decoration: const BoxDecoration(
-                                                          color: AppColors.lightGray,
-                                                          borderRadius: BorderRadius.all(
-                                                              Radius.circular(5))),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(8.0),
-                                                        child: Image.asset(
-                                                            'assets/images/orange_money.png'),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    Expanded(
-                                                      child: Text(
-                                                        controller.paymentModel.value
-                                                            .orangePay!.name
-                                                            .toString(),
-                                                        style: GoogleFonts.poppins(),
-                                                      ),
-                                                    ),
-                                                    Radio(
-                                                      value: controller.paymentModel.value
-                                                          .orangePay!.name
-                                                          .toString(),
-                                                      groupValue: controller
-                                                          .selectedPaymentMethod.value,
-                                                      activeColor: themeChange.getThem()
-                                                          ? AppColors.darkModePrimary
-                                                          : AppColors.primary,
-                                                      onChanged: (value) {
-                                                        controller.selectedPaymentMethod
-                                                                .value =
-                                                            controller.paymentModel.value
-                                                                .orangePay!.name
-                                                                .toString();
-                                                      },
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : const SizedBox(),
                               ],
                             ),
                           ),
@@ -1421,81 +490,26 @@ class WalletScreen extends StatelessWidget {
                         height: 10,
                       ),
                       ButtonThem.buildButton(context, title: "Topup".tr, onPress: () {
-                        if (controller.amountController.value.text.isNotEmpty) {
-                          if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.strip!.name) {
-                            // controller.stripeMakePayment(amount: controller.amountController.value.text);
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.paypal!.name) {
-                            // controller.paypalPaymentSheet(controller.amountController.value.text, context1);
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.payStack!.name) {
-                            controller
-                                .payStackPayment(controller.amountController.value.text);
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.mercadoPago!.name) {
-                            controller.mercadoPagoMakePayment(
-                                context: context,
-                                amount: controller.amountController.value.text);
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.flutterWave!.name) {
-                            controller.flutterWaveInitiatePayment(
-                                context: context,
-                                amount: controller.amountController.value.text);
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.payfast!.name) {
-                            controller.payFastPayment(
-                                context: context,
-                                amount: controller.amountController.value.text);
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.paytm!.name) {
-                            controller.getPaytmCheckSum(context,
-                                amount:
-                                    double.parse(controller.amountController.value.text));
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.razorpay!.name) {
-                            RazorPayController()
-                                .createOrderRazorPay(
-                                    amount:
-                                        int.parse(controller.amountController.value.text),
-                                    razorpayModel: controller.paymentModel.value.razorpay)
-                                .then((value) {
-                              if (value == null) {
-                                Get.back();
-                                ShowToastDialog.showToast(
-                                    "Something went wrong, please contact admin.".tr);
-                              } else {
-                                // CreateRazorPayOrderModel result = value;
-                                // controller.openCheckout(amount: controller.amountController.value.text, orderId: result.id);
-                              }
-                            });
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.midtrans!.name) {
-                            controller.midtransMakePayment(
-                                context: context,
-                                amount: controller.amountController.value.text);
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.orangePay!.name) {
-                            controller.orangeMakePayment(
-                                context: context,
-                                amount: controller.amountController.value.text);
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.xendit!.name) {
-                            // controller.xenditPayment(context, controller.amountController.value.text);
-                          } else if (controller.selectedPaymentMethod.value ==
-                              controller.paymentModel.value.epayco!.name) {
-                            print("Epaycooo is selected!!!!");
-                            showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  CardPaymentBottomSheet(controller: controller),
-                            );
-                          } else {
-                            ShowToastDialog.showToast("Please select payment method".tr);
-                          }
-                        } else {
-                          ShowToastDialog.showToast("Please enter amount".tr);
+                        final String? amountError = controller.validateTopUpAmount();
+                        if (amountError != null) {
+                          ShowToastDialog.showToast(amountError);
+                          return;
                         }
+
+                        final payFastName =
+                            controller.paymentModel.value.payfast?.name?.trim() ??
+                                'PayFast';
+
+                        if (controller.paymentModel.value.payfast?.enable != true) {
+                          ShowToastDialog.showToast(
+                              'PayFast is not enabled in admin payment settings.'.tr);
+                          return;
+                        }
+
+                        controller.selectedPaymentMethod.value = payFastName;
+                        controller.payFastPayment(
+                            context: context,
+                            amount: controller.amountController.value.text);
                       }),
                       const SizedBox(
                         height: 10,

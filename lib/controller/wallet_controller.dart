@@ -12,10 +12,10 @@ import 'package:driver/model/payment_model.dart';
 import 'package:driver/model/stripe_failed_model.dart';
 import 'package:driver/model/wallet_transaction_model.dart';
 import 'package:driver/payment/MercadoPagoScreen.dart';
-import 'package:driver/payment/PayFastScreen.dart';
 import 'package:driver/payment/getPaytmTxtToken.dart';
 import 'package:driver/payment/midtrans_screen.dart';
 import 'package:driver/payment/orangePayScreen.dart';
+import 'package:driver/payment/payfast_checkout_helper.dart';
 import 'package:driver/payment/paystack/pay_stack_screen.dart';
 import 'package:driver/payment/paystack/pay_stack_url_model.dart';
 import 'package:driver/payment/paystack/paystack_url_genrater.dart';
@@ -29,6 +29,7 @@ import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:payfast_flutter/payfast_flutter.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../payment/epaycoController.dart';
@@ -59,10 +60,21 @@ class WalletController extends GetxController {
     await FireStoreUtils().getPayment().then((value) {
       if (value != null) {
         paymentModel.value = value;
+        paymentModel.value.payfast =
+            PayFastCheckoutHelper.normalizePayfast(paymentModel.value.payfast);
+        if (paymentModel.value.payfast?.enable == true) {
+          selectedPaymentMethod.value =
+              paymentModel.value.payfast?.name?.trim() ?? 'PayFast';
+        } else {
+          selectedPaymentMethod.value = '';
+        }
 
-        Stripe.publishableKey = paymentModel.value.strip!.clientpublishableKey.toString();
-        Stripe.merchantIdentifier = 'GoRide';
-        Stripe.instance.applySettings();
+        final strip = paymentModel.value.strip;
+        if (strip?.clientpublishableKey?.trim().isNotEmpty == true) {
+          Stripe.publishableKey = strip!.clientpublishableKey!.trim();
+          Stripe.merchantIdentifier = 'GoRide';
+          Stripe.instance.applySettings();
+        }
         setRef();
         razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
         razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWaller);
@@ -96,13 +108,15 @@ class WalletController extends GetxController {
     });
   }
 
-  walletTopUp() async {
+  Future<void> walletTopUp({String? transactionId}) async {
     WalletTransactionModel transactionModel = WalletTransactionModel(
         id: Constant.getUuid(),
         amount: amountController.value.text,
         createdDate: Timestamp.now(),
         paymentType: selectedPaymentMethod.value,
-        transactionId: DateTime.now().millisecondsSinceEpoch.toString(),
+        transactionId: (transactionId != null && transactionId.trim().isNotEmpty)
+            ? transactionId.trim()
+            : DateTime.now().millisecondsSinceEpoch.toString(),
         userId: FireStoreUtils.getCurrentUid(),
         userType: "driver",
         note: "Wallet Topup");
@@ -118,6 +132,20 @@ class WalletController extends GetxController {
     });
 
     ShowToastDialog.showToast("Amount added in your wallet.".tr);
+  }
+
+  String? validateTopUpAmount() {
+    final String rawAmount = amountController.value.text.trim();
+    if (rawAmount.isEmpty) {
+      return "Please enter amount".tr;
+    }
+
+    final double? parsedAmount = double.tryParse(rawAmount);
+    if (parsedAmount == null || parsedAmount <= 0) {
+      return "Please enter valid amount".tr;
+    }
+
+    return null;
   }
 
   // Strip
@@ -376,23 +404,82 @@ class WalletController extends GetxController {
   }
 
   // payFast
-  payFastPayment({required BuildContext context, required String amount}) {
-    PayStackURLGen.getPayHTML(
-        payFastSettingData: paymentModel.value.payfast!,
-        amount: amount.toString(),
-        userModel: driverUserModel.value)
-        .then((String? value) async {
-      bool isDone = await Get.to(PayFastScreen(
-          htmlData: value!, payFastSettingData: paymentModel.value.payfast!));
-      if (isDone) {
-        // Get.back();
-        ShowToastDialog.showToast("Payment successfully".tr);
-        walletTopUp();
-      } else {
-        Get.back();
-        ShowToastDialog.showToast("Payment Failed".tr);
-      }
-    });
+  Future<void> payFastPayment({required BuildContext context, required String amount}) async {
+    final String? amountError = validateTopUpAmount();
+    if (amountError != null) {
+      ShowToastDialog.showToast(amountError);
+      return;
+    }
+
+    final payfast = paymentModel.value.payfast;
+    final String? configError = PayFastCheckoutHelper.validateSettings(payfast);
+    if (configError != null) {
+      ShowToastDialog.showToast(configError.tr);
+      return;
+    }
+
+    final String basketId = 'wallet-${DateTime.now().millisecondsSinceEpoch}';
+    final normalizedPayfast = PayFastCheckoutHelper.normalizePayfast(payfast);
+    final String? credentialError =
+        await PayFastCheckoutHelper.validateGatewayCredentials(
+      payfast: normalizedPayfast,
+      basketId: basketId,
+      amount: amount.trim(),
+    );
+    if (credentialError != null) {
+      ShowToastDialog.showToast(credentialError.tr);
+      debugPrint('PayFast wallet credential validation failed: $credentialError');
+      return;
+    }
+
+    try {
+      await PayFast.pay(
+        context: context,
+        merchantId: PayFastCheckoutHelper.resolveMerchantId(normalizedPayfast),
+        securedKey: PayFastCheckoutHelper.resolveSecuredKey(normalizedPayfast),
+        basketId: basketId,
+        amount: amount.trim(),
+        callbackBaseUrl:
+            PayFastCheckoutHelper.resolveCallbackBaseUrl(normalizedPayfast),
+        currency: PayFastCheckoutHelper.resolveCurrencyCode(normalizedPayfast),
+        txnDesc: 'Wallet Topup',
+        environment: normalizedPayfast.isSandbox == true ? 'sandbox' : 'live',
+        additionalDescription:
+            'Wallet topup for ${driverUserModel.value.fullName ?? 'Driver'}',
+        customerEmail:
+            PayFastCheckoutHelper.resolveCustomerEmail(driverUserModel.value),
+        customerMobile:
+            PayFastCheckoutHelper.resolveCustomerMobile(driverUserModel.value),
+        webTokenUrl: PayFastCheckoutHelper.resolveWebTokenUrl(normalizedPayfast),
+        successPath: PayFastCheckoutHelper.resolveSuccessPath(normalizedPayfast),
+        failurePath: PayFastCheckoutHelper.resolveFailurePath(normalizedPayfast),
+        checkoutPath: PayFastCheckoutHelper.resolveCheckoutPath(normalizedPayfast),
+        onResult: (result) {
+          _handlePayFastWalletResult(
+            result: result,
+            fallbackTransactionId: basketId,
+          );
+        },
+      );
+    } catch (e) {
+      ShowToastDialog.showToast("PayFast payment failed. Please try again.".tr);
+      debugPrint('PayFast wallet payment error: $e');
+    }
+  }
+
+  Future<void> _handlePayFastWalletResult({
+    required PayFastResult result,
+    required String fallbackTransactionId,
+  }) async {
+    if (result.success) {
+      ShowToastDialog.showToast("Payment successfully".tr);
+      await walletTopUp(
+        transactionId: result.transactionId ?? fallbackTransactionId,
+      );
+      return;
+    }
+
+    ShowToastDialog.showToast(result.message.tr);
   }
 
   ///Paytm payment function
@@ -582,7 +669,7 @@ class WalletController extends GetxController {
         Get.to(() => XenditScreen(
           initialURl: model.invoiceUrl ?? '',
           transId: model.id ?? '',
-          apiKey: paymentModel.value.xendit!.apiKey!.toString() ?? "",
+          apiKey: paymentModel.value.xendit!.apiKey?.toString() ?? "",
         ))!
             .then((value) {
           if (value == true) {

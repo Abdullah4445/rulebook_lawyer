@@ -10,6 +10,7 @@ import 'package:driver/model/driver_user_model.dart';
 import 'package:driver/model/order/driverId_accept_reject.dart';
 import 'package:driver/model/order_model.dart';
 import 'package:driver/themes/app_colors.dart';
+import 'package:driver/utils/case_duration_utils.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,8 @@ class OrderMapController extends GetxController {
   RxInt selectedButton = (-1).obs; // -1 = none, 0 = first, 1 = second
 
   Rx<TextEditingController> totalPriceController = TextEditingController().obs;
+  Rx<TextEditingController> caseDurationValueController = TextEditingController().obs;
+  RxString caseDurationUnit = CaseDurationUtils.defaultUnit.obs;
 
 
   RxBool isLoading = true.obs;
@@ -35,28 +38,44 @@ class OrderMapController extends GetxController {
   RxList<StepModel> steps = <StepModel>[].obs;
   void addStep() {
     steps.add(StepModel());
-    onTotalPriceChanged(); // new step add hone ke baad price update
+    syncTotalPriceFromSteps();
   }
 
   void removeLastStep() {
     if (steps.isNotEmpty) {
-      steps.removeLast();
-      onTotalPriceChanged(); // step remove hone ke baad price update
+      final removedStep = steps.removeLast();
+      removedStep.dispose();
+      syncTotalPriceFromSteps();
     }
   }
 
 
   void onTotalPriceChanged() {
-    double total = double.tryParse(totalPriceController.value.text.trim()) ?? 0.0;
-    int stepCount = steps.length;
+    final double total = _parseAmount(totalPriceController.value.text.trim());
+    _syncAmountFields(total);
+    final int stepCount = steps.length;
 
     if (stepCount == 0) return;
 
-    double stepPrice = total / stepCount;
+    final double stepPrice = total / stepCount;
 
     for (var step in steps) {
       step.rateController.text = stepPrice.toStringAsFixed(2);
     }
+  }
+
+  void onStepPriceChanged() {
+    syncTotalPriceFromSteps();
+  }
+
+  void syncTotalPriceFromSteps() {
+    final double total = steps.fold<double>(
+      0.0,
+      (sum, step) => sum + step.parsedRate,
+    );
+
+    totalPriceController.value.text = total > 0 ? _formatAmount(total) : '';
+    _syncAmountFields(total);
   }
 
 
@@ -87,58 +106,161 @@ class OrderMapController extends GetxController {
   @override
   void onClose() {
     ShowToastDialog.closeLoader();
+    enterOfferRateController.value.dispose();
+    titleController.value.dispose();
+    totalPriceController.value.dispose();
+    caseDurationValueController.value.dispose();
+    for (final step in steps) {
+      step.dispose();
+    }
     super.onClose();
   }
+
+  String _formatAmount(double amount) {
+    final int decimalDigits = Constant.currencyModel?.decimalDigits ?? 2;
+    if (amount == amount.roundToDouble()) {
+      return amount.toStringAsFixed(0);
+    }
+    return amount.toStringAsFixed(decimalDigits);
+  }
+
+  double _parseAmount(String text) {
+    return double.tryParse(text.trim()) ?? 0.0;
+  }
+
+  void _syncAmountFields(double total) {
+    newAmount.value = _formatAmount(total);
+    enterOfferRateController.value.text = newAmount.value;
+  }
+
+  bool get hasCaseDurationInput =>
+      caseDurationValueController.value.text.trim().isNotEmpty;
+
+  Map<String, dynamic>? buildCaseDurationData() {
+    return CaseDurationUtils.buildDuration(
+      valueText: caseDurationValueController.value.text,
+      unit: caseDurationUnit.value,
+    );
+  }
+
+  void updateCaseDurationUnit(String? unit) {
+    if (unit == null || unit.trim().isEmpty) return;
+    caseDurationUnit.value = CaseDurationUtils.normalizeUnit(unit);
+  }
+
   acceptOrder() async {
     try {
-      ShowToastDialog.showLoader("Please wait".tr);
-
-      // 1️⃣ Prepare fare details
       final Map<String, dynamic> offerData = {};
+      final Map<String, dynamic>? caseDuration = buildCaseDurationData();
+
+      if (hasCaseDurationInput && caseDuration == null) {
+        ShowToastDialog.showToast("Please enter valid estimated case time".tr);
+        return;
+      }
+
+      if (selectedButton.value == -1) {
+        ShowToastDialog.showToast("Please select case total or create steps".tr);
+        return;
+      }
 
       if (selectedButton.value == 0) {
         // Case total as single step
-        double totalAmount = double.tryParse(newAmount.value) ?? 0.0;
+        final String title = titleController.value.text.trim();
+        if (title.isEmpty) {
+          ShowToastDialog.showToast("Please enter case title".tr);
+          return;
+        }
+
+        double totalAmount = double.tryParse(enterOfferRateController.value.text.trim()) ??
+            double.tryParse(newAmount.value) ??
+            0.0;
+        if (totalAmount <= 0) {
+          ShowToastDialog.showToast("Please enter valid offer rate".tr);
+          return;
+        }
+
+        final Map<String, dynamic> stepData = {
+          "title": title,
+          "price": totalAmount,
+          "customerStatus": "pending",
+          "lawyerStatus": "pending",
+        };
+
+        if (caseDuration != null) {
+          offerData['caseDuration'] = Map<String, dynamic>.from(caseDuration);
+          offerData['duration'] = Map<String, dynamic>.from(caseDuration);
+          stepData['duration'] = Map<String, dynamic>.from(caseDuration);
+        }
 
         offerData['type'] = "case_total";
         offerData['total'] = totalAmount;
 
         // Wrap into steps array to keep same structure
-        offerData['steps'] = [
-          {
-            "title": titleController.value.text.trim(),
-            "price": totalAmount,
-            "customerStatus": "pending",
-            "lawyerStatus": "pending",
-          }
-        ];
+        offerData['steps'] = [stepData];
+        newAmount.value = _formatAmount(totalAmount);
 
       } else if (selectedButton.value == 1) {
         // Multi steps
-        double totalPrice = double.tryParse(totalPriceController.value.text.trim()) ?? 0.0;
-        int stepCount = steps.where((s) => s.titleController.text.trim().isNotEmpty).length;
+        final List<StepModel> validSteps = steps
+            .where((s) => s.titleController.text.trim().isNotEmpty)
+            .toList();
 
-        if (stepCount == 0) {
+        if (validSteps.isEmpty) {
           ShowToastDialog.showToast("Please enter at least one step title".tr);
           return;
         }
 
-        double stepPrice = totalPrice / stepCount;
+        double totalPrice = 0.0;
 
-        // Steps array with statuses for each step
-        offerData['steps'] = steps
-            .where((s) => s.titleController.text.trim().isNotEmpty)
-            .map((s) => {
-          "title": s.titleController.text.trim(),
-          "price": stepPrice,
-          "customerStatus": "pending",
-          "lawyerStatus": "pending",
+        for (int i = 0; i < validSteps.length; i++) {
+          final StepModel step = validSteps[i];
+          final double price = step.parsedRate;
+          if (price <= 0) {
+            ShowToastDialog.showToast("Please enter valid price for step ${i + 1}".tr);
+            return;
+          }
+
+          if (step.hasDurationInput && step.buildDurationData() == null) {
+            ShowToastDialog.showToast("Please enter valid estimated time for step ${i + 1}".tr);
+            return;
+          }
+
+          totalPrice += price;
+        }
+
+        if (totalPrice <= 0) {
+          ShowToastDialog.showToast("Please enter valid step prices".tr);
+          return;
+        }
+
+        offerData['steps'] = validSteps.map((s) {
+          final Map<String, dynamic> stepData = {
+            "title": s.titleController.text.trim(),
+            "price": s.parsedRate,
+            "customerStatus": "pending",
+            "lawyerStatus": "pending",
+          };
+
+          final stepDuration = s.buildDurationData();
+          if (stepDuration != null) {
+            stepData['duration'] = stepDuration;
+          }
+
+          return stepData;
         })
             .toList();
 
         offerData['type'] = "multi_steps";
         offerData['total'] = totalPrice;
+        if (caseDuration != null) {
+          offerData['caseDuration'] = caseDuration;
+          offerData['duration'] = caseDuration;
+        }
+        totalPriceController.value.text = _formatAmount(totalPrice);
+        newAmount.value = _formatAmount(totalPrice);
       }
+
+      ShowToastDialog.showLoader("Please wait".tr);
 
       // 2️⃣ Add current driver to acceptedDriverId list
       List<dynamic> newAcceptedDriverId = orderModel.value.acceptedDriverId ?? [];
@@ -390,8 +512,8 @@ class OrderMapController extends GetxController {
       await Constant().getBytesFromAsset('assets/images/pickup.png', 100);
       final Uint8List destination =
       await Constant().getBytesFromAsset('assets/images/dropoff.png', 100);
-      departureIcon = BitmapDescriptor.fromBytes(departure);
-      destinationIcon = BitmapDescriptor.fromBytes(destination);
+      departureIcon = BitmapDescriptor.bytes(departure);
+      destinationIcon = BitmapDescriptor.bytes(destination);
     } else {
       departureOsmIcon =
           Image.asset("assets/images/pickup.png", width: 30, height: 30); //OSM
@@ -613,6 +735,30 @@ class OrderMapController extends GetxController {
 class StepModel {
   TextEditingController titleController = TextEditingController();
   TextEditingController rateController = TextEditingController();
+  TextEditingController durationValueController = TextEditingController();
+  RxString durationUnit = CaseDurationUtils.defaultUnit.obs;
+
+  double get parsedRate => double.tryParse(rateController.text.trim()) ?? 0.0;
+
+  bool get hasDurationInput => durationValueController.text.trim().isNotEmpty;
+
+  Map<String, dynamic>? buildDurationData() {
+    return CaseDurationUtils.buildDuration(
+      valueText: durationValueController.text,
+      unit: durationUnit.value,
+    );
+  }
+
+  void updateDurationUnit(String? unit) {
+    if (unit == null || unit.trim().isEmpty) return;
+    durationUnit.value = CaseDurationUtils.normalizeUnit(unit);
+  }
+
+  void dispose() {
+    titleController.dispose();
+    rateController.dispose();
+    durationValueController.dispose();
+  }
 }
 
 

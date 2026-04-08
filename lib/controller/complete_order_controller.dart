@@ -134,6 +134,7 @@ class CompleteOrderController extends GetxController {
                   'lawyerStatus': fareDetails['lawyerStatus'] ?? "pending",
                   'customerStatus': fareDetails['customerStatus'] ?? "pending",
                   'driverConfirmed': fareDetails['driverConfirmed'] ?? false,
+                  'duration': fareDetails['caseDuration'] ?? fareDetails['duration'],
                   'timestamp': fareDetails['timestamp'] ?? DateTime.now().millisecondsSinceEpoch,
                   'stepNumber': 1,
                 }

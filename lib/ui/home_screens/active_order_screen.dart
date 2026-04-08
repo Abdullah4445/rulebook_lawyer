@@ -12,6 +12,7 @@ import 'package:driver/themes/button_them.dart';
 import 'package:driver/ui/chat_screen/chat_screen.dart';
 import 'package:driver/ui/home_screens/live_tracking_screen.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
+import 'package:driver/utils/case_duration_utils.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:driver/utils/utils.dart';
 import 'package:driver/widget/location_view.dart';
@@ -238,6 +239,9 @@ class ActiveOrderScreen extends StatelessWidget {
                                               final steps = fareDetails['steps'] != null
                                                   ? List<Map<String, dynamic>>.from(fareDetails['steps'])
                                                   : <Map<String, dynamic>>[];
+                                              final caseDuration = CaseDurationUtils.formatDuration(
+                                                fareDetails['caseDuration'] ?? fareDetails['duration'],
+                                              );
 
                                               return Padding(
                                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -287,21 +291,65 @@ class ActiveOrderScreen extends StatelessWidget {
                                                               ),
                                                               const SizedBox(height: 8),
 
+                                                              if (caseDuration.isNotEmpty) ...[
+                                                                Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      "Estimated Case Time".tr,
+                                                                      style: GoogleFonts.poppins(
+                                                                        fontSize: 13,
+                                                                        color: Colors.black54,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      caseDuration,
+                                                                      style: GoogleFonts.poppins(
+                                                                        fontSize: 13,
+                                                                        fontWeight: FontWeight.w600,
+                                                                        color: Colors.black87,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(height: 8),
+                                                              ],
+
                                                               // Steps
                                                               ...steps.map((stepEntry) {
                                                                 final step = Map<String, dynamic>.from(stepEntry);
+                                                                final stepDuration = CaseDurationUtils.formatDuration(
+                                                                  step['duration'],
+                                                                );
                                                                 return Column(
                                                                   children: [
                                                                     Padding(
                                                                       padding: const EdgeInsets.symmetric(vertical: 2),
                                                                       child: Row(
+                                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                         children: [
                                                                           Expanded(
-                                                                            child: Text(
-                                                                              step['title']?.toString() ?? '',
-                                                                              style: GoogleFonts.poppins(
-                                                                                  fontSize: 14, color: Colors.black87),
+                                                                            child: Column(
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                Text(
+                                                                                  step['title']?.toString() ?? '',
+                                                                                  style: GoogleFonts.poppins(
+                                                                                      fontSize: 14, color: Colors.black87),
+                                                                                ),
+                                                                                if (stepDuration.isNotEmpty)
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(top: 4),
+                                                                                    child: Text(
+                                                                                      stepDuration,
+                                                                                      style: GoogleFonts.poppins(
+                                                                                        fontSize: 12,
+                                                                                        color: Colors.blueGrey,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                              ],
                                                                             ),
                                                                           ),
                                                                           Text(

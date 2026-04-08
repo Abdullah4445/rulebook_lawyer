@@ -6,6 +6,7 @@ import 'package:driver/model/order/driverId_accept_reject.dart';
 import 'package:driver/model/order_model.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
+import 'package:driver/utils/case_duration_utils.dart';
 import 'package:driver/utils/fire_store_utils.dart';
 import 'package:driver/widget/location_view.dart';
 import 'package:driver/widget/user_view.dart';
@@ -67,7 +68,8 @@ class AcceptedOrders extends StatelessWidget {
                                   ? null
                                   : [
                                       BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
+                                        color: const Color.fromRGBO(
+                                            128, 128, 128, 0.5),
                                         blurRadius: 8,
                                         offset: const Offset(
                                             0, 2), // changes position of shadow
@@ -113,6 +115,9 @@ class AcceptedOrders extends StatelessWidget {
                                         final steps = fareDetails['steps'] != null
                                             ? List<Map<String, dynamic>>.from(fareDetails['steps'])
                                             : <Map<String, dynamic>>[];
+                                        final caseDuration = CaseDurationUtils.formatDuration(
+                                          fareDetails['caseDuration'] ?? fareDetails['duration'],
+                                        );
 
                                         return Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -132,7 +137,8 @@ class AcceptedOrders extends StatelessWidget {
                                                   ? null
                                                   : [
                                                 BoxShadow(
-                                                  color: Colors.black.withOpacity(0.10),
+                                                  color: const Color.fromRGBO(
+                                                      0, 0, 0, 0.10),
                                                   blurRadius: 5,
                                                   offset: const Offset(0, 4),
                                                 ),
@@ -152,18 +158,63 @@ class AcceptedOrders extends StatelessWidget {
                                                   ),
                                                   const SizedBox(height: 8),
 
+                                                  if (caseDuration.isNotEmpty) ...[
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          "Estimated Case Time".tr,
+                                                          style: GoogleFonts.poppins(
+                                                            fontSize: 13,
+                                                            color: Colors.black54,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          caseDuration,
+                                                          style: GoogleFonts.poppins(
+                                                            fontSize: 13,
+                                                            fontWeight: FontWeight.w600,
+                                                            color: Colors.black87,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                  ],
+
                                                   // Steps
                                                   ...steps.map(
-                                                        (step) => Padding(
+                                                        (step) {
+                                                      final stepDuration = CaseDurationUtils.formatDuration(
+                                                        step['duration'],
+                                                      );
+                                                      return Padding(
                                                       padding: const EdgeInsets.symmetric(vertical: 2),
                                                       child: Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
                                                           Expanded(
-                                                            child: Text(
-                                                              step['title']?.toString() ?? '',
-                                                              style: GoogleFonts.poppins(
-                                                                  fontSize: 14, color: Colors.black87),
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Text(
+                                                                  step['title']?.toString() ?? '',
+                                                                  style: GoogleFonts.poppins(
+                                                                      fontSize: 14, color: Colors.black87),
+                                                                ),
+                                                                if (stepDuration.isNotEmpty)
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.only(top: 4),
+                                                                    child: Text(
+                                                                      stepDuration,
+                                                                      style: GoogleFonts.poppins(
+                                                                        fontSize: 12,
+                                                                        color: Colors.blueGrey,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                              ],
                                                             ),
                                                           ),
                                                           Text(
@@ -175,7 +226,8 @@ class AcceptedOrders extends StatelessWidget {
                                                           ),
                                                         ],
                                                       ),
-                                                    ),
+                                                    );
+                                                    },
                                                   ),
 
                                                   const Divider(height: 20),

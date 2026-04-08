@@ -27,7 +27,10 @@ class PaymentModel {
         this.paypal,
         this.xendit,
         this.orangePay,
-        this.midtrans});
+        this.midtrans,
+        this.epayco}) {
+    _applyDefaults();
+  }
 
   PaymentModel.fromJson(Map<String, dynamic> json) {
     flutterWave = json['flutterWave'] != null ? FlutterWave.fromJson(json['flutterWave']) : null;
@@ -44,6 +47,114 @@ class PaymentModel {
     orangePay = json['orangePay'] != null ? OrangePay.fromJson(json['orangePay']) : null;
     midtrans = json['midtrans'] != null ? Midtrans.fromJson(json['midtrans']) : null;
     epayco = json['epayco'] != null ? Epayco.fromJson(json['epayco']) : null;
+    _applyDefaults();
+  }
+
+  void _applyDefaults() {
+    flutterWave ??= FlutterWave(
+      secretKey: '',
+      enable: false,
+      name: '',
+      publicKey: '',
+      encryptionKey: '',
+      isSandbox: false,
+    );
+    payStack ??= PayStack(
+      secretKey: '',
+      enable: false,
+      name: '',
+      callbackURL: '',
+      publicKey: '',
+      isSandbox: false,
+      webhookURL: '',
+    );
+    strip ??= Strip(
+      clientpublishableKey: '',
+      stripeSecret: '',
+      enable: false,
+      name: '',
+      isSandbox: false,
+    );
+    wallet ??= Wallet(enable: false, name: '');
+    mercadoPago ??= MercadoPago(
+      enable: false,
+      name: '',
+      publicKey: '',
+      accessToken: '',
+      isSandbox: false,
+    );
+    razorpay ??= RazorpayModel(
+      name: '',
+      enable: false,
+      razorpayKey: '',
+      isSandbox: false,
+      razorpaySecret: '',
+    );
+    paytm ??= Paytm(
+      name: '',
+      enable: false,
+      paytmMID: '',
+      isSandbox: false,
+      merchantKey: '',
+    );
+    payfast ??= Payfast(
+      merchantId: '',
+      enable: false,
+      name: '',
+      returnUrl: '',
+      notifyUrl: '',
+      isSandbox: false,
+      cancelUrl: '',
+      merchantKey: '',
+      securedKey: '',
+      currencyCode: 'PKR',
+    );
+    cash ??= Wallet(enable: false, name: '');
+    paypal ??= Paypal(
+      name: '',
+      enable: false,
+      paypalSecret: '',
+      isSandbox: false,
+      paypalClient: '',
+      image: '',
+    );
+    xendit ??= Xendit(
+      name: '',
+      enable: false,
+      apiKey: '',
+      isSandbox: false,
+      image: '',
+    );
+    orangePay ??= OrangePay(
+      clientId: '',
+      clientSecret: '',
+      merchantKey: '',
+      auth: '',
+      returnUrl: '',
+      cancelUrl: '',
+      notifUrl: '',
+      name: '',
+      enable: false,
+      isSandbox: false,
+      image: '',
+    );
+    midtrans ??= Midtrans(
+      name: '',
+      enable: false,
+      serverKey: '',
+      isSandbox: false,
+      image: '',
+    );
+    epayco ??= Epayco(
+      enable: false,
+      name: '',
+      publicKey: '',
+      privateKey: '',
+      customerId: '',
+      pKey: '',
+      isSandbox: false,
+      image: '',
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -299,8 +410,10 @@ class Payfast {
   bool? isSandbox;
   String? cancelUrl;
   String? merchantKey;
+  String? securedKey;
+  String? currencyCode;
 
-  Payfast({this.merchantId, this.enable, this.name, this.returnUrl, this.notifyUrl, this.isSandbox, this.cancelUrl, this.merchantKey});
+  Payfast({this.merchantId, this.enable, this.name, this.returnUrl, this.notifyUrl, this.isSandbox, this.cancelUrl, this.merchantKey, this.securedKey, this.currencyCode});
 
   Payfast.fromJson(Map<String, dynamic> json) {
     merchantId = json['merchantId'];
@@ -311,6 +424,8 @@ class Payfast {
     isSandbox = json['isSandbox'];
     cancelUrl = json['cancel_url'];
     merchantKey = json['merchantKey'];
+    securedKey = json['securedKey'] ?? json['merchantKey'];
+    currencyCode = json['currencyCode'] ?? json['currency'];
   }
 
   Map<String, dynamic> toJson() {
@@ -323,6 +438,8 @@ class Payfast {
     data['isSandbox'] = isSandbox;
     data['cancel_url'] = cancelUrl;
     data['merchantKey'] = merchantKey;
+    data['securedKey'] = securedKey ?? merchantKey;
+    data['currencyCode'] = currencyCode;
     return data;
   }
 }

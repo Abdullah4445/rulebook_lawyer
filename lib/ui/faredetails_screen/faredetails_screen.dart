@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:driver/utils/case_duration_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -60,6 +61,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
               'lawyerStatus': data['fareDetails']?['lawyerStatus'] ?? "pending",
               'customerStatus': data['fareDetails']?['customerStatus'] ?? "pending",
               'driverConfirmed': data['fareDetails']?['driverConfirmed'] ?? false,
+              'duration': data['fareDetails']?['caseDuration'] ?? data['fareDetails']?['duration'],
             }
           ]
         });
@@ -121,6 +123,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
             'lawyerStatus': fareDetails['lawyerStatus'] ?? "pending",
             'customerStatus': fareDetails['customerStatus'] ?? "pending",
             'driverConfirmed': fareDetails['driverConfirmed'] ?? false,
+            'duration': fareDetails['caseDuration'] ?? fareDetails['duration'],
           }
         ];
       }
@@ -251,6 +254,9 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final steps = getSteps();
+    final caseDuration = CaseDurationUtils.formatDuration(
+      fareDetails['caseDuration'] ?? fareDetails['duration'],
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -318,6 +324,36 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                 ],
               ),
               const SizedBox(height: 16),
+              if (caseDuration.isNotEmpty)
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Estimated Case Time",
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      Text(
+                        caseDuration,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               Expanded(
                 child: ListView.builder(
                   itemCount: steps.length,
@@ -330,6 +366,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                       customerStatus: step['customerStatus'] ?? "pending",
                       lawyerStatus: step['lawyerStatus'] ?? "pending",
                       driverConfirmed: (step['driverConfirmed'] == true),
+                      durationText: CaseDurationUtils.formatDuration(step['duration']),
                       onMarkDone: () => updateLawyerStatus(index),
                     );
                   },
@@ -363,6 +400,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
     required String lawyerStatus,
     required String customerStatus,
     required bool driverConfirmed,
+    required String durationText,
     required VoidCallback onMarkDone,
   }) {
     bool isLawyerDone = lawyerStatus.toLowerCase() == "done";
@@ -375,8 +413,8 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
         borderRadius: BorderRadius.circular(12),
         color: Colors.white,
         border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5)
+        boxShadow: const [
+          BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 5)
         ],
       ),
       child: Column(
@@ -404,6 +442,24 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
+          if (durationText.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(96, 125, 139, 0.08),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                durationText,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.blueGrey.shade700,
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -532,9 +588,12 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: Color.alphaBlend(
+          color.withAlpha(26),
+          Colors.white,
+        ),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withAlpha(128)),
       ),
       child: Text(
         "$prefix: ${status.toUpperCase()}",
@@ -548,6 +607,9 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
   }
 
   Widget _buildTotalSection() {
+    final caseDuration = CaseDurationUtils.formatDuration(
+      fareDetails['caseDuration'] ?? fareDetails['duration'],
+    );
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -555,24 +617,50 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [const BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Text(
-            "Grand Total",
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Grand Total",
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                "Rs ${fareDetails['total'] ?? 0}",
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[900],
+                ),
+              ),
+            ],
           ),
-          Text(
-            "Rs ${fareDetails['total'] ?? 0}",
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue[900],
+          if (caseDuration.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Estimated Case Time",
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                Text(
+                  caseDuration,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
-          ),
+          ],
         ],
       ),
     );

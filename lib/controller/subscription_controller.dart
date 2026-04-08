@@ -14,10 +14,10 @@ import 'package:driver/model/subscription_history.dart';
 import 'package:driver/model/subscription_plan_model.dart';
 import 'package:driver/model/wallet_transaction_model.dart';
 import 'package:driver/payment/MercadoPagoScreen.dart';
-import 'package:driver/payment/PayFastScreen.dart';
 import 'package:driver/payment/getPaytmTxtToken.dart';
 import 'package:driver/payment/midtrans_screen.dart';
 import 'package:driver/payment/orangePayScreen.dart';
+import 'package:driver/payment/payfast_checkout_helper.dart';
 import 'package:driver/payment/paystack/pay_stack_screen.dart';
 import 'package:driver/payment/paystack/pay_stack_url_model.dart';
 import 'package:driver/payment/paystack/paystack_url_genrater.dart';
@@ -31,6 +31,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:payfast_flutter/payfast_flutter.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../themes/app_colors.dart';
@@ -135,10 +136,15 @@ class SubscriptionController extends GetxController {
     await FireStoreUtils().getPayment().then((value) {
       if (value != null) {
         paymentModel.value = value;
+        paymentModel.value.payfast =
+            PayFastCheckoutHelper.normalizePayfast(paymentModel.value.payfast);
 
-        Stripe.publishableKey = paymentModel.value.strip!.clientpublishableKey.toString();
-        Stripe.merchantIdentifier = 'GoRide';
-        Stripe.instance.applySettings();
+        final strip = paymentModel.value.strip;
+        if (strip?.clientpublishableKey?.trim().isNotEmpty == true) {
+          Stripe.publishableKey = strip!.clientpublishableKey!.trim();
+          Stripe.merchantIdentifier = 'GoRide';
+          Stripe.instance.applySettings();
+        }
         setRef();
         razorPay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
         razorPay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWaller);
@@ -493,23 +499,75 @@ class SubscriptionController extends GetxController {
   }
 
   // payFast
-  payFastPayment({required BuildContext context, required String amount}) {
-    PayStackURLGen.getPayHTML(
-            payFastSettingData: paymentModel.value.payfast!,
-            amount: amount.toString(),
-            userModel: driverUserModel.value)
-        .then((String? value) async {
-      bool isDone = await Get.to(PayFastScreen(
-          htmlData: value!, payFastSettingData: paymentModel.value.payfast!));
-      if (isDone) {
-        // Get.back();
-        ShowToastDialog.showToast("Payment successfully");
-        placeOrder();
-      } else {
-        Get.back();
-        ShowToastDialog.showToast("Payment Failed");
-      }
-    });
+  Future<void> payFastPayment({required BuildContext context, required String amount}) async {
+    final payfast = paymentModel.value.payfast;
+    final String? configError = PayFastCheckoutHelper.validateSettings(payfast);
+    if (configError != null) {
+      ShowToastDialog.showToast(configError.tr);
+      return;
+    }
+
+    final double? parsedAmount = double.tryParse(amount.trim());
+    if (parsedAmount == null || parsedAmount <= 0) {
+      ShowToastDialog.showToast("Please enter valid amount".tr);
+      return;
+    }
+
+    final String basketId = 'subscription-${DateTime.now().millisecondsSinceEpoch}';
+    final normalizedPayfast = PayFastCheckoutHelper.normalizePayfast(payfast);
+    final String? credentialError =
+        await PayFastCheckoutHelper.validateGatewayCredentials(
+      payfast: normalizedPayfast,
+      basketId: basketId,
+      amount: amount.trim(),
+    );
+    if (credentialError != null) {
+      ShowToastDialog.showToast(credentialError.tr);
+      debugPrint(
+          'PayFast subscription credential validation failed: $credentialError');
+      return;
+    }
+
+    try {
+      await PayFast.pay(
+        context: context,
+        merchantId: PayFastCheckoutHelper.resolveMerchantId(normalizedPayfast),
+        securedKey: PayFastCheckoutHelper.resolveSecuredKey(normalizedPayfast),
+        basketId: basketId,
+        amount: amount.trim(),
+        callbackBaseUrl:
+            PayFastCheckoutHelper.resolveCallbackBaseUrl(normalizedPayfast),
+        currency: PayFastCheckoutHelper.resolveCurrencyCode(normalizedPayfast),
+        txnDesc: 'Subscription Payment',
+        environment: normalizedPayfast.isSandbox == true ? 'sandbox' : 'live',
+        additionalDescription:
+            'Subscription purchase for ${driverUserModel.value.fullName ?? 'Driver'}',
+        customerEmail:
+            PayFastCheckoutHelper.resolveCustomerEmail(driverUserModel.value),
+        customerMobile:
+            PayFastCheckoutHelper.resolveCustomerMobile(driverUserModel.value),
+        webTokenUrl: PayFastCheckoutHelper.resolveWebTokenUrl(normalizedPayfast),
+        successPath: PayFastCheckoutHelper.resolveSuccessPath(normalizedPayfast),
+        failurePath: PayFastCheckoutHelper.resolveFailurePath(normalizedPayfast),
+        checkoutPath: PayFastCheckoutHelper.resolveCheckoutPath(normalizedPayfast),
+        onResult: (result) {
+          _handlePayFastSubscriptionResult(result);
+        },
+      );
+    } catch (e) {
+      ShowToastDialog.showToast("PayFast payment failed. Please try again.".tr);
+      debugPrint('PayFast subscription payment error: $e');
+    }
+  }
+
+  void _handlePayFastSubscriptionResult(PayFastResult result) {
+    if (result.success) {
+      ShowToastDialog.showToast("Payment successfully".tr);
+      placeOrder();
+      return;
+    }
+
+    ShowToastDialog.showToast(result.message.tr);
   }
 
   ///Paytm payment function
@@ -699,7 +757,7 @@ class SubscriptionController extends GetxController {
         Get.to(() => XenditScreen(
                   initialURl: model.invoiceUrl ?? '',
                   transId: model.id ?? '',
-                  apiKey: paymentModel.value.xendit!.apiKey!.toString() ?? "",
+          apiKey: paymentModel.value.xendit!.apiKey?.toString() ?? "",
                 ))!
             .then((value) {
           if (value == true) {

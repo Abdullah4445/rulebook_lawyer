@@ -1,14 +1,12 @@
 import 'package:clipboard/clipboard.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:driver/constant/collection_name.dart';
 import 'package:driver/constant/constant.dart';
 import 'package:driver/constant/show_toast_dialog.dart';
 import 'package:driver/controller/complete_order_controller.dart';
-import 'package:driver/model/order_model.dart';
 import 'package:driver/themes/app_colors.dart';
 import 'package:driver/themes/responsive.dart';
 import 'package:driver/utils/DarkThemeProvider.dart';
+import 'package:driver/utils/case_duration_utils.dart';
 import 'package:driver/widget/location_view.dart';
 import 'package:driver/widget/user_order_view.dart';
 import 'package:flutter/material.dart';
@@ -655,6 +653,9 @@ class CompleteOrderScreen extends StatelessWidget {
                                             final driverConfirmed =
                                             (step['driverConfirmed'] ==
                                                 true);
+                                            final durationText =
+                                            CaseDurationUtils.formatDuration(
+                                                step['duration']);
                                             final timestamp =
                                             step['timestamp'] != null
                                                 ? controller
@@ -714,8 +715,7 @@ class CompleteOrderScreen extends StatelessWidget {
                                                         BoxDecoration(
                                                           color: AppColors
                                                               .primary
-                                                              .withOpacity(
-                                                              0.1),
+                                                              .withAlpha(26),
                                                           borderRadius:
                                                           BorderRadius
                                                               .circular(
@@ -760,6 +760,42 @@ class CompleteOrderScreen extends StatelessWidget {
                                                       FontWeight.w600,
                                                     ),
                                                   ),
+                                                   if (durationText.isNotEmpty)
+                                                     Padding(
+                                                       padding:
+                                                       const EdgeInsets.only(
+                                                           top: 8),
+                                                       child: Container(
+                                                         padding:
+                                                         const EdgeInsets
+                                                             .symmetric(
+                                                           horizontal: 10,
+                                                           vertical: 6,
+                                                         ),
+                                                         decoration:
+                                                         BoxDecoration(
+                                                           color: AppColors
+                                                               .primary
+                                                               .withAlpha(20),
+                                                           borderRadius:
+                                                           BorderRadius
+                                                               .circular(
+                                                               20),
+                                                         ),
+                                                         child: Text(
+                                                           durationText,
+                                                           style:
+                                                           GoogleFonts
+                                                               .poppins(
+                                                             fontSize: 12,
+                                                             fontWeight:
+                                                             FontWeight.w500,
+                                                             color: AppColors
+                                                                 .primary,
+                                                           ),
+                                                         ),
+                                                       ),
+                                                     ),
                                                   const SizedBox(
                                                       height: 12),
 
