@@ -1,4 +1,4 @@
-class AdminCommission {
+﻿class AdminCommission {
   String? amount;
   bool? isEnabled;
   String? type;

@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Positions {
   String? geohash;
@@ -21,7 +21,7 @@ class Positions {
         parsedGeoPoint = GeoPoint(lat.toDouble(), lng.toDouble());
       }
     } else {
-      print('⚠️ Unexpected geopoint format: $geopointData');
+      print('âš ï¸ Unexpected geopoint format: $geopointData');
     }
 
     return Positions(

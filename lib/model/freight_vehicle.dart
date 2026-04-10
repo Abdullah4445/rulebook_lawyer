@@ -1,5 +1,5 @@
-import 'package:driver/model/language_description.dart';
-import 'package:driver/model/language_name.dart';
+﻿import 'package:lawyer/model/language_description.dart';
+import 'package:lawyer/model/language_name.dart';
 
 class FreightVehicle {
   String? image;

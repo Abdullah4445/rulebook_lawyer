@@ -72,12 +72,12 @@ exports.onRideCreated = onDocumentCreated(
 
         const msg = {
                    notification: {
-                       title: "🚖 Nuevo Viaje Disponible",
-                       body: `Pedido ${orderId}: un cliente necesita un viaje.`,
+                       title: "New Case Request",
+                       body: "A new legal case is available for review. Open the app to view the details.",
                    },
             data: {
                 orderId,
-                type: "new_ride",
+                type: "city_order",
             },
             android: { priority: "high" },
             apns: { payload: { aps: { contentAvailable: true } } },

@@ -1,7 +1,7 @@
-import 'package:country_code_picker/country_code_picker.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/ui/splash_screen.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
+﻿import 'package:country_code_picker/country_code_picker.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/ui/splash_screen.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 // nawa kam
@@ -33,7 +33,7 @@ Future<void> _initializeFirebase() async {
 void main() async {
   print("Faheem work will start from here!");
   WidgetsFlutterBinding.ensureInitialized();
-  print("🌼 Firebase Initialized 🌼");
+  print("ðŸŒ¼ Firebase Initialized ðŸŒ¼");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(firebaseMessageBackgroundHandle);
   await _initializeFirebase();
@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       child: Consumer<DarkThemeProvider>(
         builder: (context, value, child) {
           return GetMaterialApp(
-            title: 'goflow'.tr,
+            title: 'Rulebook Lawyer',
             debugShowCheckedModeBanner: false,
             theme: Styles.themeData(
               themeChangeProvider.darkTheme == 0

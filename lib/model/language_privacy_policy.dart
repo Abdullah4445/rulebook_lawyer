@@ -1,4 +1,4 @@
-class LanguagePrivacyPolicy {
+﻿class LanguagePrivacyPolicy {
   String? privacyPolicy;
   String? type;
 

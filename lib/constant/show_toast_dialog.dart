@@ -1,4 +1,4 @@
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+﻿import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class ShowToastDialog {
   static showToast(String? message, {EasyLoadingToastPosition position = EasyLoadingToastPosition.top}) {

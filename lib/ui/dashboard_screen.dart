@@ -1,18 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:driver/constant/collection_name.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/controller/dash_board_controller.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/responsive.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lawyer/constant/collection_name.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/controller/dash_board_controller.dart';
+import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/themes/responsive.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 // marging code
 class DashBoardScreen extends StatelessWidget {
   const DashBoardScreen({super.key});
@@ -160,8 +158,18 @@ class DashBoardScreen extends StatelessWidget {
               }),
             ),
             drawer: buildAppDrawer(context, controller),
-            body: WillPopScope(
-                onWillPop: controller.onWillPop,
+            body: PopScope(
+                canPop: false,
+                onPopInvokedWithResult: (didPop, result) async {
+                  if (didPop) {
+                    return;
+                  }
+
+                  final canExit = await controller.onWillPop();
+                  if (canExit && context.mounted) {
+                    Navigator.of(context).maybePop();
+                  }
+                },
                 child:
                 controller.getDrawerItemWidget(controller.selectedDrawerIndex.value)),
           );
@@ -182,7 +190,7 @@ class DashBoardScreen extends StatelessWidget {
             child: ListBody(
               children: <Widget>[
                 Text(
-                    'To start earning with goflow you need to fill in your personal information'
+                    'To start earning with Rulebook Lawyer you need to fill in your personal information'
                         .tr),
               ],
             ),
@@ -211,7 +219,6 @@ class DashBoardScreen extends StatelessWidget {
   }
 
   buildAppDrawer(BuildContext context, DashBoardController controller) {
-    final themeChange = Provider.of<DarkThemeProvider>(context);
     List<DrawerItem> drawerItems = [];
     if (Constant.isSubscriptionModelApplied == true) {
       drawerItems = [
@@ -231,7 +238,7 @@ class DashBoardScreen extends StatelessWidget {
       ];
     } else {
       drawerItems = [
-        DrawerItem('City'.tr, "assets/icons/cases1.svg"),
+        DrawerItem('Cases'.tr, "assets/icons/cases1.svg"),
         DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
         DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
@@ -248,47 +255,85 @@ class DashBoardScreen extends StatelessWidget {
     var drawerOptions = <Widget>[];
     for (var i = 0; i < drawerItems.length; i++) {
       var d = drawerItems[i];
+      final isSelected = i == controller.selectedDrawerIndex.value;
+      final isLogout = d.title.toLowerCase().contains('log out');
+
       drawerOptions.add(InkWell(
         onTap: () {
           controller.onSelectItem(i);
         },
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
           child: Container(
             decoration: BoxDecoration(
-                color: i == controller.selectedDrawerIndex.value
-                    ? Theme.of(context).colorScheme.primary
-                    : Colors.transparent,
-                borderRadius: const BorderRadius.all(Radius.circular(10))),
-            padding: const EdgeInsets.all(12),
+              color: isSelected ? const Color(0xFF1F1F1F) : Colors.white,
+              borderRadius: const BorderRadius.all(Radius.circular(26)),
+              border: Border.all(
+                color: isSelected ? Colors.transparent : AppColors.grey200,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isSelected ? 0.12 : 0.05),
+                  blurRadius: isSelected ? 18 : 12,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Row(
               children: [
-                SvgPicture.asset(
-                  d.icon,
-                  width: 20,
-                  color: i == controller.selectedDrawerIndex.value
-                      ? themeChange.getThem()
-                      ? Colors.black
-                      : Colors.white
-                      : themeChange.getThem()
-                      ? Colors.white
-                      : AppColors.drawerIcon,
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                Text(
-                  d.title,
-                  style: GoogleFonts.poppins(
-                      color: i == controller.selectedDrawerIndex.value
-                          ? themeChange.getThem()
+                Container(
+                  height: 52,
+                  width: 52,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.brandGold
+                        : const Color(0xFFFFF4D9),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  padding: const EdgeInsets.all(14),
+                  child: SvgPicture.asset(
+                    d.icon,
+                    colorFilter: ColorFilter.mode(
+                      isSelected
                           ? Colors.black
-                          : Colors.white
-                          : themeChange.getThem()
-                          ? Colors.white
-                          : Colors.black,
-                      fontWeight: FontWeight.w500),
-                )
+                          : (isLogout ? Colors.black87 : AppColors.grey900),
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        d.title,
+                        style: GoogleFonts.poppins(
+                          color: isSelected
+                              ? Colors.white
+                              : (isLogout ? Colors.black : AppColors.grey900),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _drawerSubtitle(d.title),
+                        style: GoogleFonts.poppins(
+                          color: isSelected ? Colors.white70 : AppColors.grey500,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: isSelected ? Colors.white : AppColors.grey500,
+                ),
               ],
             ),
           ),
@@ -296,60 +341,211 @@ class DashBoardScreen extends StatelessWidget {
       ));
     }
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            child: FutureBuilder<DriverUserModel?>(
-                future: FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid()),
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      return Constant.loader(context);
-                    case ConnectionState.done:
-                      if (snapshot.hasError) {
-                        return Text(snapshot.error.toString());
-                      } else {
-                        DriverUserModel driverModel = snapshot.data!;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(60),
-                              child: CachedNetworkImage(
-                                height: Responsive.width(20, context),
-                                width: Responsive.width(20, context),
-                                imageUrl: driverModel.profilePic.toString(),
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Constant.loader(context),
-                                errorWidget: (context, url, error) =>
-                                    Image.network(Constant.userPlaceHolder),
+      backgroundColor: const Color(0xFFF7F8FA),
+      child: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF151923), Color(0xFF202736)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(34),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.16),
+                    blurRadius: 22,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: FutureBuilder<DriverUserModel?>(
+                  future: FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid()),
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return Constant.loader(context);
+                      case ConnectionState.done:
+                        if (snapshot.hasError) {
+                          return Text(snapshot.error.toString());
+                        } else {
+                          DriverUserModel driverModel = snapshot.data!;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    height: 78,
+                                    width: 78,
+                                    padding: const EdgeInsets.all(3),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: AppColors.brandGold,
+                                        width: 2.2,
+                                      ),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(60),
+                                      child: CachedNetworkImage(
+                                        imageUrl: driverModel.profilePic.toString(),
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) => Constant.loader(context),
+                                        errorWidget: (context, url, error) => Container(
+                                          color: const Color(0xFF111827),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            _initialsFromName(driverModel.fullName),
+                                            style: GoogleFonts.poppins(
+                                              color: AppColors.brandGold,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 24,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 6),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Rulebook Lawyer'.tr,
+                                            style: GoogleFonts.poppins(
+                                              color: AppColors.brandGold,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            driverModel.fullName.toString(),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.poppins(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 16,
+                                              height: 1.25,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 6),
-                              child: Text(driverModel.fullName.toString(),
-                                  style:
-                                  GoogleFonts.poppins(fontWeight: FontWeight.w500)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 2),
-                              child: Text(
-                                driverModel.email.toString(),
-                                style: GoogleFonts.poppins(),
+                              const SizedBox(height: 18),
+                              Container(
+                                width: double.infinity,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      driverModel.email.toString(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white70,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Your legal support dashboard, wallet and case updates in one place.'.tr,
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            )
-                          ],
-                        );
-                      }
-                    default:
-                      return Text('Error'.tr);
-                  }
-                }),
-          ),
-          Column(children: drawerOptions),
-        ],
+                            ],
+                          );
+                        }
+                      default:
+                        return Text('Error'.tr);
+                    }
+                  }),
+            ),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  Column(children: drawerOptions),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  String _drawerSubtitle(String title) {
+    switch (title.toLowerCase()) {
+      case 'cases':
+        return 'Track your ongoing and past matters';
+      case 'my wallet':
+        return 'Top up and review payment activity';
+      case 'bank details':
+        return 'Manage your payout account information';
+      case 'inbox':
+        return 'Stay connected with clients and updates';
+      case 'profile':
+        return 'Update your professional details';
+      case 'online registration':
+        return 'Upload and manage your verification documents';
+      case 'lawyer information':
+        return 'Maintain your practice and service details';
+      case 'settings':
+        return 'Preferences, language and notifications';
+      case 'subscription':
+        return 'Review available plans and upgrades';
+      case 'subscription history':
+        return 'View your past membership payments';
+      case 'terms and conditions':
+        return 'Read platform rules and usage policies';
+      case 'privacy policy':
+        return 'Understand how your data is protected';
+      case 'log out':
+        return 'Securely sign out from your account';
+      default:
+        return 'Professional legal workspace';
+    }
+  }
+
+  String _initialsFromName(String? name) {
+    final parts = (name ?? '')
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((e) => e.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) {
+      return 'RL';
+    }
+    if (parts.length == 1) {
+      return parts.first.substring(0, 1).toUpperCase();
+    }
+    return (parts.first.substring(0, 1) + parts.last.substring(0, 1))
+        .toUpperCase();
   }
 }

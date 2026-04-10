@@ -1,4 +1,4 @@
-// Dart Packages
+﻿// Dart Packages
 import 'dart:async';
 
 // Flutter Packages

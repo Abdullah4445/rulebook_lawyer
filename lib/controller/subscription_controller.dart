@@ -1,30 +1,30 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as maths;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/constant/collection_name.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:driver/model/payment_model.dart';
-import 'package:driver/model/stripe_failed_model.dart';
-import 'package:driver/model/subscription_history.dart';
-import 'package:driver/model/subscription_plan_model.dart';
-import 'package:driver/model/wallet_transaction_model.dart';
-import 'package:driver/payment/MercadoPagoScreen.dart';
-import 'package:driver/payment/getPaytmTxtToken.dart';
-import 'package:driver/payment/midtrans_screen.dart';
-import 'package:driver/payment/orangePayScreen.dart';
-import 'package:driver/payment/payfast_checkout_helper.dart';
-import 'package:driver/payment/paystack/pay_stack_screen.dart';
-import 'package:driver/payment/paystack/pay_stack_url_model.dart';
-import 'package:driver/payment/paystack/paystack_url_genrater.dart';
-import 'package:driver/payment/xenditModel.dart';
-import 'package:driver/payment/xenditScreen.dart';
-import 'package:driver/ui/dashboard_screen.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+import 'package:lawyer/constant/collection_name.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/model/payment_model.dart';
+import 'package:lawyer/model/stripe_failed_model.dart';
+import 'package:lawyer/model/subscription_history.dart';
+import 'package:lawyer/model/subscription_plan_model.dart';
+import 'package:lawyer/model/wallet_transaction_model.dart';
+import 'package:lawyer/payment/MercadoPagoScreen.dart';
+import 'package:lawyer/payment/getPaytmTxtToken.dart';
+import 'package:lawyer/payment/midtrans_screen.dart';
+import 'package:lawyer/payment/orangePayScreen.dart';
+import 'package:lawyer/payment/payfast_checkout_helper.dart';
+import 'package:lawyer/payment/paystack/pay_stack_screen.dart';
+import 'package:lawyer/payment/paystack/pay_stack_url_model.dart';
+import 'package:lawyer/payment/paystack/paystack_url_genrater.dart';
+import 'package:lawyer/payment/xenditModel.dart';
+import 'package:lawyer/payment/xenditScreen.dart';
+import 'package:lawyer/ui/dashboard_screen.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -63,7 +63,7 @@ class SubscriptionController extends GetxController {
     driverUserModel.value =
         await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid()) ??
             DriverUserModel();
-// ✅ Save to Constant
+// âœ… Save to Constant
     Constant.currentDriverUser = driverUserModel.value;
   }
 
@@ -87,7 +87,7 @@ class SubscriptionController extends GetxController {
     _iap.purchaseStream.listen((purchases) async {
       for (var purchase in purchases) {
         if (purchase.status == PurchaseStatus.purchased) {
-          await _iap.completePurchase(purchase); // ✅ Mandatory for Apple
+          await _iap.completePurchase(purchase); // âœ… Mandatory for Apple
           placeOrder();
         } else if (purchase.status == PurchaseStatus.error) {
           ShowToastDialog.showToast("Apple IAP failed");
@@ -96,7 +96,7 @@ class SubscriptionController extends GetxController {
     });
   }
 
-  /// ✅ Call this when Apple IAP is selected
+  /// âœ… Call this when Apple IAP is selected
   void buyExclusivePlan() async {
     try {
       final ProductDetails product =
@@ -238,7 +238,7 @@ class SubscriptionController extends GetxController {
           Get.back(result: true);
         }
         ShowToastDialog.showToast(
-            "Success! You’ve unlocked your subscription benefits starting today.".tr);
+            "Success! Youâ€™ve unlocked your subscription benefits starting today.".tr);
       },
     );
   }

@@ -1,4 +1,4 @@
-class ContactModel {
+﻿class ContactModel {
   String? fullName;
   String? contactNumber;
 

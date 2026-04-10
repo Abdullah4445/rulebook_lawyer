@@ -1,4 +1,4 @@
-class TaxModel {
+﻿class TaxModel {
   String? country;
   bool? enable;
   String? tax;

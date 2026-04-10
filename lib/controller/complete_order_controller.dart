@@ -1,5 +1,5 @@
-// import 'package:driver/constant/constant.dart';
-// import 'package:driver/model/order_model.dart';
+﻿// import 'package:lawyer/constant/constant.dart';
+// import 'package:lawyer/model/order_model.dart';
 // import 'package:get/get.dart';
 //
 // class CompleteOrderController extends GetxController {
@@ -50,9 +50,9 @@
 //   }
 // }
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/collection_name.dart';
-import 'package:driver/model/order_model.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/collection_name.dart';
+import 'package:lawyer/model/order_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -69,7 +69,7 @@ class CompleteOrderController extends GetxController {
   Rx<OrderModel> orderModel = OrderModel().obs;
   RxString couponAmount = "0.0".obs;
 
-  // Steps history کے لئے
+  // Steps history Ú©Û’ Ù„Ø¦Û’
   RxList<Map<String, dynamic>> stepsHistory = <Map<String, dynamic>>[].obs;
 
   double calculateAmount() {
@@ -89,7 +89,7 @@ class CompleteOrderController extends GetxController {
         double.parse(taxAmount.value);
   }
 
-  // Steps history fetch کرنے کا function
+  // Steps history fetch Ú©Ø±Ù†Û’ Ú©Ø§ function
   Future<void> fetchStepsHistory() async {
     try {
       loadingSteps.value = true;
@@ -101,7 +101,7 @@ class CompleteOrderController extends GetxController {
         return;
       }
 
-      // Check acceptedDriver collection میں fareDetails
+      // Check acceptedDriver collection Ù…ÛŒÚº fareDetails
       final acceptedDriverRef = FirebaseFirestore.instance
           .collection(CollectionName.orders)
           .doc(orderModel.value.id)
@@ -156,7 +156,7 @@ class CompleteOrderController extends GetxController {
             }
           }
 
-          // Step 3: اگر کچھ نہیں ملا تو default steps بنائیں
+          // Step 3: Ø§Ú¯Ø± Ú©Ú†Ú¾ Ù†ÛÛŒÚº Ù…Ù„Ø§ ØªÙˆ default steps Ø¨Ù†Ø§Ø¦ÛŒÚº
           if (stepsHistory.isEmpty) {
             stepsHistory.value = [
               {
@@ -189,7 +189,7 @@ class CompleteOrderController extends GetxController {
           });
 
         } else {
-          // اگر fareDetails نہیں ہے تو default steps بنائیں
+          // Ø§Ú¯Ø± fareDetails Ù†ÛÛŒÚº ÛÛ’ ØªÙˆ default steps Ø¨Ù†Ø§Ø¦ÛŒÚº
           stepsHistory.value = [
             {
               'title': 'Case Completion',
@@ -203,10 +203,10 @@ class CompleteOrderController extends GetxController {
           ];
         }
       } else {
-        // اگر acceptedDriver document نہیں ملا تو direct order document سے check کریں
+        // Ø§Ú¯Ø± acceptedDriver document Ù†ÛÛŒÚº Ù…Ù„Ø§ ØªÙˆ direct order document Ø³Û’ check Ú©Ø±ÛŒÚº
         print("No acceptedDriver document found, checking order document...");
 
-        // Order document سے fareDetails check کریں
+        // Order document Ø³Û’ fareDetails check Ú©Ø±ÛŒÚº
         final orderDoc = await FirebaseFirestore.instance
             .collection(CollectionName.orders)
             .doc(orderModel.value.id)
@@ -237,7 +237,7 @@ class CompleteOrderController extends GetxController {
 
     } catch (e) {
       print("Error fetching steps history: $e");
-      // Error کے case میں default steps
+      // Error Ú©Û’ case Ù…ÛŒÚº default steps
       stepsHistory.value = [
         {
           'title': 'Case Completion',
@@ -272,7 +272,7 @@ class CompleteOrderController extends GetxController {
         }
       }
 
-      // Arguments load ہونے کے بعد steps history fetch کریں
+      // Arguments load ÛÙˆÙ†Û’ Ú©Û’ Ø¨Ø¹Ø¯ steps history fetch Ú©Ø±ÛŒÚº
       await fetchStepsHistory();
     }
     isLoading.value = false;

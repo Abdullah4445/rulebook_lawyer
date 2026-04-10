@@ -1,7 +1,7 @@
-import 'package:driver/constant/constant.dart';
-import 'package:driver/model/language_model.dart';
-import 'package:driver/utils/Preferences.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/model/language_model.dart';
+import 'package:lawyer/utils/Preferences.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:get/get.dart';
 
 class SettingController extends GetxController {

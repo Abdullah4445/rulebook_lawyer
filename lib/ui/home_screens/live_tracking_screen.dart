@@ -1,7 +1,7 @@
-import 'package:driver/constant/constant.dart';
-import 'package:driver/controller/live_tracking_controller.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
+﻿import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/controller/live_tracking_controller.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

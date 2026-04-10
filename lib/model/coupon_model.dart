@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/model/language_title.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lawyer/model/language_title.dart';
 
 class CouponModel {
   List<LanguageTitle>? title;

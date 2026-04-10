@@ -1,19 +1,17 @@
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/ui/auth_screen/login_screen.dart';
-import 'package:driver/ui/bank_details/bank_details_screen.dart';
-import 'package:driver/ui/chat_screen/inbox_screen.dart';
-import 'package:driver/ui/freight/freight_screen.dart';
-import 'package:driver/ui/home_screens/home_screen.dart';
-import 'package:driver/ui/intercity_screen/home_intercity_screen.dart';
-import 'package:driver/ui/online_registration/online_registartion_screen.dart';
-import 'package:driver/ui/profile_screen/profile_screen.dart';
-import 'package:driver/ui/settings_screen/setting_screen.dart';
-import 'package:driver/ui/subscription_plan_screen/subscription_history.dart';
-import 'package:driver/ui/subscription_plan_screen/subscription_list_screen.dart';
-import 'package:driver/ui/terms_and_condition/terms_and_condition_screen.dart';
-import 'package:driver/ui/vehicle_information/vehicle_information_screen.dart';
-import 'package:driver/ui/wallet/wallet_screen.dart';
+﻿import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/ui/auth_screen/login_screen.dart';
+import 'package:lawyer/ui/bank_details/bank_details_screen.dart';
+import 'package:lawyer/ui/chat_screen/inbox_screen.dart';
+import 'package:lawyer/ui/home_screens/home_screen.dart';
+import 'package:lawyer/ui/online_registration/online_registartion_screen.dart';
+import 'package:lawyer/ui/profile_screen/profile_screen.dart';
+import 'package:lawyer/ui/settings_screen/setting_screen.dart';
+import 'package:lawyer/ui/subscription_plan_screen/subscription_history.dart';
+import 'package:lawyer/ui/subscription_plan_screen/subscription_list_screen.dart';
+import 'package:lawyer/ui/terms_and_condition/terms_and_condition_screen.dart';
+import 'package:lawyer/ui/vehicle_information/vehicle_information_screen.dart';
+import 'package:lawyer/ui/wallet/wallet_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -124,7 +122,7 @@ class DashBoardController extends GetxController {
   setDrawerList() {
     if (Constant.isSubscriptionModelApplied == true) {
       drawerItems.value = [
-        DrawerItem('City'.tr, "assets/icons/ic_city.svg"),
+        DrawerItem('Cases'.tr, "assets/icons/ic_city.svg"),
         DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
         DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
@@ -140,7 +138,7 @@ class DashBoardController extends GetxController {
       ];
     } else {
       drawerItems.value = [
-        DrawerItem('City'.tr, "assets/icons/ic_city.svg"),
+        DrawerItem('Cases'.tr, "assets/icons/ic_city.svg"),
         DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
         DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
         DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),

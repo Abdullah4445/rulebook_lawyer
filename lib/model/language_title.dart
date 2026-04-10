@@ -1,4 +1,4 @@
-class LanguageTitle {
+﻿class LanguageTitle {
   String? title;
   String? type;
 

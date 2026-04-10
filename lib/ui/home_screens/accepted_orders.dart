@@ -1,15 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/constant/collection_name.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/controller/accepted_orders_controller.dart';
-import 'package:driver/model/order/driverId_accept_reject.dart';
-import 'package:driver/model/order_model.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
-import 'package:driver/utils/case_duration_utils.dart';
-import 'package:driver/utils/fire_store_utils.dart';
-import 'package:driver/widget/location_view.dart';
-import 'package:driver/widget/user_view.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lawyer/constant/collection_name.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/controller/accepted_orders_controller.dart';
+import 'package:lawyer/model/order/driverId_accept_reject.dart';
+import 'package:lawyer/model/order_model.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
+import 'package:lawyer/utils/case_duration_utils.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
+import 'package:lawyer/widget/location_view.dart';
+import 'package:lawyer/widget/user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -109,7 +109,7 @@ class AcceptedOrders extends StatelessWidget {
                                     } else {
                                       final driverIdAcceptReject = snapshot.data!;
 
-                                      // 🔥 Fare Details container
+                                      // ðŸ”¥ Fare Details container
                                       if (driverIdAcceptReject.fareDetails != null) {
                                         final fareDetails = driverIdAcceptReject.fareDetails!;
                                         final steps = fareDetails['steps'] != null

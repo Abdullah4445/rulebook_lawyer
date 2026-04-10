@@ -1,7 +1,7 @@
-import 'package:driver/model/intercity_order_model.dart';
-import 'package:driver/model/order_model.dart';
-import 'package:driver/model/user_model.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:lawyer/model/intercity_order_model.dart';
+import 'package:lawyer/model/order_model.dart';
+import 'package:lawyer/model/user_model.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

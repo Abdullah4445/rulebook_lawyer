@@ -1,10 +1,10 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/model/place_picker_model.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/place_picker_model.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';

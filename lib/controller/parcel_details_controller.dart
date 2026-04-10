@@ -1,4 +1,4 @@
-import 'package:driver/model/intercity_order_model.dart';
+﻿import 'package:lawyer/model/intercity_order_model.dart';
 import 'package:get/get.dart';
 
 class ParcelDetailsController extends GetxController{

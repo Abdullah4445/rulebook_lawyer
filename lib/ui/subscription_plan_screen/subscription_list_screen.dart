@@ -1,16 +1,16 @@
-import 'dart:io';
+﻿import 'dart:io';
 
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/controller/subscription_controller.dart';
-import 'package:driver/model/subscription_plan_model.dart';
-import 'package:driver/payment/createRazorPayOrderModel.dart';
-import 'package:driver/payment/rozorpayConroller.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/button_them.dart';
-import 'package:driver/themes/responsive.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
-import 'package:driver/utils/network_image_widget.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/controller/subscription_controller.dart';
+import 'package:lawyer/model/subscription_plan_model.dart';
+import 'package:lawyer/payment/createRazorPayOrderModel.dart';
+import 'package:lawyer/payment/rozorpayConroller.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/themes/button_them.dart';
+import 'package:lawyer/themes/responsive.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
+import 'package:lawyer/utils/network_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -1275,7 +1275,7 @@ class SubscriptionListScreen extends StatelessWidget {
                         } else if (controller.selectedPaymentMethod.value ==
                             'apple_in_app') {
                           Get.back();
-                          controller.buyExclusivePlan(); // ✅ Apple IAP
+                          controller.buyExclusivePlan(); // âœ… Apple IAP
                         } else {
                           if (controller.selectedPaymentMethod.value ==
                               controller.paymentModel.value.wallet!.name) {
@@ -1525,7 +1525,7 @@ class SubscriptionPlanWidget extends StatelessWidget {
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Row(
                             children: [
-                              Text('•  ',
+                              Text('â€¢  ',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: themeChange.getThem()
@@ -1572,7 +1572,7 @@ class SubscriptionPlanWidget extends StatelessWidget {
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Row(
                             children: [
-                              Text('•  ',
+                              Text('â€¢  ',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: themeChange.getThem()

@@ -1,4 +1,4 @@
-class LanguageTermsCondition {
+﻿class LanguageTermsCondition {
   String? termsAndConditions;
   String? type;
 

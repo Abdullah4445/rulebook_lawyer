@@ -1,4 +1,4 @@
-class LanguageModel {
+﻿class LanguageModel {
   String? image;
   String? code;
   bool? isDeleted;

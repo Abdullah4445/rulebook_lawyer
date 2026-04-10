@@ -1,7 +1,7 @@
-import 'dart:developer';
+﻿import 'dart:developer';
 
-import 'package:driver/constant/constant.dart';
-import 'package:driver/model/driver_user_model.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/model/driver_user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

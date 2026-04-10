@@ -1,4 +1,4 @@
-import 'package:driver/model/language_title.dart';
+﻿import 'package:lawyer/model/language_title.dart';
 
 class DocumentModel {
   bool? backSide;

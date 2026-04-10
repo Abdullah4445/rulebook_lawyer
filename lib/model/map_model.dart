@@ -1,4 +1,4 @@
-class MapModel {
+﻿class MapModel {
   List<String>? destinationAddresses;
   List<String>? originAddresses;
   List<Rows>? rows;

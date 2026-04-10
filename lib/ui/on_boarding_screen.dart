@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/controller/on_boarding_controller.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/button_them.dart';
-import 'package:driver/ui/auth_screen/login_screen.dart';
-import 'package:driver/utils/Preferences.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/controller/on_boarding_controller.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/themes/button_them.dart';
+import 'package:lawyer/ui/auth_screen/login_screen.dart';
+import 'package:lawyer/utils/Preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';

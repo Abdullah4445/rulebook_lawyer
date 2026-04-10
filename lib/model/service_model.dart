@@ -1,5 +1,5 @@
-import 'package:driver/model/admin_commission.dart';
-import 'package:driver/model/language_title.dart';
+﻿import 'package:lawyer/model/admin_commission.dart';
+import 'package:lawyer/model/language_title.dart';
 
 class ServiceModel {
   String? image;

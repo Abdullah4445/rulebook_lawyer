@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/themes/responsive.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/themes/responsive.dart';
 import 'package:flutter/material.dart';
 
 class NetworkImageWidget extends StatelessWidget {

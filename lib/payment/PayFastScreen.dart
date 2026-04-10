@@ -1,8 +1,8 @@
-// ignore_for_file: file_names
+﻿// ignore_for_file: file_names
 
 import 'dart:developer';
 
-import 'package:driver/model/payment_model.dart';
+import 'package:lawyer/model/payment_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

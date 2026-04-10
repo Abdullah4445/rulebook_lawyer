@@ -1,6 +1,6 @@
-import 'package:driver/lang/app_ar.dart';
-import 'package:driver/lang/app_en.dart';
-import 'package:driver/lang/app_fr.dart';
+﻿import 'package:lawyer/lang/app_ar.dart';
+import 'package:lawyer/lang/app_en.dart';
+import 'package:lawyer/lang/app_fr.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

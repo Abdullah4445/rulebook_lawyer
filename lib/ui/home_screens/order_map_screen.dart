@@ -1,14 +1,14 @@
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/controller/order_map_controller.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/button_them.dart';
-import 'package:driver/themes/responsive.dart';
-import 'package:driver/themes/text_field_them.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
-import 'package:driver/utils/case_duration_utils.dart';
-import 'package:driver/widget/location_view.dart';
-import 'package:driver/widget/user_view.dart';
+﻿import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/controller/order_map_controller.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/themes/button_them.dart';
+import 'package:lawyer/themes/responsive.dart';
+import 'package:lawyer/themes/text_field_them.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
+import 'package:lawyer/utils/case_duration_utils.dart';
+import 'package:lawyer/widget/location_view.dart';
+import 'package:lawyer/widget/user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart' as myOsm;
 import 'package:get/get.dart';
@@ -190,7 +190,7 @@ class OrderMapScreen extends StatelessWidget {
                                                                   .value
                                                                   .destinationLocationName
                                                                   ?.isEmpty ??
-                                                              true) // ← NULL SAFE CHECK
+                                                              true) // â† NULL SAFE CHECK
                                                       ? "Taxi Meter Preffered for this ride"
                                                           .tr
                                                       : controller
@@ -214,7 +214,7 @@ class OrderMapScreen extends StatelessWidget {
                                                               .value
                                                               .destinationLocationName
                                                               ?.isEmpty ??
-                                                          true) // ← NULL SAFE CHECK
+                                                          true) // â† NULL SAFE CHECK
                                                       ? Container()
                                                       : Row(
                                                           crossAxisAlignment:
@@ -278,7 +278,7 @@ class OrderMapScreen extends StatelessWidget {
                                                                 final decimalDigits = Constant
                                                                         .currencyModel
                                                                         ?.decimalDigits ??
-                                                                    2; // ← NULL SAFE
+                                                                    2; // â† NULL SAFE
                                                                 controller
                                                                     .newAmount
                                                                     .value = ((double.tryParse(controller.newAmount.value) ??
@@ -334,11 +334,11 @@ class OrderMapScreen extends StatelessWidget {
                                               //               context,
                                               //               hintText:
                                               //                   "Enter Title",
-                                              //               // ← Only title now
+                                              //               // â† Only title now
                                               //               controller: controller
                                               //                   .titleController
                                               //                   .value,
-                                              //               // ← Use a new controller for title
+                                              //               // â† Use a new controller for title
                                               //               keyBoardType:
                                               //                   TextInputType
                                               //                       .text,
@@ -349,7 +349,7 @@ class OrderMapScreen extends StatelessWidget {
                                               //                         right:
                                               //                             10),
                                               //                 child: Icon(Icons
-                                              //                     .title), // ← Simple icon instead of currency
+                                              //                     .title), // â† Simple icon instead of currency
                                               //               ),
                                               //             ),
                                               //           ),
@@ -369,7 +369,7 @@ class OrderMapScreen extends StatelessWidget {
                                               //                           .value
                                               //                           .destinationLocationName
                                               //                           ?.isEmpty ??
-                                              //                       true) // ← NULL SAFE CHECK
+                                              //                       true) // â† NULL SAFE CHECK
                                               //                   ? "Enter Taxi Meter rate"
                                               //                   : "Enter Fare rate"
                                               //                       .tr,
@@ -400,7 +400,7 @@ class OrderMapScreen extends StatelessWidget {
                                               //                 child: Text(Constant
                                               //                         .currencyModel
                                               //                         ?.symbol ??
-                                              //                     ''), // ← NULL SAFE
+                                              //                     ''), // â† NULL SAFE
                                               //               ),
                                               //             ),
                                               //           ),
@@ -441,11 +441,11 @@ class OrderMapScreen extends StatelessWidget {
                                               //               context,
                                               //               hintText:
                                               //                   "Enter Title",
-                                              //               // ← Only title now
+                                              //               // â† Only title now
                                               //               controller: controller
                                               //                   .titleController
                                               //                   .value,
-                                              //               // ← Use a new controller for title
+                                              //               // â† Use a new controller for title
                                               //               keyBoardType:
                                               //                   TextInputType
                                               //                       .text,
@@ -456,7 +456,7 @@ class OrderMapScreen extends StatelessWidget {
                                               //                         right:
                                               //                             10),
                                               //                 child: Icon(Icons
-                                              //                     .title), // ← Simple icon instead of currency
+                                              //                     .title), // â† Simple icon instead of currency
                                               //               ),
                                               //             ),
                                               //           ),
@@ -476,7 +476,7 @@ class OrderMapScreen extends StatelessWidget {
                                               //                           .value
                                               //                           .destinationLocationName
                                               //                           ?.isEmpty ??
-                                              //                       true) // ← NULL SAFE CHECK
+                                              //                       true) // â† NULL SAFE CHECK
                                               //                   ? "Enter Taxi Meter rate"
                                               //                   : "Enter Fare rate"
                                               //                       .tr,
@@ -507,7 +507,7 @@ class OrderMapScreen extends StatelessWidget {
                                               //                 child: Text(Constant
                                               //                         .currencyModel
                                               //                         ?.symbol ??
-                                              //                     ''), // ← NULL SAFE
+                                              //                     ''), // â† NULL SAFE
                                               //               ),
                                               //             ),
                                               //           ),
@@ -548,11 +548,11 @@ class OrderMapScreen extends StatelessWidget {
                                               //               context,
                                               //               hintText:
                                               //                   "Enter Title",
-                                              //               // ← Only title now
+                                              //               // â† Only title now
                                               //               controller: controller
                                               //                   .titleController
                                               //                   .value,
-                                              //               // ← Use a new controller for title
+                                              //               // â† Use a new controller for title
                                               //               keyBoardType:
                                               //                   TextInputType
                                               //                       .text,
@@ -563,7 +563,7 @@ class OrderMapScreen extends StatelessWidget {
                                               //                         right:
                                               //                             10),
                                               //                 child: Icon(Icons
-                                              //                     .title), // ← Simple icon instead of currency
+                                              //                     .title), // â† Simple icon instead of currency
                                               //               ),
                                               //             ),
                                               //           ),
@@ -583,7 +583,7 @@ class OrderMapScreen extends StatelessWidget {
                                               //                           .value
                                               //                           .destinationLocationName
                                               //                           ?.isEmpty ??
-                                              //                       true) // ← NULL SAFE CHECK
+                                              //                       true) // â† NULL SAFE CHECK
                                               //                   ? "Enter Taxi Meter rate"
                                               //                   : "Enter Fare rate"
                                               //                       .tr,
@@ -614,7 +614,7 @@ class OrderMapScreen extends StatelessWidget {
                                               //                 child: Text(Constant
                                               //                         .currencyModel
                                               //                         ?.symbol ??
-                                              //                     ''), // ← NULL SAFE
+                                              //                     ''), // â† NULL SAFE
                                               //               ),
                                               //             ),
                                               //           ),
@@ -653,7 +653,7 @@ class OrderMapScreen extends StatelessWidget {
                                                       final isCommissionEnabled =
                                                           Constant.adminCommission
                                                                   ?.isEnabled ==
-                                                              false; // ← NULL SAFE
+                                                              false; // â† NULL SAFE
 
                                                       if (isSubscriptionApplied &&
                                                           isCommissionEnabled) {

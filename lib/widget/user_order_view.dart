@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/model/user_model.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/model/user_model.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

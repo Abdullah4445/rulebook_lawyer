@@ -1,8 +1,8 @@
-import 'dart:async';
+﻿import 'dart:async';
 
-import 'package:driver/constant/constant.dart';
-import 'package:driver/payment/paystack/paystack_url_genrater.dart';
-import 'package:driver/themes/app_colors.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/payment/paystack/paystack_url_genrater.dart';
+import 'package:lawyer/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';

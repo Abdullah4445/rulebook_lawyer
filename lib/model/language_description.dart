@@ -1,4 +1,4 @@
-class LanguageDescription {
+﻿class LanguageDescription {
   String? description;
   String? type;
 

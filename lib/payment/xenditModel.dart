@@ -1,4 +1,4 @@
-class XenditModel {
+﻿class XenditModel {
   String? id;
   String? externalId;
   String? userId;

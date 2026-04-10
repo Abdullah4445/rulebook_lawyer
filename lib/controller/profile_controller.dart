@@ -1,6 +1,6 @@
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';

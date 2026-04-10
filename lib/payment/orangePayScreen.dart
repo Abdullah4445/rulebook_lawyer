@@ -1,8 +1,8 @@
-// ignore_for_file: must_be_immutable
+﻿// ignore_for_file: must_be_immutable
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:driver/model/payment_model.dart';
+import 'package:lawyer/model/payment_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

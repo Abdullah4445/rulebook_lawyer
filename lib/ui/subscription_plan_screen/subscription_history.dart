@@ -1,7 +1,7 @@
-import 'package:driver/constant/constant.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/responsive.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
+﻿import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/themes/responsive.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';

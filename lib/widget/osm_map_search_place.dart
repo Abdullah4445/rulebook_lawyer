@@ -1,6 +1,6 @@
-import 'package:driver/controller/osm_search_place_controller.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
+﻿import 'package:lawyer/controller/osm_search_place_controller.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';

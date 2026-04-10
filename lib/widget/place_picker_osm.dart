@@ -1,7 +1,7 @@
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
-import 'package:driver/utils/utils.dart';
-import 'package:driver/widget/osm_map_search_place.dart';
+﻿import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
+import 'package:lawyer/utils/utils.dart';
+import 'package:lawyer/widget/osm_map_search_place.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:get/get.dart';
@@ -35,7 +35,7 @@ class _LocationPickerState extends State<LocationPicker> {
       if (mapController.listenerMapSingleTapping.value != null) {
         GeoPoint position = mapController.listenerMapSingleTapping.value!;
         addMarker(position);
-        place = await Nominatim(userAgent: 'Driver Position Search').reverseSearch(
+        place = await Nominatim.reverseSearch(
           lat: position.latitude,
           lon: position.longitude,
           zoom: 14,
@@ -65,7 +65,7 @@ class _LocationPickerState extends State<LocationPicker> {
           _markers.add(position);
         });
 
-        place = await Nominatim(userAgent: 'Driver Position Search').reverseSearch(
+        place = await Nominatim.reverseSearch(
           lat: position.latitude,
           lon: position.longitude,
           zoom: 14,
@@ -89,7 +89,7 @@ class _LocationPickerState extends State<LocationPicker> {
         );
         await addMarker(selectedLocation!);
         mapController.moveTo(selectedLocation!, animate: true);
-        place = await Nominatim(userAgent: 'Driver Position Search').reverseSearch(
+        place = await Nominatim.reverseSearch(
           lat: selectedLocation!.latitude,
           lon: selectedLocation!.longitude,
           zoom: 14,

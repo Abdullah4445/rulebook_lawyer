@@ -1,9 +1,9 @@
-import 'package:driver/constant/constant.dart';
-import 'package:driver/model/withdraw_model.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/responsive.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/model/withdraw_model.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/themes/responsive.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';

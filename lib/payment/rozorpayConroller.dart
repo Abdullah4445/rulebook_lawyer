@@ -1,8 +1,8 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
-import 'package:driver/constant/constant.dart';
-import 'package:driver/model/payment_model.dart';
-import 'package:driver/payment/createRazorPayOrderModel.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/model/payment_model.dart';
+import 'package:lawyer/payment/createRazorPayOrderModel.dart';
 import 'package:http/http.dart' as http;
 
 class RazorPayController {

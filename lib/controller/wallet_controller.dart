@@ -1,28 +1,28 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as maths;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/model/bank_details_model.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:driver/model/payment_model.dart';
-import 'package:driver/model/stripe_failed_model.dart';
-import 'package:driver/model/wallet_transaction_model.dart';
-import 'package:driver/payment/MercadoPagoScreen.dart';
-import 'package:driver/payment/getPaytmTxtToken.dart';
-import 'package:driver/payment/midtrans_screen.dart';
-import 'package:driver/payment/orangePayScreen.dart';
-import 'package:driver/payment/payfast_checkout_helper.dart';
-import 'package:driver/payment/paystack/pay_stack_screen.dart';
-import 'package:driver/payment/paystack/pay_stack_url_model.dart';
-import 'package:driver/payment/paystack/paystack_url_genrater.dart';
-import 'package:driver/payment/xenditModel.dart';
-import 'package:driver/payment/xenditScreen.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/bank_details_model.dart';
+import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/model/payment_model.dart';
+import 'package:lawyer/model/stripe_failed_model.dart';
+import 'package:lawyer/model/wallet_transaction_model.dart';
+import 'package:lawyer/payment/MercadoPagoScreen.dart';
+import 'package:lawyer/payment/getPaytmTxtToken.dart';
+import 'package:lawyer/payment/midtrans_screen.dart';
+import 'package:lawyer/payment/orangePayScreen.dart';
+import 'package:lawyer/payment/payfast_checkout_helper.dart';
+import 'package:lawyer/payment/paystack/pay_stack_screen.dart';
+import 'package:lawyer/payment/paystack/pay_stack_url_model.dart';
+import 'package:lawyer/payment/paystack/paystack_url_genrater.dart';
+import 'package:lawyer/payment/xenditModel.dart';
+import 'package:lawyer/payment/xenditScreen.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:epayco_dart/data/models/api_responses/tc_transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal/flutter_paypal.dart';
@@ -47,6 +47,16 @@ class WalletController extends GetxController {
   RxBool isLoading = true.obs;
   RxList transactionList = <WalletTransactionModel>[].obs;
 
+  List<WalletTransactionModel> get topUpTransactions => transactionList
+      .whereType<WalletTransactionModel>()
+      .where((transaction) => _isTopUpTransaction(transaction))
+      .toList();
+
+  List<WalletTransactionModel> get otherWalletTransactions => transactionList
+      .whereType<WalletTransactionModel>()
+      .where((transaction) => !_isTopUpTransaction(transaction))
+      .toList();
+
   @override
   void onInit() {
     // TODO: implement onInit
@@ -60,6 +70,8 @@ class WalletController extends GetxController {
     await FireStoreUtils().getPayment().then((value) {
       if (value != null) {
         paymentModel.value = value;
+        paymentModel.value.cash?.enable = false;
+        paymentModel.value.cash?.name = 'Cash';
         paymentModel.value.payfast =
             PayFastCheckoutHelper.normalizePayfast(paymentModel.value.payfast);
         if (paymentModel.value.payfast?.enable == true) {
@@ -109,6 +121,11 @@ class WalletController extends GetxController {
   }
 
   Future<void> walletTopUp({String? transactionId}) async {
+    if (selectedPaymentMethod.value.trim().toLowerCase() == 'cash') {
+      ShowToastDialog.showToast("Cash payment is not available for wallet top-up.".tr);
+      return;
+    }
+
     WalletTransactionModel transactionModel = WalletTransactionModel(
         id: Constant.getUuid(),
         amount: amountController.value.text,
@@ -132,6 +149,11 @@ class WalletController extends GetxController {
     });
 
     ShowToastDialog.showToast("Amount added in your wallet.".tr);
+  }
+
+  bool _isTopUpTransaction(WalletTransactionModel transaction) {
+    final String note = transaction.note?.trim().toLowerCase() ?? '';
+    return note == 'wallet topup' || note == 'wallet top-up';
   }
 
   String? validateTopUpAmount() {
@@ -432,6 +454,9 @@ class WalletController extends GetxController {
       return;
     }
 
+    // Show loading
+    ShowToastDialog.showLoader("Processing payment...".tr);
+
     try {
       await PayFast.pay(
         context: context,
@@ -455,31 +480,166 @@ class WalletController extends GetxController {
         failurePath: PayFastCheckoutHelper.resolveFailurePath(normalizedPayfast),
         checkoutPath: PayFastCheckoutHelper.resolveCheckoutPath(normalizedPayfast),
         onResult: (result) {
+          ShowToastDialog.closeLoader();
           _handlePayFastWalletResult(
             result: result,
             fallbackTransactionId: basketId,
+            context: context,
+            amount: amount,
           );
         },
       );
     } catch (e) {
-      ShowToastDialog.showToast("PayFast payment failed. Please try again.".tr);
+      ShowToastDialog.closeLoader();
+      
+      // Show detailed error with retry option
+      _showPaymentErrorDialog(
+        context: context,
+        error: e.toString(),
+        amount: amount,
+      );
+      
       debugPrint('PayFast wallet payment error: $e');
     }
+  }
+
+  // New method to show error dialog with retry option
+  void _showPaymentErrorDialog({
+    required BuildContext context,
+    required String error,
+    required String amount,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.red, size: 30),
+              SizedBox(width: 10),
+              Expanded(child: Text("Payment Failed".tr)),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Payment process میں مسئلہ آیا:".tr,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  error.length > 100 ? '${error.substring(0, 100)}...' : error,
+                  style: TextStyle(fontSize: 12, color: Colors.red[900]),
+                ),
+              ),
+              SizedBox(height: 15),
+              Text(
+                "💡 کیا کریں:".tr,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 5),
+              Text("1. Internet connection چیک کریں"),
+              Text("2. JazzCash wallet میں balance چیک کریں"),
+              Text("3. دوبارہ کوشش کریں"),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text("Cancel".tr),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text("Retry Payment".tr),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Retry payment
+                Future.delayed(Duration(milliseconds: 500), () {
+                  payFastPayment(context: context, amount: amount);
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _handlePayFastWalletResult({
     required PayFastResult result,
     required String fallbackTransactionId,
+    required BuildContext context,
+    required String amount,
   }) async {
     if (result.success) {
-      ShowToastDialog.showToast("Payment successfully".tr);
+      ShowToastDialog.showToast("Payment successfully! Your wallet has been updated.".tr);
       await walletTopUp(
         transactionId: result.transactionId ?? fallbackTransactionId,
       );
+      // Close the payment dialog/modal
+      Get.back();
       return;
     }
 
-    ShowToastDialog.showToast(result.message.tr);
+    // Enhanced error messaging with specific feedback
+    String errorMessage = result.message.tr;
+    String userFriendlyMessage = "";
+
+    // JazzCash specific errors
+    if (result.message.toLowerCase().contains('jazzcash')) {
+      if (result.message.toLowerCase().contains('insufficient') || 
+          result.message.toLowerCase().contains('balance')) {
+        userFriendlyMessage = "❌ JazzCash wallet میں balance کم ہے\n\n💡 Solution:\n1. JazzCash app کھولیں\n2. Balance چیک کریں\n3. Load کریں اور دوبارہ کوشش کریں".tr;
+      } else if (result.message.toLowerCase().contains('pin') || 
+                 result.message.toLowerCase().contains('mpin')) {
+        userFriendlyMessage = "❌ JazzCash PIN غلط ہے\n\n💡 Solution:\n1. صحیح 5 digit MPIN enter کریں\n2. اگر بھول گئے ہیں تو JazzCash app سے reset کریں".tr;
+      } else if (result.message.toLowerCase().contains('blocked') || 
+                 result.message.toLowerCase().contains('suspended')) {
+        userFriendlyMessage = "❌ JazzCash account blocked ہے\n\n💡 Solution:\n1. JazzCash helpline پر رابطہ کریں: 111-124-124\n2. Account unblock کروائیں".tr;
+      } else {
+        userFriendlyMessage = "❌ JazzCash payment fail ہو گئی\n\n💡 Solutions:\n1. Internet connection چیک کریں\n2. JazzCash app update کریں\n3. دوبارہ کوشش کریں".tr;
+      }
+    }
+    // General payment errors
+    else if (result.message.toLowerCase().contains('cancel')) {
+      userFriendlyMessage = "Payment cancelled by user".tr;
+    } else if (result.message.toLowerCase().contains('timeout') ||
+               result.message.toLowerCase().contains('expired')) {
+      userFriendlyMessage = "⏱️ Payment session expire ہو گیا\n\n💡 Solution:\nدوبارہ کوشش کریں، اس بار جلدی PIN enter کریں".tr;
+    } else if (result.message.toLowerCase().contains('insufficient')) {
+      userFriendlyMessage = "Insufficient funds. Please check your account balance.".tr;
+    } else if (result.message.toLowerCase().contains('pin') ||
+               result.message.toLowerCase().contains('password')) {
+      userFriendlyMessage = "🔑 PIN یا password غلط ہے\n\n💡 Solution:\n1. صحیح PIN enter کریں\n2. Caps Lock check کریں".tr;
+    } else if (result.message.toLowerCase().contains('network') ||
+               result.message.toLowerCase().contains('connection')) {
+      userFriendlyMessage = "🌐 Network error\n\n💡 Solutions:\n1. WiFi/Mobile data چیک کریں\n2. Signal اچھا ہو\n3. دوبارہ کوشش کریں".tr;
+    } else if (result.message.toLowerCase().contains('declined') || 
+               result.message.toLowerCase().contains('failed')) {
+      userFriendlyMessage = "❌ Payment declined\n\n💡 Possible reasons:\n1. Balance کم ہے\n2. Daily limit exceed ہو گئی\n3. Account issue ہے\n\nBank/JazzCash سے رابطہ کریں".tr;
+    } else {
+      userFriendlyMessage = "Payment failed: ${result.message}. Please try again or contact support.".tr;
+    }
+    
+    // Show user-friendly message
+    ShowToastDialog.showToast(userFriendlyMessage.isEmpty ? errorMessage : userFriendlyMessage);
+    
+    // Log for debugging
+    debugPrint('═══════════════════════════════════════');
+    debugPrint('PayFast Payment Failed');
+    debugPrint('Transaction ID: $fallbackTransactionId');
+    debugPrint('Error Message: ${result.message}');
+    debugPrint('Timestamp: ${DateTime.now()}');
+    debugPrint('═══════════════════════════════════════');
   }
 
   ///Paytm payment function
@@ -940,14 +1100,14 @@ class WalletController extends GetxController {
       //   lastName: "TheCoder",
       //   email: "billthecoder046@gmail.com",
       //   cellPhone: "3001234567",
-      //   phone:  "3001234567",// ✅ FIXED
+      //   phone:  "3001234567",// âœ… FIXED
       //   dues: "1",
       //   extra1: "wallet-${DateTime.now().millisecondsSinceEpoch}",
       //   extra2: "walletTopup",
       //   currency: "COP",
       //   methodConfirmation: "POST",
       //   testMode: paymentModel.value.epayco?.isSandbox ?? false,
-      //     urlResponse: "https://www.test.com/epayco-response",     // ✅ Add this
+      //     urlResponse: "https://www.test.com/epayco-response",     // âœ… Add this
       //     urlConfirmation: "https://www.test.com/epayco-confirm",
       // );
 
@@ -1031,3 +1191,4 @@ class WalletController extends GetxController {
     );
   }
 }
+

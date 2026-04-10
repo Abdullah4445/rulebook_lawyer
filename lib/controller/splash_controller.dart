@@ -1,13 +1,13 @@
-import 'dart:async';
+﻿import 'dart:async';
 
-import 'package:driver/constant/constant.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:driver/ui/auth_screen/login_screen.dart';
-import 'package:driver/ui/dashboard_screen.dart';
-import 'package:driver/ui/on_boarding_screen.dart';
-import 'package:driver/ui/subscription_plan_screen/subscription_list_screen.dart';
-import 'package:driver/utils/Preferences.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/ui/auth_screen/login_screen.dart';
+import 'package:lawyer/ui/dashboard_screen.dart';
+import 'package:lawyer/ui/on_boarding_screen.dart';
+import 'package:lawyer/ui/subscription_plan_screen/subscription_list_screen.dart';
+import 'package:lawyer/utils/Preferences.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 

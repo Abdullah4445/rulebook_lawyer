@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/model/user_model.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/model/user_model.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -82,7 +82,7 @@ class UserView extends StatelessWidget {
     );
   }
 
-  /// 🔹 Reusable row builder
+  /// ðŸ”¹ Reusable row builder
   Widget _buildUserRow(
       BuildContext context, {
         required String imageUrl,
@@ -117,22 +117,22 @@ class UserView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// 👤 User name
+              /// ðŸ‘¤ User name
               Text(
                 name.isEmpty ? "No Name" : name,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
-                  color: Colors.black, // 👈 Ensures visibility on dark theme
+                  color: Colors.black, // ðŸ‘ˆ Ensures visibility on dark theme
                 ),
               ),
               const SizedBox(height: 4),
 
-              /// 💰, 📍, ⭐ info row
+              /// ðŸ’°, ðŸ“, â­ info row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // 💰 Amount
+                  // ðŸ’° Amount
                   // Text(
                   //   Constant.amountShow(amount: amount),
                   //   style: GoogleFonts.poppins(
@@ -142,7 +142,7 @@ class UserView extends StatelessWidget {
                   //   ),
                   // ),
 
-                  // 📍 Distance
+                  // ðŸ“ Distance
                   Row(
                     children: [
                       // const Icon(Icons.location_on,
@@ -158,7 +158,7 @@ class UserView extends StatelessWidget {
                     ],
                   ),
 
-                  // ⭐ Rating
+                  // â­ Rating
                   Row(
                     children: [
                       const Icon(Icons.star,
@@ -188,10 +188,10 @@ class UserView extends StatelessWidget {
 
 
 // import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:driver/constant/constant.dart';
-// import 'package:driver/model/user_model.dart';
-// import 'package:driver/themes/app_colors.dart';
-// import 'package:driver/utils/fire_store_utils.dart';
+// import 'package:lawyer/constant/constant.dart';
+// import 'package:lawyer/model/user_model.dart';
+// import 'package:lawyer/themes/app_colors.dart';
+// import 'package:lawyer/utils/fire_store_utils.dart';
 // import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
 //

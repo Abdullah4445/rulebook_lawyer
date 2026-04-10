@@ -1,4 +1,4 @@
-class ReferralModel {
+﻿class ReferralModel {
   String? referralCode;
   String? referralBy;
   String? id;

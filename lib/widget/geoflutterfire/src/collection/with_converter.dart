@@ -1,8 +1,8 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/widget/geoflutterfire/src/models/distance_doc_snapshot.dart';
-import 'package:driver/widget/geoflutterfire/src/models/point.dart';
+import 'package:lawyer/widget/geoflutterfire/src/models/distance_doc_snapshot.dart';
+import 'package:lawyer/widget/geoflutterfire/src/models/point.dart';
 
 import 'base.dart';
 

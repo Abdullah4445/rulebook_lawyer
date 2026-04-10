@@ -1,14 +1,16 @@
-name: driver
-description: A new Flutter project.
+name: lawyer
+description: Rulebook Lawyer - Professional Legal Services Platform
 publish_to: 'none'
 
 version: 6.1.0+105
 
 environment:
-  sdk: '>=2.19.5 <3.0.0'
+  sdk: '>=3.4.0 <4.0.0'
 
 dependencies:
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
@@ -27,7 +29,7 @@ dependencies:
   sign_in_with_apple: ^7.0.1
   crypto: ^3.0.6
   geocoding: ^4.0.0
-  flutter_local_notifications: ^19.3.1
+  flutter_local_notifications: ^18.0.0
   googleapis_auth: ^2.0.0
   cached_network_image: ^3.4.1
   flutter_svg: ^2.0.17
@@ -60,7 +62,7 @@ dependencies:
   google_maps_place_picker_mb: ^3.1.2
   badges: ^3.1.2
   location: any
-  osm_nominatim: ^4.0.1
+  osm_nominatim: ^3.0.1
   flutter_osm_plugin: ^1.4.1
 
   # Payment

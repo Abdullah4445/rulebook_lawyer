@@ -1,14 +1,14 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/controller/details_upload_controller.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/button_them.dart';
-import 'package:driver/themes/responsive.dart';
-import 'package:driver/themes/text_field_them.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/controller/details_upload_controller.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/themes/button_them.dart';
+import 'package:lawyer/themes/responsive.dart';
+import 'package:lawyer/themes/text_field_them.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';

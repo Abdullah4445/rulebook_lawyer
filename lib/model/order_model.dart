@@ -1,14 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/model/admin_commission.dart';
-import 'package:driver/model/contact_model.dart';
-import 'package:driver/model/coupon_model.dart';
-import 'package:driver/model/order/location_lat_lng.dart';
-import 'package:driver/model/order/positions.dart';
-import 'package:driver/model/service_model.dart';
-import 'package:driver/model/tax_model.dart';
-import 'package:driver/model/zone_model.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lawyer/model/admin_commission.dart';
+import 'package:lawyer/model/contact_model.dart';
+import 'package:lawyer/model/coupon_model.dart';
+import 'package:lawyer/model/order/location_lat_lng.dart';
+import 'package:lawyer/model/order/positions.dart';
+import 'package:lawyer/model/service_model.dart';
+import 'package:lawyer/model/tax_model.dart';
+import 'package:lawyer/model/zone_model.dart';
 
-// ✅ New TitleItem model import karo (ya isi file me rakh lo)
+// âœ… New TitleItem model import karo (ya isi file me rakh lo)
 // class TitleItem {
 //   String? title;
 //   String? type;
@@ -68,10 +68,10 @@ class OrderModel {
   String? lastHearingDate;
   String? nextHearingDate;
 
-  /// 🆕 List of titles (like en, ar, fr)
+  /// ðŸ†• List of titles (like en, ar, fr)
   // List<TitleItem>? titleList;
 
-  /// 🔥 New fields for live tracking
+  /// ðŸ”¥ New fields for live tracking
   GeoPoint? driverLocation;
   bool? customerIsWatchingLiveTracking;
   bool? notifyUserIfDriverIsNotMovingEvenRideActive;
@@ -184,7 +184,7 @@ class OrderModel {
     zone = json['zone'] != null ? ZoneModel.fromJson(json['zone']) : null;
     zoneId = json['zoneId'];
 
-    // 🔥 New fields
+    // ðŸ”¥ New fields
     final dLoc = json['driverLocation'];
     if (dLoc is GeoPoint) {
       driverLocation = dLoc;
@@ -205,7 +205,7 @@ class OrderModel {
       });
     }
 
-    // /// 🆕 Title list parse karo
+    // /// ðŸ†• Title list parse karo
     // if (json['title'] != null) {
     //   titleList = (json['title'] as List)
     //       .map((e) => TitleItem.fromJson(Map<String, dynamic>.from(e)))
@@ -270,7 +270,7 @@ class OrderModel {
       data['position'] = position!.toJson();
     }
 
-    // 🔥 New fields
+    // ðŸ”¥ New fields
     if (driverLocation != null) {
       data['driverLocation'] = {
         'latitude': driverLocation!.latitude,
@@ -282,7 +282,7 @@ class OrderModel {
     data['notifyUserIfDriverIsNotMovingEvenRideActive'] =
         notifyUserIfDriverIsNotMovingEvenRideActive;
 
-    // /// 🆕 Title list ko JSON me convert karo
+    // /// ðŸ†• Title list ko JSON me convert karo
     // if (titleList != null) {
     //   data['title'] = titleList!.map((e) => e.toJson()).toList();
     // }
@@ -301,14 +301,14 @@ class OrderModel {
 
 
 // import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:driver/model/admin_commission.dart';
-// import 'package:driver/model/contact_model.dart';
-// import 'package:driver/model/coupon_model.dart';
-// import 'package:driver/model/order/location_lat_lng.dart';
-// import 'package:driver/model/order/positions.dart';
-// import 'package:driver/model/service_model.dart';
-// import 'package:driver/model/tax_model.dart';
-// import 'package:driver/model/zone_model.dart';
+// import 'package:lawyer/model/admin_commission.dart';
+// import 'package:lawyer/model/contact_model.dart';
+// import 'package:lawyer/model/coupon_model.dart';
+// import 'package:lawyer/model/order/location_lat_lng.dart';
+// import 'package:lawyer/model/order/positions.dart';
+// import 'package:lawyer/model/service_model.dart';
+// import 'package:lawyer/model/tax_model.dart';
+// import 'package:lawyer/model/zone_model.dart';
 //
 // class OrderModel {
 //   String? sourceLocationName;
@@ -350,7 +350,7 @@ class OrderModel {
 //   String? title;
 //
 //
-//   /// 🔥 New fields for live tracking
+//   /// ðŸ”¥ New fields for live tracking
 //   GeoPoint? driverLocation;
 //   bool? customerIsWatchingLiveTracking;
 //   bool? notifyUserIfDriverIsNotMovingEvenRideActive;
@@ -462,7 +462,7 @@ class OrderModel {
 //     zone = json['zone'] != null ? ZoneModel.fromJson(json['zone']) : null;
 //     zoneId = json['zoneId'];
 //
-//     // 🔥 New fields
+//     // ðŸ”¥ New fields
 //     final dLoc = json['driverLocation'];
 //     if (dLoc is GeoPoint) {
 //       driverLocation = dLoc;
@@ -541,7 +541,7 @@ class OrderModel {
 //       data['position'] = position!.toJson();
 //     }
 //
-//     // 🔥 New fields
+//     // ðŸ”¥ New fields
 //     if (driverLocation != null) {
 //       data['driverLocation'] = {
 //         'latitude': driverLocation!.latitude,
@@ -586,7 +586,7 @@ class OrderModel {
 //   ZoneModel? zone;
 //   String? zoneId;
 //
-//   // ✅ New fields for live tracking logic
+//   // âœ… New fields for live tracking logic
 //   GeoPoint? driverLocation;
 //   bool? notifyUserIfDriverIsNotMovingEvenRideActive;
 //   bool? customerIsWatchingLiveTracking;
@@ -709,7 +709,7 @@ class OrderModel {
 //     zone = json['zone'] != null ? ZoneModel.fromJson(json['zone']) : null;
 //     zoneId = json['zoneId'];
 //
-//     // ✅ New fields
+//     // âœ… New fields
 //     driverLocation = json['driverLocation'];
 //     notifyUserIfDriverIsNotMovingEvenRideActive =
 //         json['notifyUserIfDriverIsNotMovingEvenRideActive'];
@@ -758,7 +758,7 @@ class OrderModel {
 //     if (taxList != null) data['taxList'] = taxList!.map((v) => v.toJson()).toList();
 //     if (position != null) data['position'] = position!.toJson();
 //
-//     // ✅ Add new fields
+//     // âœ… Add new fields
 //     if (driverLocation != null) data['driverLocation'] = driverLocation;
 //     if (notifyUserIfDriverIsNotMovingEvenRideActive != null) {
 //       data['notifyUserIfDriverIsNotMovingEvenRideActive'] =

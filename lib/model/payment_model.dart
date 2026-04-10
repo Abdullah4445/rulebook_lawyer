@@ -1,4 +1,4 @@
-class PaymentModel {
+﻿class PaymentModel {
   FlutterWave? flutterWave;
   PayStack? payStack;
   Strip? strip;

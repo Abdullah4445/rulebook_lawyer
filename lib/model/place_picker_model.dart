@@ -1,4 +1,4 @@
-class PlaceDetailsModel {
+﻿class PlaceDetailsModel {
   Result? result;
   String? status;
 

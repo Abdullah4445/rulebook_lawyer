@@ -1,13 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/constant/collection_name.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:driver/model/service_model.dart';
-import 'package:driver/ui/intercity_screen/accepted_intercity_orders.dart';
-import 'package:driver/ui/intercity_screen/active_intercity_order_screen.dart';
-import 'package:driver/ui/intercity_screen/new_order_intercity_screen.dart';
-import 'package:driver/ui/order_intercity_screen/order_intercity_screen.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lawyer/constant/collection_name.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/model/service_model.dart';
+import 'package:lawyer/ui/intercity_screen/accepted_intercity_orders.dart';
+import 'package:lawyer/ui/intercity_screen/active_intercity_order_screen.dart';
+import 'package:lawyer/ui/intercity_screen/new_order_intercity_screen.dart';
+import 'package:lawyer/ui/order_intercity_screen/order_intercity_screen.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

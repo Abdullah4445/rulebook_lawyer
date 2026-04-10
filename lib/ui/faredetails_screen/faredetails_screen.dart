@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/utils/case_duration_utils.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lawyer/utils/case_duration_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -496,7 +496,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
           const SizedBox(height: 16),
 
           if (driverConfirmed)
-            _completedBanner("✔ Step Fully Completed & Paid")
+            _completedBanner("âœ” Step Fully Completed & Paid")
           else if (isCustomerDone && !driverConfirmed)
             _buildDriverConfirmationRow(index)
           else if (!isLawyerDone)

@@ -1,13 +1,13 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:math';
 
-import 'package:driver/constant/collection_name.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:driver/model/intercity_order_model.dart';
-import 'package:driver/model/order_model.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+import 'package:lawyer/constant/collection_name.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/model/intercity_order_model.dart';
+import 'package:lawyer/model/order_model.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
@@ -333,8 +333,8 @@ class LiveTrackingController extends GetxController {
       required double? sourceLongitude,
       required double? destinationLatitude,
       required double? destinationLongitude}) async {
-    print('🔎 Routing from: ($sourceLatitude, $sourceLongitude)');
-    print('🔎 To: ($destinationLatitude, $destinationLongitude)');
+    print('ðŸ”Ž Routing from: ($sourceLatitude, $sourceLongitude)');
+    print('ðŸ”Ž To: ($destinationLatitude, $destinationLongitude)');
 
     if (sourceLatitude != null &&
         sourceLongitude != null &&
@@ -530,9 +530,9 @@ class LiveTrackingController extends GetxController {
       );
 
       print(
-          "🚗 Road distance: ${roadInfo.distance} km, duration: ${roadInfo.duration} min");
+          "ðŸš— Road distance: ${roadInfo.distance} km, duration: ${roadInfo.duration} min");
     } catch (e) {
-      print("❌ Road drawing error: $e");
+      print("âŒ Road drawing error: $e");
     }
   }
 

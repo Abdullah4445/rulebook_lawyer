@@ -1,4 +1,4 @@
-class CaseDurationUtils {
+﻿class CaseDurationUtils {
   static const String defaultUnit = 'days';
   static const List<String> units = ['days', 'weeks', 'months'];
 

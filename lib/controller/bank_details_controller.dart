@@ -1,5 +1,5 @@
-import 'package:driver/model/bank_details_model.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:lawyer/model/bank_details_model.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

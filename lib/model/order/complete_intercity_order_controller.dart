@@ -1,5 +1,5 @@
-import 'package:driver/constant/constant.dart';
-import 'package:driver/model/intercity_order_model.dart';
+﻿import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/model/intercity_order_model.dart';
 import 'package:get/get.dart';
 
 class CompleteInterCityOrderController extends GetxController {

@@ -1,7 +1,7 @@
-import 'package:driver/controller/home_intercity_controller.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/responsive.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:lawyer/controller/home_intercity_controller.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/themes/responsive.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:badges/badges.dart' as badges;

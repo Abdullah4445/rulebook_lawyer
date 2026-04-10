@@ -1,5 +1,5 @@
-import 'package:driver/model/payment_model.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:lawyer/model/payment_model.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:get/get.dart';
 
 class OrderController extends GetxController {

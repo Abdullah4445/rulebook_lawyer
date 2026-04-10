@@ -1,7 +1,7 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/controller/home_controller.dart';
+import 'package:lawyer/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -19,7 +19,7 @@ class ActiveOrderController extends GetxController {
   final RxBool _userShouldBeNotified = false.obs;
   String? _activeOrderId;
 
-  // 🔁 New: Real-time watch for customer's live tracking
+  // ðŸ” New: Real-time watch for customer's live tracking
   bool _customerIsWatching = false;
   StreamSubscription<DocumentSnapshot>? _customerWatchSubscription;
 
@@ -32,7 +32,7 @@ class ActiveOrderController extends GetxController {
     _lastSavedLocation = null;
     _lastMovedTime = DateTime.now();
 
-    // 🔁 Listen to customer's live tracking view
+    // ðŸ” Listen to customer's live tracking view
     _customerWatchSubscription = FirebaseFirestore.instance
         .collection(CollectionName.orders)
         .doc(orderModel.id)
@@ -46,7 +46,7 @@ class ActiveOrderController extends GetxController {
       print("[Tracking] Timer tick - checking location...");
 
       if (!_customerIsWatching) {
-        print("[Tracking] Skipped location update — customer not watching.");
+        print("[Tracking] Skipped location update â€” customer not watching.");
         return;
       }
 

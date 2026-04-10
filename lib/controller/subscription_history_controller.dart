@@ -1,5 +1,5 @@
-import 'package:driver/model/subscription_history.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:lawyer/model/subscription_history.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:get/get.dart';
 
 class SubscriptionHistoryController extends GetxController {

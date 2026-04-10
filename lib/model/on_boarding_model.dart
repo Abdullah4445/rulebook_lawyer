@@ -1,5 +1,5 @@
-import 'package:driver/model/language_description.dart';
-import 'package:driver/model/language_title.dart';
+﻿import 'package:lawyer/model/language_description.dart';
+import 'package:lawyer/model/language_title.dart';
 
 class OnBoardingModel {
   String? image;

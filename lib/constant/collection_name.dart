@@ -1,4 +1,4 @@
-class CollectionName {
+﻿class CollectionName {
   static const String users = "users";
   static const String driverUsers = "driver_users";
   static const String documents = "documents";

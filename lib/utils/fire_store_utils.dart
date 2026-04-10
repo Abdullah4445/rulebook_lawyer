@@ -1,40 +1,40 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/constant/collection_name.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/model/admin_commission.dart';
-import 'package:driver/model/bank_details_model.dart';
-import 'package:driver/model/conversation_model.dart';
-import 'package:driver/model/currency_model.dart';
-import 'package:driver/model/document_model.dart';
-import 'package:driver/model/driver_document_model.dart';
-import 'package:driver/model/driver_rules_model.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:driver/model/inbox_model.dart';
-import 'package:driver/model/intercity_order_model.dart';
-import 'package:driver/model/language_model.dart';
-import 'package:driver/model/language_privacy_policy.dart';
-import 'package:driver/model/language_terms_condition.dart';
-import 'package:driver/model/on_boarding_model.dart';
-import 'package:driver/model/order/driverId_accept_reject.dart';
-import 'package:driver/model/order_model.dart';
-import 'package:driver/model/payment_model.dart';
-import 'package:driver/model/referral_model.dart';
-import 'package:driver/model/review_model.dart';
-import 'package:driver/model/service_model.dart';
-import 'package:driver/model/subscription_history.dart';
-import 'package:driver/model/subscription_plan_model.dart';
-import 'package:driver/model/user_model.dart';
-import 'package:driver/model/vehicle_type_model.dart';
-import 'package:driver/model/wallet_transaction_model.dart';
-import 'package:driver/model/withdraw_model.dart';
-import 'package:driver/model/zone_model.dart';
-import 'package:driver/utils/utils.dart' as ut;
-import 'package:driver/widget/geoflutterfire/src/geoflutterfire.dart';
-import 'package:driver/widget/geoflutterfire/src/models/point.dart';
+import 'package:lawyer/constant/collection_name.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/admin_commission.dart';
+import 'package:lawyer/model/bank_details_model.dart';
+import 'package:lawyer/model/conversation_model.dart';
+import 'package:lawyer/model/currency_model.dart';
+import 'package:lawyer/model/document_model.dart';
+import 'package:lawyer/model/driver_document_model.dart';
+import 'package:lawyer/model/driver_rules_model.dart';
+import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/model/inbox_model.dart';
+import 'package:lawyer/model/intercity_order_model.dart';
+import 'package:lawyer/model/language_model.dart';
+import 'package:lawyer/model/language_privacy_policy.dart';
+import 'package:lawyer/model/language_terms_condition.dart';
+import 'package:lawyer/model/on_boarding_model.dart';
+import 'package:lawyer/model/order/driverId_accept_reject.dart';
+import 'package:lawyer/model/order_model.dart';
+import 'package:lawyer/model/payment_model.dart';
+import 'package:lawyer/model/referral_model.dart';
+import 'package:lawyer/model/review_model.dart';
+import 'package:lawyer/model/service_model.dart';
+import 'package:lawyer/model/subscription_history.dart';
+import 'package:lawyer/model/subscription_plan_model.dart';
+import 'package:lawyer/model/user_model.dart';
+import 'package:lawyer/model/vehicle_type_model.dart';
+import 'package:lawyer/model/wallet_transaction_model.dart';
+import 'package:lawyer/model/withdraw_model.dart';
+import 'package:lawyer/model/zone_model.dart';
+import 'package:lawyer/utils/utils.dart' as ut;
+import 'package:lawyer/widget/geoflutterfire/src/geoflutterfire.dart';
+import 'package:lawyer/widget/geoflutterfire/src/models/point.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
@@ -436,10 +436,10 @@ class FireStoreUtils {
     CollectionReference query = FirebaseFirestore.instance.collection("orders");
 
     QuerySnapshot snapshot = await query.get();
-    print("🔥 Found ${snapshot.docs.length} documents in orders collection");
+    print("ðŸ”¥ Found ${snapshot.docs.length} documents in orders collection");
 
     for (var doc in snapshot.docs) {
-      print("📜 Order ID: ${doc.id}, Data: ${doc.data()}");
+      print("ðŸ“œ Order ID: ${doc.id}, Data: ${doc.data()}");
     }
   }
   Stream<List<OrderModel>> getOrders(
@@ -450,7 +450,7 @@ class FireStoreUtils {
     StreamController<List<OrderModel>>.broadcast();
     List<OrderModel> ordersList = [];
 
-    print("Current Driver details are:::😇:");
+    print("Current Driver details are:::ðŸ˜‡:");
     print(driverUserModel.serviceId);
     print(driverUserModel.zoneIds);
     print(Constant.casePlaced);
@@ -465,7 +465,7 @@ class FireStoreUtils {
       print("My value: ${value.data()}");
     }))}");
 
-    // ❌👇 Ye part ab distance filter ke liye use nahi hoga
+    // âŒðŸ‘‡ Ye part ab distance filter ke liye use nahi hoga
     /*
   GeoFirePoint center =
       Geoflutterfire().point(latitude: latitude ?? 0.0, longitude: longLatitude ?? 0.0);
@@ -480,7 +480,7 @@ class FireStoreUtils {
   print("My Stream: ${stream.toString()}");
   */
 
-    // ✅ Simple Firestore stream use kar rahe hain
+    // âœ… Simple Firestore stream use kar rahe hain
     Stream<QuerySnapshot<Map<String, dynamic>>> stream = query.snapshots();
 
     stream.listen((snapshot) {
@@ -502,7 +502,7 @@ class FireStoreUtils {
       getNearestOrderRequestController!.sink.add(ordersList);
     });
 
-    print("🛰️ My Stream: ${stream.toString()}");
+    print("ðŸ›°ï¸ My Stream: ${stream.toString()}");
 
     yield* getNearestOrderRequestController!.stream;
   }
@@ -513,7 +513,7 @@ class FireStoreUtils {
   // async* {
   //   getNearestOrderRequestController = StreamController<List<OrderModel>>.broadcast();
   //   List<OrderModel> ordersList = [];
-  //   print("Current Driver details are:::😇:");
+  //   print("Current Driver details are:::ðŸ˜‡:");
   //   print(driverUserModel.serviceId);
   //   print(driverUserModel.zoneIds);
   //   print(Constant.ridePlaced);
@@ -557,7 +557,7 @@ class FireStoreUtils {
   //     getNearestOrderRequestController!.sink.add(ordersList);
   //   });
   //
-  //   print("🛰️ My Stream: ${stream.toString()}");
+  //   print("ðŸ›°ï¸ My Stream: ${stream.toString()}");
   //
   //   yield* getNearestOrderRequestController!.stream;
   // }

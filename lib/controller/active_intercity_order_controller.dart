@@ -1,5 +1,5 @@
-import 'package:driver/controller/freight_controller.dart';
-import 'package:driver/controller/home_intercity_controller.dart';
+﻿import 'package:lawyer/controller/freight_controller.dart';
+import 'package:lawyer/controller/home_intercity_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

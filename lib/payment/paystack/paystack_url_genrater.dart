@@ -1,9 +1,9 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:driver/model/payment_model.dart';
-import 'package:driver/payment/paystack/pay_stack_url_model.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/model/payment_model.dart';
+import 'package:lawyer/payment/paystack/pay_stack_url_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 

@@ -1,4 +1,4 @@
-// Flutter Packages
+﻿// Flutter Packages
 import 'package:flutter/widgets.dart';
 
 /// The [ScrollView] to use for the loaded data.

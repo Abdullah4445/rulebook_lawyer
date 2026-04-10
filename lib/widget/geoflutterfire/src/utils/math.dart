@@ -1,4 +1,4 @@
-import 'dart:math';
+﻿import 'dart:math';
 
 import '../models/point.dart';
 
@@ -191,15 +191,15 @@ class MathUtils {
 
   static int setPrecision(double km) {
     /*
-      * 1	≤ 5,000km	×	5,000km
-      * 2	≤ 1,250km	×	625km
-      * 3	≤ 156km	×	156km
-      * 4	≤ 39.1km	×	19.5km
-      * 5	≤ 4.89km	×	4.89km
-      * 6	≤ 1.22km	×	0.61km
-      * 7	≤ 153m	×	153m
-      * 8	≤ 38.2m	×	19.1m
-      * 9	≤ 4.77m	×	4.77m
+      * 1	â‰¤ 5,000km	Ã—	5,000km
+      * 2	â‰¤ 1,250km	Ã—	625km
+      * 3	â‰¤ 156km	Ã—	156km
+      * 4	â‰¤ 39.1km	Ã—	19.5km
+      * 5	â‰¤ 4.89km	Ã—	4.89km
+      * 6	â‰¤ 1.22km	Ã—	0.61km
+      * 7	â‰¤ 153m	Ã—	153m
+      * 8	â‰¤ 38.2m	Ã—	19.1m
+      * 9	â‰¤ 4.77m	Ã—	4.77m
       *
      */
 

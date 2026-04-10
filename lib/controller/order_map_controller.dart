@@ -1,17 +1,17 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart' as cloudFirestore;
-import 'package:driver/constant/collection_name.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/send_notification.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/model/driver_user_model.dart';
-import 'package:driver/model/order/driverId_accept_reject.dart';
-import 'package:driver/model/order_model.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/utils/case_duration_utils.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+import 'package:lawyer/constant/collection_name.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/send_notification.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/model/order/driverId_accept_reject.dart';
+import 'package:lawyer/model/order_model.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/utils/case_duration_utils.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
@@ -92,7 +92,7 @@ class OrderMapController extends GetxController {
   @override
   void onInit() {
     if (Constant.selectedMapType == 'osm') {
-      ShowToastDialog.showLoader("Please wait".tr); // ← YAHAN CORRECTION KI HAI
+      ShowToastDialog.showLoader("Please wait".tr); // â† YAHAN CORRECTION KI HAI
       mapOsmController = MapController(
           initPosition: GeoPoint(latitude: 20.9153, longitude: -100.7439),
           useExternalTracking: false); //OSM
@@ -262,12 +262,12 @@ class OrderMapController extends GetxController {
 
       ShowToastDialog.showLoader("Please wait".tr);
 
-      // 2️⃣ Add current driver to acceptedDriverId list
+      // 2ï¸âƒ£ Add current driver to acceptedDriverId list
       List<dynamic> newAcceptedDriverId = orderModel.value.acceptedDriverId ?? [];
       newAcceptedDriverId.add(FireStoreUtils.getCurrentUid());
       orderModel.value.acceptedDriverId = newAcceptedDriverId;
 
-      // 3️⃣ Save fare details in order document
+      // 3ï¸âƒ£ Save fare details in order document
       await cloudFirestore.FirebaseFirestore.instance
           .collection("orders")
           .doc(orderModel.value.id)
@@ -276,7 +276,7 @@ class OrderMapController extends GetxController {
         "acceptedDriverId": newAcceptedDriverId,
       }, cloudFirestore.SetOptions(merge: true));
 
-      // 4️⃣ Prepare accepted driver info with fare details
+      // 4ï¸âƒ£ Prepare accepted driver info with fare details
       DriverIdAcceptReject driverIdAcceptReject = DriverIdAcceptReject(
         driverId: FireStoreUtils.getCurrentUid(),
         acceptedRejectTime: cloudFirestore.Timestamp.now(),
@@ -284,10 +284,10 @@ class OrderMapController extends GetxController {
         fareDetails: offerData,
       );
 
-      // 5️⃣ Save accepted driver info inside order document
+      // 5ï¸âƒ£ Save accepted driver info inside order document
       await FireStoreUtils.acceptRide(orderModel.value, driverIdAcceptReject);
 
-      // 6️⃣ Notify customer
+      // 6ï¸âƒ£ Notify customer
       final customer =
       await FireStoreUtils.getCustomer(orderModel.value.userId.toString());
       if (customer != null) {
@@ -300,7 +300,7 @@ class OrderMapController extends GetxController {
         );
       }
 
-      // 7️⃣ Subscription order deduction
+      // 7ï¸âƒ£ Subscription order deduction
       if (driverModel.value.subscriptionTotalOrders != "-1") {
         driverModel.value.subscriptionTotalOrders =
             (int.parse(driverModel.value.subscriptionTotalOrders.toString()) - 1)
@@ -313,7 +313,7 @@ class OrderMapController extends GetxController {
       Get.back(result: true);
     } catch (e) {
       ShowToastDialog.closeLoader();
-      print("❌ Error in acceptOrder: $e");
+      print("âŒ Error in acceptOrder: $e");
     }
   }
 
@@ -322,7 +322,7 @@ class OrderMapController extends GetxController {
   //   try {
   //     ShowToastDialog.showLoader("Please wait".tr);
   //
-  //     // 1️⃣ Prepare fare details
+  //     // 1ï¸âƒ£ Prepare fare details
   //     final Map<String, dynamic> offerData = {};
   //
   //     if (selectedButton.value == 0) {
@@ -355,12 +355,12 @@ class OrderMapController extends GetxController {
   //       offerData['steps'] = stepData;
   //     }
   //
-  //     // 2️⃣ Add current driver to acceptedDriverId list
+  //     // 2ï¸âƒ£ Add current driver to acceptedDriverId list
   //     List<dynamic> newAcceptedDriverId = orderModel.value.acceptedDriverId ?? [];
   //     newAcceptedDriverId.add(FireStoreUtils.getCurrentUid());
   //     orderModel.value.acceptedDriverId = newAcceptedDriverId;
   //
-  //     // 3️⃣ Save fare details in order document
+  //     // 3ï¸âƒ£ Save fare details in order document
   //     await cloudFirestore.FirebaseFirestore.instance
   //         .collection("orders")
   //         .doc(orderModel.value.id)
@@ -369,7 +369,7 @@ class OrderMapController extends GetxController {
   //       "acceptedDriverId": newAcceptedDriverId,
   //     }, cloudFirestore.SetOptions(merge: true));
   //
-  //     // 4️⃣ Prepare accepted driver info with fare details
+  //     // 4ï¸âƒ£ Prepare accepted driver info with fare details
   //     DriverIdAcceptReject driverIdAcceptReject = DriverIdAcceptReject(
   //       driverId: FireStoreUtils.getCurrentUid(),
   //       acceptedRejectTime: cloudFirestore.Timestamp.now(),
@@ -377,10 +377,10 @@ class OrderMapController extends GetxController {
   //       fareDetails: offerData, // Stores fare info for this driver
   //     );
   //
-  //     // 5️⃣ Save accepted driver info inside order document
+  //     // 5ï¸âƒ£ Save accepted driver info inside order document
   //     await FireStoreUtils.acceptRide(orderModel.value, driverIdAcceptReject);
   //
-  //     // 6️⃣ Notify customer
+  //     // 6ï¸âƒ£ Notify customer
   //     final customer =
   //     await FireStoreUtils.getCustomer(orderModel.value.userId.toString());
   //     if (customer != null) {
@@ -388,12 +388,12 @@ class OrderMapController extends GetxController {
   //         token: customer.fcmToken.toString(),
   //         title: 'New Driver Bid'.tr,
   //         body:
-  //         'Driver has offered ${Constant.amountShow(amount: newAmount.value)} for your journey.🚗'.tr,
+  //         'Driver has offered ${Constant.amountShow(amount: newAmount.value)} for your journey.ðŸš—'.tr,
   //         payload: {},
   //       );
   //     }
   //
-  //     // 7️⃣ Subscription order deduction
+  //     // 7ï¸âƒ£ Subscription order deduction
   //     if (driverModel.value.subscriptionTotalOrders != "-1") {
   //       driverModel.value.subscriptionTotalOrders =
   //           (int.parse(driverModel.value.subscriptionTotalOrders.toString()) - 1)
@@ -406,7 +406,7 @@ class OrderMapController extends GetxController {
   //     Get.back(result: true);
   //   } catch (e) {
   //     ShowToastDialog.closeLoader();
-  //     print("❌ Error in acceptOrder: $e");
+  //     print("âŒ Error in acceptOrder: $e");
   //   }
   // }
 
@@ -437,7 +437,7 @@ class OrderMapController extends GetxController {
   //             token: value.fcmToken.toString(),
   //             title: 'New Driver Bid'.tr,
   //             body:
-  //             'Driver has offered ${Constant.amountShow(amount: newAmount.value)} for your journey.🚗'
+  //             'Driver has offered ${Constant.amountShow(amount: newAmount.value)} for your journey.ðŸš—'
   //                 .tr,
   //             payload: {});
   //       }

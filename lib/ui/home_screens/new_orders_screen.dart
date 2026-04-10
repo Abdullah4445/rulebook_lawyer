@@ -1,14 +1,14 @@
-import 'package:driver/constant/constant.dart';
-import 'package:driver/controller/home_controller.dart';
-import 'package:driver/model/order_model.dart';
+﻿import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/controller/home_controller.dart';
+import 'package:lawyer/model/order_model.dart';
 
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/themes/responsive.dart';
-import 'package:driver/ui/home_screens/order_map_screen.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
-import 'package:driver/utils/fire_store_utils.dart';
-import 'package:driver/widget/location_view.dart';
-import 'package:driver/widget/user_view.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/themes/responsive.dart';
+import 'package:lawyer/ui/home_screens/order_map_screen.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
+import 'package:lawyer/widget/location_view.dart';
+import 'package:lawyer/widget/user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -107,14 +107,14 @@ class NewOrderScreen extends StatelessWidget {
 
 
 
-                            /// 👤 User info
+                            /// ðŸ‘¤ User info
                             UserView(
                               userId: orderModel.userId,
                               amount: orderModel.offerRate,
                             ),
 
                             const SizedBox(height: 8),
-                            /// 🧾 Title + Image Row
+                            /// ðŸ§¾ Title + Image Row
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -162,7 +162,7 @@ class NewOrderScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 10),
                             const Divider(),
-                            /// 📍 Location
+                            /// ðŸ“ Location
                             LocationView(
                               sourceLocation:
                               orderModel.sourceLocationName ??
@@ -172,28 +172,33 @@ class NewOrderScreen extends StatelessWidget {
                             const SizedBox(height: 10),
                             const Divider(),
 
-                            /// 💵 Payment Info
+                            /// ðŸ’µ Payment Info
                             Row(
                               mainAxisAlignment:
                               MainAxisAlignment.spaceBetween,
                               children: [
-                                _infoItem(
-                                  "Payment Type",
-                                  orderModel.paymentType ?? "N/A",
-                                  Icons.payment,
-                                  themeChange,
+                                Flexible(
+                                  child: _infoItem(
+                                    "Payment Type",
+                                    orderModel.paymentType ?? "N/A",
+                                    Icons.payment,
+                                    themeChange,
+                                  ),
                                 ),
-                                _infoItem(
-                                  "Offer Rate",
-                                  "${orderModel.offerRate ?? '0'} PKR",
-                                  Icons.local_offer,
-                                  themeChange,
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: _infoItem(
+                                    "Offer Rate",
+                                    "${orderModel.offerRate ?? '0'} PKR",
+                                    Icons.local_offer,
+                                    themeChange,
+                                  ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 8),
 
-                            /// ⚖️ Case Type / Status / OTP
+                            /// âš–ï¸ Case Type / Status / OTP
                             // Row(
                             //   mainAxisAlignment:
                             //   MainAxisAlignment.spaceBetween,
@@ -221,7 +226,7 @@ class NewOrderScreen extends StatelessWidget {
 
                             const SizedBox(height: 8),
 
-                            /// 🕒 Created Date
+                            /// ðŸ•’ Created Date
                             Text(
                               "Created on: ${orderModel.createdDate?.toDate().toLocal().toString().split('.')[0] ?? 'Unknown'}",
                               style: GoogleFonts.poppins(
@@ -243,32 +248,38 @@ class NewOrderScreen extends StatelessWidget {
     );
   }
 
-  /// 🔹 Reusable Info Item Widget
+  /// ðŸ”¹ Reusable Info Item Widget
   Widget _infoItem(
       String title, String value, IconData icon, DarkThemeProvider themeChange) {
     return Row(
       children: [
         Icon(icon, size: 16, color: Colors.blueGrey),
         const SizedBox(width: 4),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: GoogleFonts.poppins(
-                fontSize: 11,
-                color: themeChange.getThem() ? Colors.grey[400] : Colors.grey[700],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontSize: 11,
+                  color: themeChange.getThem() ? Colors.grey[400] : Colors.grey[700],
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Text(
-              value,
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: themeChange.getThem() ? Colors.white : Colors.black,
+              Text(
+                value,
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: themeChange.getThem() ? Colors.white : Colors.black,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -293,16 +304,16 @@ class NewOrderScreen extends StatelessWidget {
 
 
 
-// import 'package:driver/constant/constant.dart';
-// import 'package:driver/controller/home_controller.dart';
-// import 'package:driver/model/order_model.dart';
-// import 'package:driver/themes/app_colors.dart';
-// import 'package:driver/themes/responsive.dart';
-// import 'package:driver/ui/home_screens/order_map_screen.dart';
-// import 'package:driver/utils/DarkThemeProvider.dart';
-// import 'package:driver/utils/fire_store_utils.dart';
-// import 'package:driver/widget/location_view.dart';
-// import 'package:driver/widget/user_view.dart';
+// import 'package:lawyer/constant/constant.dart';
+// import 'package:lawyer/controller/home_controller.dart';
+// import 'package:lawyer/model/order_model.dart';
+// import 'package:lawyer/themes/app_colors.dart';
+// import 'package:lawyer/themes/responsive.dart';
+// import 'package:lawyer/ui/home_screens/order_map_screen.dart';
+// import 'package:lawyer/utils/DarkThemeProvider.dart';
+// import 'package:lawyer/utils/fire_store_utils.dart';
+// import 'package:lawyer/widget/location_view.dart';
+// import 'package:lawyer/widget/user_view.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:google_fonts/google_fonts.dart';

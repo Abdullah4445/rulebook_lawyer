@@ -1,10 +1,11 @@
-import 'package:driver/controller/splash_controller.dart';
-import 'package:driver/themes/app_colors.dart';
+﻿import 'package:lawyer/controller/splash_controller.dart';
+import 'package:lawyer/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,72 +13,98 @@ class SplashScreen extends StatelessWidget {
         init: SplashController(),
         builder: (controller) {
           return Scaffold(
-            backgroundColor: const Color(0xFF0F172A),
+            backgroundColor: AppColors.primary,
             body: Container(
               width: double.infinity,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
+                  colors: [AppColors.primary, Color(0xFF0F172A)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF111827),
-                    Color(0xFF0F172A),
-                    Color(0xFF020617),
-                  ],
                 ),
               ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(22),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(28),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x33000000),
-                            blurRadius: 22,
-                            offset: Offset(0, 10),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  child: Column(
+                    children: [
+                      const Spacer(flex: 2),
+                      // Professional logo container
+                      Container(
+                        padding: const EdgeInsets.all(22),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(34),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.14),
                           ),
-                        ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.balance,
+                              size: 70,
+                              color: AppColors.darkModePrimary,
+                            ),
+                            const SizedBox(height: 12),
+                            Image.asset(
+                              "assets/appicon/lawyer_splash1.png",
+                              width: 120,
+                              height: 120,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  "assets/appicon/app_logo2.png",
+                                  width: 120,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      child: Image.asset(
-                        "assets/appicon/app_logo2.png",
-                        width: 130,
+                      const SizedBox(height: 28),
+                      // Branding text
+                      Text(
+                        'Rulebook Lawyer',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.2,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 28),
-                    const Text(
-                      'Rulebook Lawyer',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.6,
+                      const SizedBox(height: 10),
+                      Text(
+                        'Professional legal services, case management and client support in one secure place.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Professional legal services at your fingertips',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.78),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                      const Spacer(),
+                      // Loading indicator
+                      const SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.darkModePrimary),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 22),
-                    Container(
-                      height: 4,
-                      width: 92,
-                      decoration: BoxDecoration(
-                        color: AppColors.darkModePrimary,
-                        borderRadius: BorderRadius.circular(100),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Preparing your dashboard...',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white60,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

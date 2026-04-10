@@ -1,4 +1,4 @@
-/// A package to paginate your firebase related data with realtime updates.
+﻿/// A package to paginate your firebase related data with realtime updates.
 ///
 /// It can be used for `Firestore` and `Firebase Realtime Database`.
 ///

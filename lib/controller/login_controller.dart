@@ -1,10 +1,10 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:crypto/crypto.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/ui/auth_screen/otp_screen.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/ui/auth_screen/otp_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

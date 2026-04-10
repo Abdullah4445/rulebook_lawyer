@@ -1,26 +1,26 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/model/ChatVideoContainer.dart';
-import 'package:driver/model/admin_commission.dart';
-import 'package:driver/model/conversation_model.dart';
-import 'package:driver/model/currency_model.dart';
-import 'package:driver/model/language_description.dart';
-import 'package:driver/model/language_model.dart';
-import 'package:driver/model/language_name.dart';
-import 'package:driver/model/language_privacy_policy.dart';
-import 'package:driver/model/language_terms_condition.dart';
-import 'package:driver/model/language_title.dart';
-import 'package:driver/model/map_model.dart' as mapModels;
-import 'package:driver/model/order/location_lat_lng.dart';
-import 'package:driver/model/tax_model.dart';
-import 'package:driver/themes/app_colors.dart';
-import 'package:driver/utils/DarkThemeProvider.dart';
-import 'package:driver/utils/Preferences.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/ChatVideoContainer.dart';
+import 'package:lawyer/model/admin_commission.dart';
+import 'package:lawyer/model/conversation_model.dart';
+import 'package:lawyer/model/currency_model.dart';
+import 'package:lawyer/model/language_description.dart';
+import 'package:lawyer/model/language_model.dart';
+import 'package:lawyer/model/language_name.dart';
+import 'package:lawyer/model/language_privacy_policy.dart';
+import 'package:lawyer/model/language_terms_condition.dart';
+import 'package:lawyer/model/language_title.dart';
+import 'package:lawyer/model/map_model.dart' as mapModels;
+import 'package:lawyer/model/order/location_lat_lng.dart';
+import 'package:lawyer/model/tax_model.dart';
+import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/utils/DarkThemeProvider.dart';
+import 'package:lawyer/utils/Preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,7 +33,6 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
-import '../model/admin_commission.dart';
 import '../model/driver_user_model.dart';
 import '../utils/utils.dart';
 
@@ -42,7 +41,7 @@ class Constant {
   static const String googleLoginType = "google";
   static const String appleLoginType = "apple";
   static LocationLatLng? currentLocation;
-  static const String exclusivePlanId = 'driver_exclusive_plan';
+  static const String exclusivePlanId = 'lawyer_exclusive_plan';
 
   static String mapAPIKey = "";
   static String senderId = '';
@@ -66,6 +65,30 @@ class Constant {
 
   static CurrencyModel? currencyModel;
 
+  static CurrencyModel get defaultPkrCurrency => CurrencyModel(
+        id: 'pkr-default',
+        code: 'PKR',
+        decimalDigits: 2,
+        enable: true,
+        name: 'Pakistani Rupee',
+        symbol: 'PKR',
+        symbolAtRight: false,
+      );
+
+  static CurrencyModel forcePkrCurrency([CurrencyModel? source]) {
+    return CurrencyModel(
+      id: source?.id ?? defaultPkrCurrency.id,
+      createdAt: source?.createdAt,
+      updatedAt: source?.updatedAt,
+      code: 'PKR',
+      decimalDigits: source?.decimalDigits ?? defaultPkrCurrency.decimalDigits,
+      enable: source?.enable ?? true,
+      name: 'Pakistani Rupee',
+      symbol: 'PKR',
+      symbolAtRight: false,
+    );
+  }
+
   static const String casePlaced = "Case Placed";
   static const String caseActive = "Case Active";
   static const String caseInProgress = "Case InProgress";
@@ -76,10 +99,10 @@ class Constant {
 
   static String? referralAmount = "0";
 
-  static const globalUrl = "https://goflow-vip.online/";
+  static const globalUrl = "https://rulebook.online/";
 
   static const userPlaceHolder =
-      "https://firebasestorage.googleapis.com/v0/b/goflow-1a752.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115";
+      "https://firebasestorage.googleapis.com/v0/b/rulebook-app.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115";
 
   static Widget loader(BuildContext context) {
     // final themeChange = Provider.of<DarkThemeProvider>(context);
@@ -89,17 +112,21 @@ class Constant {
   }
 
   static String localizationName(List<LanguageName>? name) {
-    if (name == null || name.isEmpty) {
+    final List<LanguageName> localizedNames =
+        List<LanguageName>.from(name ?? const <LanguageName>[]);
+
+    if (localizedNames.isEmpty) {
       print("Localization name list is empty or null. Returning empty string.");
       return ""; // Return an empty string or a default value if the list is invalid.
     }
+
 
     String? languageCode = myLanguageId;
     print("Current language code: $languageCode");
 
     try {
       // Try to find the name for the current language.
-      String localizedName = name
+      String localizedName = localizedNames
           .firstWhere(
             (element) => element.type == languageCode,
           )
@@ -111,7 +138,7 @@ class Constant {
       print("Localized name not found for $languageCode, error: $e");
       try {
         // If the current language is not found, try English.
-        String englishName = name
+        String englishName = localizedNames
             .firstWhere(
               (element) => element.type == "en",
             )
@@ -128,7 +155,7 @@ class Constant {
   }
 
   String localizationTitle(List<LanguageTitle> name, String title) {
-    if (name == null || name.isEmpty) {
+    if (name.isEmpty) {
       print("Localization list is empty or null. Defaulting to original title: $title");
       return title; // Return the original title if the list is invalid.
     }
@@ -140,7 +167,7 @@ class Constant {
       // Try to find the title for the current language.
       String localizedTitle = name
           .firstWhere(
-            (element) => element?.type == languageCode,
+              (element) => element.type == languageCode,
           )
           .title
           .toString();
@@ -361,8 +388,8 @@ class Constant {
   }) {
     double taxAmount = 0.0;
 
-    // ✅ Disable commission for Exclusive Taxi Plan
-    if (currentDriverUser?.subscriptionPlan?.id == 'driver_exclusive_plan') {
+    // âœ… Disable commission for Exclusive Lawyer Plan
+    if (currentDriverUser?.subscriptionPlan?.id == 'lawyer_exclusive_plan') {
       return 0.0;
     }
 
@@ -414,11 +441,13 @@ class Constant {
   static String amountShow({required String? amount}) {
     // Safely parse amount
     final double parsedAmount = double.tryParse(amount ?? '0') ?? 0.0;
+    final CurrencyModel effectiveCurrency =
+        Constant.forcePkrCurrency(Constant.currencyModel);
 
-    if (Constant.currencyModel?.symbolAtRight == true) {
-      return "${parsedAmount.toStringAsFixed(Constant.currencyModel?.decimalDigits ?? 2)} ${Constant.currencyModel?.symbol ?? ''}";
+    if (effectiveCurrency.symbolAtRight == true) {
+      return "${parsedAmount.toStringAsFixed(effectiveCurrency.decimalDigits ?? 2)} ${effectiveCurrency.symbol ?? 'PKR'}";
     } else {
-      return "${Constant.currencyModel?.symbol ?? ''} ${parsedAmount.toStringAsFixed(Constant.currencyModel?.decimalDigits ?? 2)}";
+      return "${effectiveCurrency.symbol ?? 'PKR'} ${parsedAmount.toStringAsFixed(effectiveCurrency.decimalDigits ?? 2)}";
     }
   }
 

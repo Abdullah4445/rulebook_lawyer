@@ -1,4 +1,4 @@
-class BankDetailsModel {
+﻿class BankDetailsModel {
   String? userId;
   String? bankName;
   String? holderName;

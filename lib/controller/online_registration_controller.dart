@@ -1,6 +1,6 @@
-import 'package:driver/model/document_model.dart';
-import 'package:driver/model/driver_document_model.dart';
-import 'package:driver/utils/fire_store_utils.dart';
+﻿import 'package:lawyer/model/document_model.dart';
+import 'package:lawyer/model/driver_document_model.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:get/get.dart';
 
 class OnlineRegistrationController extends GetxController {

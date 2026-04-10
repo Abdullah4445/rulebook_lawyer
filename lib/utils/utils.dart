@@ -1,9 +1,9 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driver/constant/constant.dart';
-import 'package:driver/constant/show_toast_dialog.dart';
-import 'package:driver/model/order/location_lat_lng.dart';
+import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/order/location_lat_lng.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -28,7 +28,7 @@ class Utils {
     }
 
     permission = await Geolocator.checkPermission();
-    print("GETTING LOCATIONNN1234🌝🌺 $permission");
+    print("GETTING LOCATIONNN1234ðŸŒðŸŒº $permission");
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
@@ -49,9 +49,9 @@ class Utils {
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
-    print("GETTING LOCATIONNN🌝🌺 ");
+    print("GETTING LOCATIONNNðŸŒðŸŒº ");
     Position? position = await Geolocator.getCurrentPosition();
-    print("GETTING LOCATIONNN🌝🌺 ${position.latitude} ${position.longitude}");
+    print("GETTING LOCATIONNNðŸŒðŸŒº ${position.latitude} ${position.longitude}");
     Constant.currentLocation =
         LocationLatLng(latitude: position.latitude, longitude: position.longitude);
     return await Geolocator.getCurrentPosition();

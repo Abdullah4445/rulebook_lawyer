@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DriverIdAcceptReject {
   String? driverId;
@@ -6,7 +6,7 @@ class DriverIdAcceptReject {
   Timestamp? acceptedRejectTime;
   String? suggestedTime;
   String? suggestedDate;
-  Map<String, dynamic>? fareDetails; // ← New field
+  Map<String, dynamic>? fareDetails; // â† New field
 
   DriverIdAcceptReject({
     this.offerAmount,
@@ -14,7 +14,7 @@ class DriverIdAcceptReject {
     this.acceptedRejectTime,
     this.suggestedTime,
     this.suggestedDate,
-    this.fareDetails, // ← Add optional in constructor
+    this.fareDetails, // â† Add optional in constructor
   });
 
   DriverIdAcceptReject.fromJson(Map<String, dynamic> json) {
@@ -25,7 +25,7 @@ class DriverIdAcceptReject {
     suggestedDate = json['suggestedDate'];
     fareDetails = json['fareDetails'] != null
         ? Map<String, dynamic>.from(json['fareDetails'])
-        : null; // ← Read fareDetails if exists
+        : null; // â† Read fareDetails if exists
   }
 
   Map<String, dynamic> toJson() {
@@ -36,7 +36,7 @@ class DriverIdAcceptReject {
     data['suggestedTime'] = suggestedTime;
     data['suggestedDate'] = suggestedDate;
     if (fareDetails != null) {
-      data['fareDetails'] = fareDetails; // ← Save only if not null
+      data['fareDetails'] = fareDetails; // â† Save only if not null
     }
     return data;
   }
