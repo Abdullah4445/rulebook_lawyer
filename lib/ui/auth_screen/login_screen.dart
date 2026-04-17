@@ -163,45 +163,29 @@ class LoginScreen extends StatelessWidget {
                                   log("----->old user");
                                   FireStoreUtils.userExitOrNot(value.user!.uid).then((userExit) async {
                                     if (userExit == true) {
-                                      String token = await NotificationService.getToken();
-                                      DriverUserModel userModel = DriverUserModel();
+                                      try {
+                                        // Fetch existing profile first
+                                        await FireStoreUtils.getDriverProfile(FirebaseAuth.instance.currentUser!.uid).then(
+                                              (existingProfile) async {
+                                            if (existingProfile != null) {
+                                              // Update FCM token on existing profile
+                                              String token = await NotificationService.getToken();
+                                              existingProfile.fcmToken = token;
+                                              await FireStoreUtils.updateDriverUser(existingProfile);
 
-                                      userModel.fcmToken = token;
-                                      await FireStoreUtils.updateDriverUser(userModel);
-                                      await FireStoreUtils.getDriverProfile(FirebaseAuth.instance.currentUser!.uid).then(
-                                            (value) {
-                                          if (value != null) {
-                                            DriverUserModel userModel = value;
-                                            bool isPlanExpire = false;
-
-                                            if (userModel.subscriptionPlan?.id != null) {
-                                              if (userModel.subscriptionExpiryDate == null) {
-                                                if (userModel.subscriptionPlan?.expiryDay == '-1') {
-                                                  isPlanExpire = false;
-                                                } else {
-                                                  isPlanExpire = true;
-                                                }
-                                              } else {
-                                                DateTime expiryDate = userModel.subscriptionExpiryDate!.toDate();
-                                                isPlanExpire = expiryDate.isBefore(DateTime.now());
-                                              }
+                                              // Navigate to dashboard
+                                              Get.offAll(const DashBoardScreen());
                                             } else {
-                                              isPlanExpire = true;
+                                              ShowToastDialog.closeLoader();
+                                              ShowToastDialog.showToast("Profile not found. Please complete registration.".tr);
                                             }
-                                            // if (userModel.subscriptionPlanId == null || isPlanExpire == true) {
-                                            //   if (Constant.adminCommission?.isEnabled == false && Constant.isSubscriptionModelApplied == false) {
-                                            //     ShowToastDialog.closeLoader();
-                                            //     Get.offAll(const DashBoardScreen());
-                                            //   } else {
-                                            //     ShowToastDialog.closeLoader();
-                                            //     Get.offAll(const SubscriptionListScreen(), arguments: {"isShow": true});
-                                            //   }
-                                            // } else {
-                                            Get.offAll(const DashBoardScreen());
-                                            // }
-                                          }
-                                        },
-                                      );
+                                          },
+                                        );
+                                      } catch (e) {
+                                        log("Error updating user: $e");
+                                        ShowToastDialog.closeLoader();
+                                        ShowToastDialog.showToast("Login failed. Please try again.".tr);
+                                      }
                                     } else {
                                       DriverUserModel userModel = DriverUserModel();
                                       userModel.id = value.user!.uid;
@@ -214,6 +198,85 @@ class LoginScreen extends StatelessWidget {
                                         "userModel": userModel,
                                       });
                                     }
+                                  }).catchError((error) {
+                                    log("Error checking user: $error");
+                                    ShowToastDialog.closeLoader();
+                                    ShowToastDialog.showToast("Login failed. Please try again.".tr);
+                                  });
+                                }
+                              }
+                            });
+                          },
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        ButtonThem.buildBorderButton(
+                          context,
+                          title: "Login with Facebook".tr,
+                          iconVisibility: true,
+                          iconAssetImage: 'assets/icons/ic_facebook.png',
+                          onPress: () async {
+                            ShowToastDialog.showLoader("Please wait".tr);
+                            await controller.signInWithFacebook().then((value) {
+                              ShowToastDialog.closeLoader();
+                              if (value != null) {
+                                if (value.additionalUserInfo!.isNewUser) {
+                                  log("----->new Facebook user");
+                                  DriverUserModel userModel = DriverUserModel();
+                                  userModel.id = value.user!.uid;
+                                  userModel.email = value.user!.email;
+                                  userModel.fullName = value.user!.displayName;
+                                  userModel.profilePic = value.user!.photoURL;
+                                  userModel.loginType = Constant.facebookLoginType;
+
+                                  ShowToastDialog.closeLoader();
+                                  Get.to(const InformationScreen(), arguments: {
+                                    "userModel": userModel,
+                                  });
+                                } else {
+                                  log("----->old Facebook user");
+                                  FireStoreUtils.userExitOrNot(value.user!.uid).then((userExit) async {
+                                    if (userExit == true) {
+                                      try {
+                                        // Fetch existing profile first
+                                        await FireStoreUtils.getDriverProfile(FirebaseAuth.instance.currentUser!.uid).then(
+                                              (existingProfile) async {
+                                            if (existingProfile != null) {
+                                              // Update FCM token on existing profile
+                                              String token = await NotificationService.getToken();
+                                              existingProfile.fcmToken = token;
+                                              await FireStoreUtils.updateDriverUser(existingProfile);
+
+                                              // Navigate to dashboard
+                                              Get.offAll(const DashBoardScreen());
+                                            } else {
+                                              ShowToastDialog.closeLoader();
+                                              ShowToastDialog.showToast("Profile not found. Please complete registration.".tr);
+                                            }
+                                          },
+                                        );
+                                      } catch (e) {
+                                        log("Error updating user: $e");
+                                        ShowToastDialog.closeLoader();
+                                        ShowToastDialog.showToast("Login failed. Please try again.".tr);
+                                      }
+                                    } else {
+                                      DriverUserModel userModel = DriverUserModel();
+                                      userModel.id = value.user!.uid;
+                                      userModel.email = value.user!.email;
+                                      userModel.fullName = value.user!.displayName;
+                                      userModel.profilePic = value.user!.photoURL;
+                                      userModel.loginType = Constant.facebookLoginType;
+
+                                      Get.to(const InformationScreen(), arguments: {
+                                        "userModel": userModel,
+                                      });
+                                    }
+                                  }).catchError((error) {
+                                    log("Error checking user: $error");
+                                    ShowToastDialog.closeLoader();
+                                    ShowToastDialog.showToast("Login failed. Please try again.".tr);
                                   });
                                 }
                               }

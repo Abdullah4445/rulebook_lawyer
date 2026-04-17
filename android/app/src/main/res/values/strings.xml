@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="app_name">Rulebook Lawyer</string>
   <string name="notification_new_request_title">New Request</string>
   <string name="notification_new_request_body">A new ride request is available</string>
   <string name="notification_new_message_title">New Message</string>
@@ -11,4 +12,9 @@
   <string name="notification_assigned_body">Hey! You have been assigned to a booked ride planned on %1$s. From: %2$s -> %3$s</string>
   <string name="notification_upcoming_ride_title">Upcoming ride</string>
   <string name="notification_upcoming_ride_body">Hey! You have an upcoming ride in less than 10 minutes</string>
+
+  <!-- Facebook Configuration -->
+  <string name="facebook_app_id">YOUR_FACEBOOK_APP_ID</string>
+  <string name="fb_login_protocol_scheme">fbYOUR_FACEBOOK_APP_ID</string>
+  <string name="facebook_client_token">YOUR_FACEBOOK_CLIENT_TOKEN</string>
 </resources>

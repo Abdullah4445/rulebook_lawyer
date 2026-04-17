@@ -18,7 +18,6 @@ import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +35,7 @@ class WalletScreen extends StatelessWidget {
         builder: (controller) {
           final topUpTransactions = controller.topUpTransactions;
           final otherTransactions = controller.otherWalletTransactions;
+          final cashTransactions = controller.cashTransactions;
 
           return Scaffold(
             backgroundColor: AppColors.primary,
@@ -58,7 +58,7 @@ class WalletScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Total Balance".tr,
+                                      "Wallet Balance".tr,
                                       style: GoogleFonts.poppins(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600,
@@ -66,13 +66,18 @@ class WalletScreen extends StatelessWidget {
                                     ),
                                     Text(
                                       Constant.amountShow(
-                                          amount: controller
-                                              .driverUserModel.value.walletAmount
-                                              .toString()),
+                                          amount: controller.calculatedWalletBalance.toString()),
                                       style: GoogleFonts.poppins(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 24),
+                                    ),
+                                    Text(
+                                      "(Wallet & Topup only)".tr,
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.white70,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 11),
                                     ),
                                   ],
                                 ),
@@ -191,7 +196,7 @@ class WalletScreen extends StatelessWidget {
                                         _buildSectionHeader(
                                           title: 'Wallet Activity'.tr,
                                           subtitle:
-                                              'Withdrawals and other balance movements are listed below.'.tr,
+                                              'Admin credits, withdrawals, commissions and wallet movements are listed here.'.tr,
                                         ),
                                         const SizedBox(height: 10),
                                         ...otherTransactions.map(
@@ -201,9 +206,28 @@ class WalletScreen extends StatelessWidget {
                                             walletTransactionModel: walletTransactionModel,
                                           ),
                                         ),
+                                        const SizedBox(height: 18),
+                                      ],
+                                      if (cashTransactions.isNotEmpty) ...[
+                                        _buildSectionHeader(
+                                          title: 'Cash Payment History'.tr,
+                                          subtitle:
+                                              'Cash payments are shown here for reference only and are NOT included in your wallet balance.'.tr,
+                                        ),
+                                        const SizedBox(height: 10),
+                                        ...cashTransactions.map(
+                                          (walletTransactionModel) => _buildTransactionCard(
+                                            context: context,
+                                            themeChange: themeChange,
+                                            walletTransactionModel: walletTransactionModel,
+                                            isCashTransaction: true,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 18),
                                       ],
                                       if (topUpTransactions.isEmpty &&
-                                          otherTransactions.isEmpty)
+                                          otherTransactions.isEmpty &&
+                                          cashTransactions.isEmpty)
                                         Padding(
                                           padding: const EdgeInsets.symmetric(vertical: 30),
                                           child: Center(
@@ -226,9 +250,7 @@ class WalletScreen extends StatelessWidget {
                       context,
                       title: "withdraw".tr,
                       onPress: () async {
-                        if (double.parse(controller.driverUserModel.value.walletAmount
-                                .toString()) <=
-                            0) {
+                        if (controller.calculatedWalletBalance <= 0) {
                           ShowToastDialog.showToast("Insufficient balance".tr);
                         } else {
                           ShowToastDialog.showLoader("Please wait".tr);
@@ -294,6 +316,7 @@ class WalletScreen extends StatelessWidget {
     required DarkThemeProvider themeChange,
     required WalletTransactionModel walletTransactionModel,
     bool highlightTopUp = false,
+    bool isCashTransaction = false,
   }) {
     final bool isNegative =
         Constant.IsNegative(double.tryParse(walletTransactionModel.amount.toString()) ?? 0);
@@ -307,27 +330,33 @@ class WalletScreen extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: highlightTopUp
+            color: isCashTransaction
                 ? (themeChange.getThem()
-                    ? AppColors.darkContainerBackground
-                    : const Color(0xFFFFFBF2))
-                : (themeChange.getThem()
-                    ? AppColors.darkContainerBackground
-                    : AppColors.containerBackground),
+                    ? AppColors.darkContainerBackground.withValues(alpha: 0.5)
+                    : const Color(0xFFF5F5F5))
+                : (highlightTopUp
+                    ? (themeChange.getThem()
+                        ? AppColors.darkContainerBackground
+                        : const Color(0xFFFFFBF2))
+                    : (themeChange.getThem()
+                        ? AppColors.darkContainerBackground
+                        : AppColors.containerBackground)),
             borderRadius: const BorderRadius.all(Radius.circular(18)),
             border: Border.all(
-              color: highlightTopUp
-                  ? AppColors.brandGold.withValues(alpha: 0.30)
-                  : (themeChange.getThem()
-                      ? AppColors.darkContainerBorder
-                      : AppColors.containerBorder),
+              color: isCashTransaction
+                  ? AppColors.grey500.withValues(alpha: 0.40)
+                  : (highlightTopUp
+                      ? AppColors.brandGold.withValues(alpha: 0.30)
+                      : (themeChange.getThem()
+                          ? AppColors.darkContainerBorder
+                          : AppColors.containerBorder)),
               width: 0.8,
             ),
             boxShadow: themeChange.getThem()
                 ? null
                 : [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
+                      color: Colors.black.withValues(alpha: isCashTransaction ? 0.03 : 0.06),
                       blurRadius: 14,
                       offset: const Offset(0, 6),
                     ),
@@ -340,20 +369,21 @@ class WalletScreen extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: highlightTopUp
-                        ? AppColors.brandGold.withValues(alpha: 0.14)
-                        : AppColors.lightGray,
+                    color: isCashTransaction
+                        ? AppColors.grey400.withValues(alpha: 0.20)
+                        : (highlightTopUp
+                            ? AppColors.brandGold.withValues(alpha: 0.14)
+                            : AppColors.lightGray),
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: SvgPicture.asset(
-                      'assets/icons/ic_wallet.svg',
-                      width: 24,
-                      colorFilter: ColorFilter.mode(
-                        highlightTopUp ? AppColors.brandGold : Colors.black,
-                        BlendMode.srcIn,
-                      ),
+                    child: Icon(
+                      isCashTransaction ? Icons.money_off : Icons.wallet,
+                      size: 24,
+                      color: isCashTransaction
+                          ? AppColors.grey600
+                          : (highlightTopUp ? AppColors.brandGold : Colors.black),
                     ),
                   ),
                 ),
@@ -369,6 +399,7 @@ class WalletScreen extends StatelessWidget {
                               Constant.dateFormatTimestamp(walletTransactionModel.createdDate),
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w600,
+                                color: isCashTransaction ? AppColors.grey600 : null,
                               ),
                             ),
                           ),
@@ -376,15 +407,44 @@ class WalletScreen extends StatelessWidget {
                             "${isNegative ? '(-' : '+'}${Constant.amountShow(amount: walletTransactionModel.amount.toString().replaceAll('-', ''))}${isNegative ? ')' : ''}",
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w700,
-                              color: isNegative ? Colors.red : AppColors.success,
+                              color: isCashTransaction
+                                  ? AppColors.grey600
+                                  : (isNegative ? Colors.red : AppColors.success),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        walletTransactionModel.note.toString().tr,
-                        style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                      Row(
+                        children: [
+                          if (isCashTransaction) ...[
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.grey500.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'CASH'.tr,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.grey700,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                          ],
+                          Expanded(
+                            child: Text(
+                              walletTransactionModel.note.toString().tr,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w500,
+                                color: isCashTransaction ? AppColors.grey600 : null,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -394,6 +454,17 @@ class WalletScreen extends StatelessWidget {
                           color: AppColors.grey500,
                         ),
                       ),
+                      if (isCashTransaction) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          '* Not added to wallet balance'.tr,
+                          style: GoogleFonts.poppins(
+                            fontSize: 10,
+                            color: AppColors.grey500,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -899,186 +970,345 @@ class WalletScreen extends StatelessWidget {
 
           return StatefulBuilder(builder: (context, setState) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                top: 20,
+              ),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 25.0, bottom: 10),
-                      child: Text(
-                        "Withdraw".tr,
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
+                    // Header
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.account_balance_wallet, color: AppColors.primary),
                         ),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Withdraw Funds".tr,
+                              style: GoogleFonts.poppins(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              "Request sent to admin for approval".tr,
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                color: AppColors.grey500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Available Balance Card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.80)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Available to Withdraw".tr,
+                            style: GoogleFonts.poppins(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            Constant.amountShow(amount: controller.calculatedWalletBalance.toString()),
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "(Wallet balance only - Cash excluded)".tr,
+                            style: GoogleFonts.poppins(
+                              color: Colors.white60,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    const SizedBox(height: 16),
+
+                    // Payout Method Info
                     Container(
-                        decoration: BoxDecoration(
-                          color: themeChange.getThem()
-                              ? AppColors.darkContainerBackground
-                              : AppColors.containerBackground,
-                          borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          border: Border.all(
-                              color: themeChange.getThem()
-                                  ? AppColors.darkContainerBorder
-                                  : AppColors.containerBorder,
-                              width: 0.5),
-                          boxShadow: themeChange.getThem()
-                              ? null
-                              : [
-                                  BoxShadow(
-                                    color: Colors.grey.withValues(alpha: 0.5),
-                                    blurRadius: 8,
-                                    offset:
-                                        const Offset(0, 2), // changes position of shadow
-                                  ),
-                                ],
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF8EA),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.brandGold.withValues(alpha: 0.30),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.info_outline, color: AppColors.brandGold, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Withdrawal is processed via admin approval. Amount will be transferred to your registered bank/JazzCash account.'.tr,
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                color: AppColors.grey700,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Bank Account Details
+                    Text(
+                      "Payout Account".tr,
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: themeChange.getThem()
+                            ? AppColors.darkContainerBackground
+                            : AppColors.containerBackground,
+                        borderRadius: const BorderRadius.all(Radius.circular(14)),
+                        border: Border.all(
+                            color: themeChange.getThem()
+                                ? AppColors.darkContainerBorder
+                                : AppColors.containerBorder,
+                            width: 0.5),
+                        boxShadow: themeChange.getThem()
+                            ? null
+                            : [
+                                BoxShadow(
+                                  color: Colors.grey.withValues(alpha: 0.15),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(14.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
                                     controller.bankDetailsModel.value.bankName.toString(),
                                     style: GoogleFonts.poppins(
-                                      fontSize: 22,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const Icon(
-                                    Icons.account_balance,
-                                    size: 40,
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withValues(alpha: 0.10),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              Text(
-                                controller.bankDetailsModel.value.accountNumber
-                                    .toString(),
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
+                                  child: const Icon(Icons.account_balance, color: AppColors.primary, size: 24),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                controller.bankDetailsModel.value.holderName.toString(),
-                                style: GoogleFonts.poppins(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 4,
-                              ),
-                              Text(
-                                controller.bankDetailsModel.value.branchName.toString(),
-                                style: GoogleFonts.poppins(
-                                  fontSize: 18,
-                                ),
-                              ),
-                              Text(
-                                controller.bankDetailsModel.value.otherInformation
-                                    .toString(),
-                                style: GoogleFonts.poppins(),
-                              ),
-                              const SizedBox(
-                                height: 10,
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            _bankDetailRow(
+                              icon: Icons.credit_card,
+                              label: "Account No".tr,
+                              value: controller.bankDetailsModel.value.accountNumber.toString(),
+                            ),
+                            const SizedBox(height: 6),
+                            _bankDetailRow(
+                              icon: Icons.person,
+                              label: "Account Holder".tr,
+                              value: controller.bankDetailsModel.value.holderName.toString(),
+                            ),
+                            if ((controller.bankDetailsModel.value.branchName ?? '').isNotEmpty) ...[
+                              const SizedBox(height: 6),
+                              _bankDetailRow(
+                                icon: Icons.location_on,
+                                label: "Branch".tr,
+                                value: controller.bankDetailsModel.value.branchName.toString(),
                               ),
                             ],
-                          ),
-                        )),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    RichText(
-                      text: TextSpan(
-                        text: "Amount to Withdraw".tr,
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
+                          ],
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 10,
+                    const SizedBox(height: 16),
+
+                    // Amount Field
+                    Text(
+                      "Amount to Withdraw".tr,
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
                     ),
+                    const SizedBox(height: 8),
                     TextFieldThem.buildTextFiled(context,
-                        hintText: 'Enter Amount'.tr,
+                        hintText: 'Enter Amount (PKR)'.tr,
                         controller: controller.withdrawalAmountController.value),
-                    const SizedBox(
-                      height: 10,
+                    const SizedBox(height: 12),
+
+                    // Notes Field
+                    Text(
+                      "Notes (Optional)".tr,
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
                     ),
+                    const SizedBox(height: 8),
                     TextFieldThem.buildTextFiled(context,
-                        hintText: 'Notes'.tr,
-                        maxLine: 3,
+                        hintText: 'Any note for admin...'.tr,
+                        maxLine: 2,
                         controller: controller.noteController.value),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ButtonThem.buildButton(
-                          context,
-                          title: "Withdrawal".tr,
-                          onPress: () async {
-                            if (double.parse(controller.driverUserModel.value.walletAmount
-                                    .toString()) <
-                                double.parse(
-                                    controller.withdrawalAmountController.value.text)) {
-                              ShowToastDialog.showToast("Insufficient balance".tr);
-                            } else if (double.parse(Constant.minimumAmountToWithdrawal) >
-                                double.parse(
-                                    controller.withdrawalAmountController.value.text)) {
-                              ShowToastDialog.showToast(
-                                  "Withdraw amount must be greater or equal to ${Constant.amountShow(amount: Constant.minimumAmountToWithdrawal.toString())}"
-                                      .tr);
-                            } else {
-                              ShowToastDialog.showLoader("Please wait".tr);
-                              WithdrawModel withdrawModel = WithdrawModel();
-                              withdrawModel.id = Constant.getUuid();
-                              withdrawModel.userId = FireStoreUtils.getCurrentUid();
-                              withdrawModel.paymentStatus = "pending";
-                              withdrawModel.amount =
-                                  controller.withdrawalAmountController.value.text;
-                              withdrawModel.note = controller.noteController.value.text;
-                              withdrawModel.createdDate = Timestamp.now();
+                    const SizedBox(height: 20),
 
-                              await FireStoreUtils.updatedDriverWallet(
-                                  amount:
-                                      "-${controller.withdrawalAmountController.value.text}");
+                    // Withdraw Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ButtonThem.buildButton(
+                        context,
+                        title: "Request Withdrawal".tr,
+                        onPress: () async {
+                          final String amountText = controller.withdrawalAmountController.value.text.trim();
+                          if (amountText.isEmpty || double.tryParse(amountText) == null) {
+                            ShowToastDialog.showToast("Please enter a valid amount".tr);
+                            return;
+                          }
+                          final double enteredAmount = double.parse(amountText);
+                          if (controller.calculatedWalletBalance < enteredAmount) {
+                            ShowToastDialog.showToast("Insufficient wallet balance".tr);
+                          } else if (double.parse(Constant.minimumAmountToWithdrawal) > enteredAmount) {
+                            ShowToastDialog.showToast(
+                                "Minimum withdrawal amount is ${Constant.amountShow(amount: Constant.minimumAmountToWithdrawal)}"
+                                    .tr);
+                          } else {
+                            ShowToastDialog.showLoader("Submitting withdrawal request...".tr);
+                            WithdrawModel withdrawModel = WithdrawModel();
+                            withdrawModel.id = Constant.getUuid();
+                            withdrawModel.userId = FireStoreUtils.getCurrentUid();
+                            withdrawModel.paymentStatus = "pending";
+                            withdrawModel.amount = amountText;
+                            withdrawModel.note = controller.noteController.value.text;
+                            withdrawModel.createdDate = Timestamp.now();
 
-                              await FireStoreUtils.setWithdrawRequest(withdrawModel)
-                                  .then((value) {
-                                controller.getUser();
-                                ShowToastDialog.closeLoader();
-                                ShowToastDialog.showToast("Request sent to admin".tr);
-                                Get.back();
-                              });
-                            }
-                          },
-                        )
-                      ],
+                            await FireStoreUtils.updatedDriverWallet(
+                                amount: "-$amountText");
+
+                            await FireStoreUtils.setWithdrawRequest(withdrawModel)
+                                .then((value) {
+                              controller.getUser();
+                              controller.getTraction();
+                              ShowToastDialog.closeLoader();
+                              Get.back();
+                              // Show success dialog
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.check_circle, color: Colors.green, size: 60),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        "Withdrawal Request Submitted!".tr,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        "Your request of ${Constant.amountShow(amount: amountText)} has been sent to admin. Amount will be transferred to your bank/JazzCash account after approval.".tr,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 13,
+                                          color: AppColors.grey600,
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx),
+                                      child: Text("OK".tr),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            });
+                          }
+                        },
+                      ),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
             );
           });
         });
+  }
+
+  Widget _bankDetailRow({required IconData icon, required String label, required String value}) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: AppColors.grey500),
+        const SizedBox(width: 6),
+        Text(
+          "$label: ",
+          style: GoogleFonts.poppins(fontSize: 13, color: AppColors.grey500),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ],
+    );
   }
 }
 

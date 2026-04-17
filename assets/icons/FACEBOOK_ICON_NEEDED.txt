@@ -1,0 +1,20 @@
+IMPORTANT: Please add a Facebook icon
+
+You need to add a Facebook icon named "ic_facebook.png" to this directory.
+
+Instructions:
+1. Download a Facebook icon (PNG format, transparent background recommended)
+2. Recommended size: 512x512px or similar
+3. Save it as: ic_facebook.png in this folder (assets/icons/)
+4. The icon should have a blue background with the white 'f' logo
+
+You can download from:
+- https://www.facebook.com/brand/resources/facebookapp/logo/
+- Or search for "facebook icon png" on Google Images (ensure you have usage rights)
+- Or use a free icon from: https://www.flaticon.com/ or https://icons8.com/
+
+Temporary Solution:
+Until you add the icon, you can:
+- Copy ic_google.png and rename it to ic_facebook.png as a placeholder
+- Or comment out the iconAssetImage line in login_screen.dart
+

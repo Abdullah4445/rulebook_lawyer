@@ -178,7 +178,7 @@ class HomeController extends GetxController {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
     String? token = await _firebaseMessaging.getToken();
-    print("New token for this driver is: $token");
+    print("🔔 New FCM token for lawyer: $token");
     if (token != null) {
       await _updateTokenInFirestore(driverId, token);
     }

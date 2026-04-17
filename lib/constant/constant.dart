@@ -40,6 +40,7 @@ class Constant {
   static const String phoneLoginType = "phone";
   static const String googleLoginType = "google";
   static const String appleLoginType = "apple";
+  static const String facebookLoginType = "facebook";
   static LocationLatLng? currentLocation;
   static const String exclusivePlanId = 'lawyer_exclusive_plan';
 

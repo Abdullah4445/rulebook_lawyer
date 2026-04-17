@@ -7,6 +7,7 @@ import 'package:lawyer/constant/show_toast_dialog.dart';
 import 'package:lawyer/ui/auth_screen/otp_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -23,42 +24,57 @@ class LoginController extends GetxController {
   Rx<GlobalKey<FormState>> formKey = GlobalKey<FormState>().obs;
 
   sendCode() async {
-    ShowToastDialog.showLoader("Please wait".tr);
-    await FirebaseAuth.instance
-        .verifyPhoneNumber(
-      phoneNumber: countryCode + phoneNumberController.value.text,
-      verificationCompleted: (PhoneAuthCredential credential) {},
-      verificationFailed: (FirebaseAuthException e) {
-        debugPrint("FirebaseAuthException--->${e.message}");
+    try {
+      ShowToastDialog.showLoader("Please wait".tr);
+
+      await FirebaseAuth.instance
+          .verifyPhoneNumber(
+        phoneNumber: countryCode + phoneNumberController.value.text,
+        verificationCompleted: (PhoneAuthCredential credential) {},
+        verificationFailed: (FirebaseAuthException e) {
+          debugPrint("FirebaseAuthException--->${e.message}");
+          ShowToastDialog.closeLoader();
+          if (e.code == 'invalid-phone-number') {
+            ShowToastDialog.showToast("The provided phone number is not valid.".tr);
+          } else {
+            ShowToastDialog.showToast("Something went wrong.".tr);
+          }
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          ShowToastDialog.closeLoader();
+          Get.to(const OtpScreen(), arguments: {
+            "countryCode": countryCode.value,
+            "phoneNumber": phoneNumberController.value.text,
+            "verificationId": verificationId,
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      )
+          .catchError((error) {
+        debugPrint("catchError--->$error");
         ShowToastDialog.closeLoader();
-        if (e.code == 'invalid-phone-number') {
-          ShowToastDialog.showToast("The provided phone number is not valid.".tr);
-        } else {
-          ShowToastDialog.showToast(e.message);
-        }
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        ShowToastDialog.closeLoader();
-        Get.to(const OtpScreen(), arguments: {
-          "countryCode": countryCode.value,
-          "phoneNumber": phoneNumberController.value.text,
-          "verificationId": verificationId,
-        });
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    )
-        .catchError((error) {
-      debugPrint("catchError--->$error");
+        ShowToastDialog.showToast(
+            "You have try many time please send otp after some time".tr);
+      });
+    } catch (e) {
+      print(e);
       ShowToastDialog.closeLoader();
-      ShowToastDialog.showToast(
-          "You have try many time please send otp after some time".tr);
-    });
+      ShowToastDialog.showToast("Error: ${e.toString()}".tr);
+    }
   }
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser =
-          await GoogleSignIn().signIn().catchError((error) {
+          await GoogleSignIn().signIn().timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          debugPrint("Google Sign-In timeout");
+          ShowToastDialog.closeLoader();
+          ShowToastDialog.showToast("Sign in timeout. Please try again.".tr);
+          return null;
+        },
+      ).catchError((error) {
         debugPrint("catchError--->$error");
         ShowToastDialog.closeLoader();
         ShowToastDialog.showToast("Something went wrong".tr);
@@ -67,20 +83,30 @@ class LoginController extends GetxController {
 
       if (googleUser == null) {
         debugPrint("Google Sign-In cancelled by user.");
+        ShowToastDialog.closeLoader();
         return null;
       }
 
-      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      final GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+
+      if (googleAuth == null || googleAuth.idToken == null) {
+        debugPrint("Failed to get Google auth credentials");
+        ShowToastDialog.closeLoader();
+        ShowToastDialog.showToast("Authentication failed. Please try again.".tr);
+        return null;
+      }
 
       // Create a new credential using only the idToken for Firebase Authentication
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
       debugPrint("Unexpected Google Sign-In error: $e");
+      ShowToastDialog.closeLoader();
+      ShowToastDialog.showToast("Sign in failed: ${e.toString()}".tr);
       return null;
     }
   }
@@ -111,6 +137,48 @@ class LoginController extends GetxController {
       debugPrint(e.toString());
     }
     return null;
+  }
+
+  Future<UserCredential?> signInWithFacebook() async {
+    try {
+      // Trigger the sign-in flow
+      final LoginResult loginResult = await FacebookAuth.instance.login(
+        permissions: ['email', 'public_profile'],
+      );
+
+      if (loginResult.status == LoginStatus.success) {
+        // Get the access token
+        final AccessToken? accessToken = loginResult.accessToken;
+
+        if (accessToken == null) {
+          debugPrint("Failed to get Facebook access token");
+          ShowToastDialog.closeLoader();
+          ShowToastDialog.showToast("Authentication failed. Please try again.".tr);
+          return null;
+        }
+
+        // Create a credential from the access token
+        final OAuthCredential facebookAuthCredential =
+            FacebookAuthProvider.credential(accessToken.tokenString);
+
+        // Sign in to Firebase with the Facebook credential
+        return await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+      } else if (loginResult.status == LoginStatus.cancelled) {
+        debugPrint("Facebook Sign-In cancelled by user.");
+        ShowToastDialog.closeLoader();
+        return null;
+      } else {
+        debugPrint("Facebook Sign-In failed: ${loginResult.message}");
+        ShowToastDialog.closeLoader();
+        ShowToastDialog.showToast("Sign in failed. Please try again.".tr);
+        return null;
+      }
+    } catch (e) {
+      debugPrint("Unexpected Facebook Sign-In error: $e");
+      ShowToastDialog.closeLoader();
+      ShowToastDialog.showToast("Sign in failed: ${e.toString()}".tr);
+      return null;
+    }
   }
 
   String generateNonce([int length = 32]) {

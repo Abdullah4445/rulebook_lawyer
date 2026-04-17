@@ -47,15 +47,43 @@ class WalletController extends GetxController {
   RxBool isLoading = true.obs;
   RxList transactionList = <WalletTransactionModel>[].obs;
 
+  // Calculate wallet balance (excluding cash payments only)
+  // Admin topups, wallet transfers, topups etc. all included
+  double get calculatedWalletBalance {
+    double balance = 0.0;
+    for (var transaction in transactionList.whereType<WalletTransactionModel>()) {
+      final String paymentType = transaction.paymentType?.trim().toLowerCase() ?? '';
+      // ONLY exclude cash payments from wallet balance
+      if (paymentType != 'cash') {
+        final double amount = double.tryParse(transaction.amount?.toString() ?? '0') ?? 0.0;
+        balance += amount;
+      }
+    }
+    return balance;
+  }
+
+  // Topup transactions (user topup via payment gateway)
   List<WalletTransactionModel> get topUpTransactions => transactionList
       .whereType<WalletTransactionModel>()
-      .where((transaction) => _isTopUpTransaction(transaction))
+      .where((t) => _isTopUpTransaction(t) && !_isCashTransaction(t))
       .toList();
 
+  // Admin added / wallet activity (non-cash, non-topup) - includes admin credits
   List<WalletTransactionModel> get otherWalletTransactions => transactionList
       .whereType<WalletTransactionModel>()
-      .where((transaction) => !_isTopUpTransaction(transaction))
+      .where((t) => !_isTopUpTransaction(t) && !_isCashTransaction(t))
       .toList();
+
+  // Cash payment transactions only (for reference display)
+  List<WalletTransactionModel> get cashTransactions => transactionList
+      .whereType<WalletTransactionModel>()
+      .where((t) => _isCashTransaction(t))
+      .toList();
+
+  bool _isCashTransaction(WalletTransactionModel t) {
+    final String paymentType = t.paymentType?.trim().toLowerCase() ?? '';
+    return paymentType == 'cash';
+  }
 
   @override
   void onInit() {
