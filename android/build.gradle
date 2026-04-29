@@ -18,6 +18,21 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
+    // Force Java 21 toolchain for ALL subprojects to avoid
+    // "cannot find Java 17" error when only JDK 21 is available.
+    afterEvaluate {
+        if (it.plugins.hasPlugin('kotlin-android') || it.plugins.hasPlugin('org.jetbrains.kotlin.android')) {
+            it.kotlin {
+                jvmToolchain(21)
+            }
+        }
+        if (it.plugins.hasPlugin('com.android.library') || it.plugins.hasPlugin('com.android.application')) {
+            it.android.compileOptions {
+                sourceCompatibility JavaVersion.VERSION_21
+                targetCompatibility JavaVersion.VERSION_21
+            }
+        }
+    }
 }
 subprojects {
     project.evaluationDependsOn(':app')

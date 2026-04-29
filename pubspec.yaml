@@ -139,10 +139,10 @@ flutter_launcher_icons:
 flutter_native_splash:
   color: "#0F172A"
   color_dark: "#020617"
-  image: assets/appicon/app_logo2.png
-  image_dark: assets/appicon/app_logodark2.png
+  image: assets/appicon/lawyer_splash1.png
+  image_dark: assets/appicon/lawyer_splash1.png
   android_12:
     color: "#0F172A"
     color_dark: "#020617"
-    image: assets/appicon/app_logo2.png
-    image_dark: assets/appicon/app_logodark2.png
+    image: assets/appicon/lawyer_splash1.png
+    image_dark: assets/appicon/lawyer_splash1.png
