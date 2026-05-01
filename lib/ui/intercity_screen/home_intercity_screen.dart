@@ -20,7 +20,8 @@ class HomeIntercityScreen extends StatelessWidget {
           return controller.selectedService.value.intercityType == null || controller.selectedService.value.intercityType == false
               ? Scaffold(
                   backgroundColor: AppColors.primary,
-                  body: Column(
+                  body: SafeArea(
+                    child: Column(
                     children: [
                       SizedBox(
                         height: Responsive.width(8, context),
@@ -31,7 +32,7 @@ class HomeIntercityScreen extends StatelessWidget {
                           height: Responsive.height(100, context),
                           width: Responsive.width(100, context),
                           decoration:
-                              BoxDecoration(color: Theme.of(context).colorScheme.background, borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+                              BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
@@ -44,9 +45,12 @@ class HomeIntercityScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  ),
                 )
               : Scaffold(
-                  body: controller.widgetOptions.elementAt(controller.selectedIndex.value),
+                  body: SafeArea(
+                    child: controller.widgetOptions.elementAt(controller.selectedIndex.value),
+                  ),
                   bottomNavigationBar: BottomNavigationBar(
                       items: <BottomNavigationBarItem>[
                         BottomNavigationBarItem(

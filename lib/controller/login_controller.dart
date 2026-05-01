@@ -3,10 +3,12 @@ import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:crypto/crypto.dart';
+import 'package:lawyer/firebase_options.dart';
 import 'package:lawyer/constant/show_toast_dialog.dart';
 import 'package:lawyer/ui/auth_screen/otp_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
@@ -18,6 +20,9 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../utils/utils.dart';
 
 class LoginController extends GetxController {
+  static const String _serverClientId =
+      '82480771693-is2grp5q30rlgtfc72to4emfu5kilg9i.apps.googleusercontent.com';
+
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
   RxString countryCode = "+1".obs;
 
@@ -65,8 +70,18 @@ class LoginController extends GetxController {
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
+      final googleSignIn = GoogleSignIn(
+        scopes: const ['email', 'profile'],
+        serverClientId: _serverClientId,
+        clientId: defaultTargetPlatform == TargetPlatform.iOS
+            ? DefaultFirebaseOptions.ios.iosClientId
+            : null,
+      );
+
+      await googleSignIn.signOut();
+
       final GoogleSignInAccount? googleUser =
-          await GoogleSignIn().signIn().timeout(
+          await googleSignIn.signIn().timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           debugPrint("Google Sign-In timeout");
@@ -87,9 +102,10 @@ class LoginController extends GetxController {
         return null;
       }
 
-      final GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-      if (googleAuth == null || googleAuth.idToken == null) {
+      if ((googleAuth.idToken == null || googleAuth.idToken!.isEmpty) &&
+          (googleAuth.accessToken == null || googleAuth.accessToken!.isEmpty)) {
         debugPrint("Failed to get Google auth credentials");
         ShowToastDialog.closeLoader();
         ShowToastDialog.showToast("Authentication failed. Please try again.".tr);
@@ -106,7 +122,13 @@ class LoginController extends GetxController {
     } catch (e) {
       debugPrint("Unexpected Google Sign-In error: $e");
       ShowToastDialog.closeLoader();
-      ShowToastDialog.showToast("Sign in failed: ${e.toString()}".tr);
+      final message = e.toString();
+      if (message.contains('10') || message.contains('DEVELOPER_ERROR')) {
+        ShowToastDialog.showToast(
+            'Google Sign-In is not configured for this build. Add the current SHA-1/SHA-256 in Firebase.'.tr);
+      } else {
+        ShowToastDialog.showToast("Sign in failed: ${e.toString()}".tr);
+      }
       return null;
     }
   }

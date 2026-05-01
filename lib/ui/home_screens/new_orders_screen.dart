@@ -251,72 +251,170 @@ class _EmptyViewState extends State<_EmptyView>
           opacity: value,
           child: Transform.scale(scale: 0.8 + (value * 0.2), child: child),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            AnimatedBuilder(
-              animation: _float,
-              builder: (context, child) => Transform.translate(
-                offset: Offset(0, _float.value),
-                child: child,
-              ),
+            Positioned(
+              top: 40,
+              left: 28,
               child: Container(
-                padding: const EdgeInsets.all(28),
+                width: 88,
+                height: 88,
                 decoration: BoxDecoration(
-                  color: AppColors.brandGold.withOpacity(0.08),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.brandGold.withOpacity(0.2),
-                    width: 2,
+                  color: AppColors.brandGold.withValues(alpha: 0.08),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 84,
+              right: 44,
+              child: Container(
+                width: 96,
+                height: 2,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.brandGold.withValues(alpha: 0.12),
+                      AppColors.brandGold.withValues(alpha: 0.48),
+                      Colors.transparent,
+                    ],
                   ),
                 ),
-                child: Icon(
-                  Icons.gavel,
-                  size: 56,
-                  color: AppColors.brandGold.withOpacity(0.6),
+              ),
+            ),
+            Positioned(
+              bottom: 96,
+              left: 46,
+              child: Container(
+                width: 120,
+                height: 2,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      AppColors.brandGold.withValues(alpha: 0.35),
+                      AppColors.brandGold.withValues(alpha: 0.10),
+                    ],
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 24),
-            Text(
-              "No New Cases",
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: widget.themeChange.getThem() ? Colors.white : Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "New cases will appear here\nwhen clients post them",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                color: AppColors.subTitleColor,
-                height: 1.6,
-              ),
-            ),
-            const SizedBox(height: 24),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.fromLTRB(24, 28, 24, 26),
               decoration: BoxDecoration(
-                color: AppColors.brandGold.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.brandGold.withOpacity(0.3),
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFFFFFEFB), Color(0xFFF3EEE4)],
                 ),
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(color: AppColors.brandGold.withValues(alpha: 0.40), width: 1.3),
+                boxShadow: const [
+                  BoxShadow(
+                    color: AppColors.cardShadow,
+                    blurRadius: 24,
+                    offset: Offset(0, 12),
+                  ),
+                ],
               ),
-              child: Row(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.circle, size: 8, color: AppColors.brandGold),
-                  const SizedBox(width: 8),
+                  AnimatedBuilder(
+                    animation: _float,
+                    builder: (context, child) => Transform.translate(
+                      offset: Offset(0, _float.value),
+                      child: child,
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFF8E1A0), Color(0xFFC9A227)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.brandGold.withValues(alpha: 0.28),
+                            blurRadius: 18,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.gavel_rounded,
+                        size: 58,
+                        color: Color(0xFF6B5310),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   Text(
-                    "Listening for new cases...",
+                    "No New Cases",
+                    textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: AppColors.brandGold,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.brandNavy,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Your dashboard is ready. New legal requests will appear here as soon as clients submit them.",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 13.5,
+                      color: AppColors.brandNavy.withValues(alpha: 0.72),
+                      height: 1.65,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.brandNavy,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.brandGold.withValues(alpha: 0.65), width: 1.4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.brandGold.withValues(alpha: 0.16),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: AppColors.brandGold,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.brandGold.withValues(alpha: 0.55),
+                                blurRadius: 10,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          "Listening for new cases...",
+                          style: GoogleFonts.poppins(
+                            fontSize: 12.5,
+                            color: AppColors.brandGoldLight,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

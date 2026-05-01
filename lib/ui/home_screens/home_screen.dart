@@ -27,7 +27,8 @@ class HomeScreen extends StatelessWidget {
               double.tryParse(Constant.minimumDepositToRideAccept) ?? 0;
           return Scaffold(
             backgroundColor: AppColors.primary,
-            body: controller.isLoading.value
+            body: SafeArea(
+              child: controller.isLoading.value
                 ? Constant.loader(context)
                 : Column(
                     children: [
@@ -80,6 +81,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+            ),
             bottomNavigationBar: BottomNavigationBar(
                 items: <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
@@ -106,7 +108,20 @@ class HomeScreen extends StatelessWidget {
                   ),
                   BottomNavigationBarItem(
                     icon: badges.Badge(
-                      badgeContent: Text(controller.isActiveValue.value.toString()),
+                      badgeStyle: badges.BadgeStyle(
+                        badgeColor: AppColors.darkModePrimary,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        borderSide: const BorderSide(color: Colors.white, width: 1),
+                      ),
+                      badgeContent: Text(
+                        controller.isActiveValue.value.toString(),
+                        style: GoogleFonts.poppins(
+                          color: AppColors.primary,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(6.0),
                         child: Image.asset("assets/icons/active.png",

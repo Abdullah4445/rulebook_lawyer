@@ -11,6 +11,7 @@ import 'package:lawyer/ui/subscription_plan_screen/subscription_history.dart';
 import 'package:lawyer/ui/subscription_plan_screen/subscription_list_screen.dart';
 import 'package:lawyer/ui/terms_and_condition/terms_and_condition_screen.dart';
 import 'package:lawyer/ui/vehicle_information/vehicle_information_screen.dart';
+import 'package:lawyer/ui/ai_chat/ai_chat_screen.dart';
 import 'package:lawyer/ui/wallet/wallet_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,14 +42,16 @@ class DashBoardController extends GetxController {
         case 7:
           return const SettingScreen();
         case 8:
-          return const SubscriptionListScreen();
+          return const AiChatScreen();
         case 9:
-          return const SubscriptionHistory();
+          return const SubscriptionListScreen();
         case 10:
+          return const SubscriptionHistory();
+        case 11:
           return const TermsAndConditionScreen(
             type: 'terms',
           );
-        case 11:
+        case 12:
           return const TermsAndConditionScreen(
             type: 'privacy',
           );
@@ -74,12 +77,14 @@ class DashBoardController extends GetxController {
         case 7:
           return const SettingScreen();
         case 8:
-          return const SubscriptionHistory();
+          return const AiChatScreen();
         case 9:
+          return const SubscriptionHistory();
+        case 10:
           return const TermsAndConditionScreen(
             type: 'terms',
           );
-        case 10:
+        case 11:
           return const TermsAndConditionScreen(
             type: 'privacy',
           );
@@ -93,14 +98,14 @@ class DashBoardController extends GetxController {
 
   onSelectItem(int index) async {
     if (Constant.isSubscriptionModelApplied == true) {
-      if (index == 12) { // Logout index change kiya
+      if (index == 13) { // Logout index (14 items, last = 13)
         await FirebaseAuth.instance.signOut();
         Get.offAll(const LoginScreen());
       } else {
         selectedDrawerIndex.value = index;
       }
     } else {
-      if (index == 11) { // Logout index change kiya
+      if (index == 12) { // Logout index (13 items, last = 12)
         await FirebaseAuth.instance.signOut();
         Get.offAll(const LoginScreen());
       } else {
@@ -122,34 +127,36 @@ class DashBoardController extends GetxController {
   setDrawerList() {
     if (Constant.isSubscriptionModelApplied == true) {
       drawerItems.value = [
-        DrawerItem('Cases'.tr, "assets/icons/ic_city.svg"),
-        DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
-        DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
-        DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
-        DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),
-        DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"),
-        DrawerItem('Lawyer Information'.tr, "assets/icons/ic_city.svg"),
-        DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
-        DrawerItem('Subscription'.tr, "assets/icons/ic_subscription.svg"),
-        DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
-        DrawerItem('Terms and Conditions', "assets/icons/ic_terms.svg"),
-        DrawerItem('Privacy Policy', "assets/icons/ic_terms.svg"),
-        DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),
+        DrawerItem('Cases'.tr, "assets/icons/ic_city.svg"),            // 0
+        DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),      // 1
+        DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),  // 2
+        DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),           // 3
+        DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),       // 4
+        DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"), // 5
+        DrawerItem('Lawyer Information'.tr, "assets/icons/ic_city.svg"), // 6
+        DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),     // 7
+        DrawerItem('AI Legal Research'.tr, "assets/icons/ic_city.svg"), // 8
+        DrawerItem('Subscription'.tr, "assets/icons/ic_subscription.svg"), // 9
+        DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"), // 10
+        DrawerItem('Terms and Conditions', "assets/icons/ic_terms.svg"), // 11
+        DrawerItem('Privacy Policy', "assets/icons/ic_terms.svg"),     // 12
+        DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),        // 13
       ];
     } else {
       drawerItems.value = [
-        DrawerItem('Cases'.tr, "assets/icons/ic_city.svg"),
-        DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
-        DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
-        DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
-        DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),
-        DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"),
-        DrawerItem('Lawyer Information'.tr, "assets/icons/ic_city.svg"),
-        DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
-        DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
-        DrawerItem('Terms and Conditions', "assets/icons/ic_terms.svg"),
-        DrawerItem('Privacy Policy', "assets/icons/ic_terms.svg"),
-        DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),
+        DrawerItem('Cases'.tr, "assets/icons/ic_city.svg"),            // 0
+        DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),      // 1
+        DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),  // 2
+        DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),           // 3
+        DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),       // 4
+        DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"), // 5
+        DrawerItem('Lawyer Information'.tr, "assets/icons/ic_city.svg"), // 6
+        DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),     // 7
+        DrawerItem('AI Legal Research'.tr, "assets/icons/ic_city.svg"), // 8
+        DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"), // 9
+        DrawerItem('Terms and Conditions', "assets/icons/ic_terms.svg"), // 10
+        DrawerItem('Privacy Policy', "assets/icons/ic_terms.svg"),     // 11
+        DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),        // 12
       ];
     }
   }

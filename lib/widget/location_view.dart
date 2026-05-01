@@ -1,8 +1,6 @@
-﻿import 'package:lawyer/themes/app_colors.dart';
-import 'package:lawyer/themes/responsive.dart';
+﻿import 'package:lawyer/themes/responsive.dart';
 import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dash/flutter_dash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +14,7 @@ class LocationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeChange = Provider.of<DarkThemeProvider>(context);
+    final textColor = Theme.of(context).colorScheme.onSurface;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +33,11 @@ class LocationView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(sourceLocation.toString(), maxLines: 2, style: GoogleFonts.poppins(color: Colors.black)),
+              Text(
+                sourceLocation.toString(),
+                maxLines: 2,
+                style: GoogleFonts.poppins(color: textColor),
+              ),
               SizedBox(
                   height: calculateLineWraps(text: sourceLocation.toString(), textStyle: TextStyle(), maxWidth: Responsive.width(80, context)) == 2
                       ? Responsive.height(2.2, context)

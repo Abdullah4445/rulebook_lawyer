@@ -93,6 +93,13 @@ class UserView extends StatelessWidget {
         required String distance,
         required String distanceType,
       }) {
+    final theme = Theme.of(context);
+    final primaryTextColor = theme.colorScheme.onSurface;
+    final secondaryTextColor = theme.textTheme.bodyMedium?.color?.withValues(
+          alpha: theme.brightness == Brightness.dark ? 0.78 : 0.72,
+        ) ??
+        (theme.brightness == Brightness.dark ? AppColors.gray300 : AppColors.gray600);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -123,7 +130,7 @@ class UserView extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
-                  color: Colors.black, // ðŸ‘ˆ Ensures visibility on dark theme
+                  color: primaryTextColor,
                 ),
               ),
               const SizedBox(height: 4),
@@ -169,7 +176,7 @@ class UserView extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 13,
-                          color: Colors.black,
+                          color: secondaryTextColor,
                         ),
                       ),
                     ],

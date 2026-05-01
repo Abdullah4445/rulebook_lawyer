@@ -4,11 +4,11 @@
 /// Premium legal services color scheme - Dark Blue, Gold, and Black
 class AppColors {
   // Primary Legal Brand Colors
-  static const Color primary = Color(0xFF0F172A); // Deep Navy Blue
+  static const Color primary = Color(0xFF000000); // Brand Black
   static const Color darkModePrimary = Color(0xFFC9A227); // Elegant Gold
   static const Color brandGold = Color(0xFFC9A227);
   static const Color brandGoldLight = Color(0xFFFFF9E6);
-  static const Color brandNavy = Color(0xFF0F172A);
+  static const Color brandNavy = Color(0xFF000000);
   static const Color brandSurface = Color(0xFFF8FAFC);
   static const Color brandSurfaceDark = Color(0xFF020617);
 
@@ -21,12 +21,12 @@ class AppColors {
   // Background Colors
   static const Color background = Color(0xffFFFFFF);
   static const Color darkBackground = Color(0xff020617);
-  static const Color gradientStart = Color(0xFF0F172A);
-  static const Color gradientEnd = Color(0xFF1E293B);
+  static const Color gradientStart = Color(0xFF000000);
+  static const Color gradientEnd = Color(0xFF111111);
 
   // Drawer Colors
   static const Color drawerIcon = Color(0xFF94A3B8);
-  static const Color drawerActive = Color(0xFF0F172A);
+  static const Color drawerActive = Color(0xFF000000);
   static const Color drawerActiveDark = Color(0xFFC9A227);
 
   // Utility Colors
@@ -62,7 +62,7 @@ class AppColors {
   static const Color gray600 = Color(0xFF475569);
   static const Color gray700 = Color(0xFF334155);
   static const Color gray800 = Color(0xFF1E293B);
-  static const Color gray900 = Color(0xFF0F172A);
+  static const Color gray900 = Color(0xFF000000);
 
   // Additional Gray Colors (from previous config)
   static const Color grey50 = Color(0xFFF8FAFC);
@@ -74,7 +74,7 @@ class AppColors {
   static const Color grey600 = Color(0xFF475569);
   static const Color grey700 = Color(0xFF334155);
   static const Color grey800 = Color(0xFF1E293B);
-  static const Color grey900 = Color(0xFF0F172A);
+  static const Color grey900 = Color(0xFF000000);
 
   // Text Field Colors
   static const Color textField = Color(0xFFF8FAFC);
@@ -100,7 +100,7 @@ class AppColors {
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
+    colors: [Color(0xFF000000), Color(0xFF111111)],
   );
 
   static const LinearGradient goldGradient = LinearGradient(

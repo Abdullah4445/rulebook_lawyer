@@ -1,5 +1,6 @@
 ﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lawyer/utils/case_duration_utils.dart';
+import 'package:lawyer/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -257,23 +258,28 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
     final caseDuration = CaseDurationUtils.formatDuration(
       fareDetails['caseDuration'] ?? fareDetails['duration'],
     );
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkContainerBackground : Colors.white;
+    final borderColor = isDark ? AppColors.darkContainerBorder : Colors.grey.shade200;
+    final subtleTextColor = isDark ? AppColors.gray400 : Colors.grey.shade700;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Billing Details"),
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
+        title: const Text("Billing Details",selectionColor: Colors.white,),
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
         actions: [
-          // Refresh Button
           IconButton(
             onPressed: refreshing ? null : refreshData,
             icon: refreshing
-                ? const SizedBox(
+                ? SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Colors.white,
+                color: scheme.onPrimary,
               ),
             )
                 : const Icon(Icons.refresh),
@@ -281,18 +287,17 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
           ),
         ],
       ),
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: loading
-          ? const Center(child: CircularProgressIndicator(color: Colors.black))
+          ? Center(child: CircularProgressIndicator(color: scheme.primary))
           : RefreshIndicator(
         onRefresh: refreshData,
-        color: Colors.black,
+        color: scheme.primary,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header with manual refresh button
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -301,26 +306,9 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: scheme.onSurface,
                     ),
                   ),
-                  // Small refresh button
-                  // IconButton(
-                  //   onPressed: refreshing ? null : refreshData,
-                  //   icon: refreshing
-                  //       ? const SizedBox(
-                  //     width: 20,
-                  //     height: 20,
-                  //     child: CircularProgressIndicator(
-                  //       strokeWidth: 2,
-                  //       color: Colors.black,
-                  //     ),
-                  //   )
-                  //       : const Icon(
-                  //     Icons.refresh,
-                  //     size: 24,
-                  //   ),
-                  //   tooltip: 'Refresh',
-                  // ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -330,9 +318,9 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cardColor,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: borderColor),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -341,7 +329,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                         "Estimated Case Time",
                         style: GoogleFonts.poppins(
                           fontSize: 13,
-                          color: Colors.grey.shade700,
+                          color: subtleTextColor,
                         ),
                       ),
                       Text(
@@ -349,6 +337,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
+                          color: scheme.onSurface,
                         ),
                       ),
                     ],
@@ -372,24 +361,16 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                   },
                 ),
               ),
-              _buildTotalSection(),
+              _buildTotalSection(
+                theme: theme,
+                cardColor: cardColor,
+                borderColor: borderColor,
+                subtleTextColor: subtleTextColor,
+              ),
             ],
           ),
         ),
       ),
-      // Floating Action Button for refresh
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: refreshing ? null : refreshData,
-      //   backgroundColor: Colors.black,
-      //   foregroundColor: Colors.white,
-      //   child: refreshing
-      //       ? const CircularProgressIndicator(
-      //     color: Colors.white,
-      //     strokeWidth: 2,
-      //   )
-      //       : const Icon(Icons.refresh),
-      //   tooltip: 'Refresh Data',
-      // ),
     );
   }
 
@@ -405,16 +386,29 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
   }) {
     bool isLawyerDone = lawyerStatus.toLowerCase() == "done";
     bool isCustomerDone = customerStatus.toLowerCase() == "done";
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkContainerBackground : Colors.white;
+    final borderColor = isDark ? AppColors.darkContainerBorder : Colors.grey.shade200;
+    final subtleTextColor = isDark ? AppColors.gray400 : Colors.grey;
+    final durationChipColor = isDark
+        ? AppColors.brandGold.withValues(alpha: 0.14)
+        : const Color.fromRGBO(96, 125, 139, 0.08);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: const [
-          BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 5)
+        color: cardColor,
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.16 : 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          )
         ],
       ),
       child: Column(
@@ -428,7 +422,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                 style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey,
+                  color: subtleTextColor,
                 ),
               ),
               _statusBadge(lawyerStatus, "Lawyer"),
@@ -440,6 +434,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.w600,
+              color: scheme.onSurface,
             ),
           ),
           if (durationText.isNotEmpty) ...[
@@ -447,7 +442,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: Color.fromRGBO(96, 125, 139, 0.08),
+                color: durationChipColor,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -455,7 +450,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: Colors.blueGrey.shade700,
+                  color: isDark ? AppColors.brandGold : Colors.blueGrey.shade700,
                 ),
               ),
             ),
@@ -467,9 +462,9 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "Fee",
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 12, color: subtleTextColor),
                   ),
                   Text(
                     "Rs $price",
@@ -484,9 +479,9 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Text(
+                  Text(
                     "Customer",
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(fontSize: 12, color: subtleTextColor),
                   ),
                   _statusBadge(customerStatus, "Client"),
                 ],
@@ -496,7 +491,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
           const SizedBox(height: 16),
 
           if (driverConfirmed)
-            _completedBanner("âœ” Step Fully Completed & Paid")
+            _completedBanner("Step Fully Completed & Paid")
           else if (isCustomerDone && !driverConfirmed)
             _buildDriverConfirmationRow(index)
           else if (!isLawyerDone)
@@ -509,13 +504,14 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
   }
 
   Widget _buildLawyerActionBtn(VoidCallback onMarkDone) {
+    final scheme = Theme.of(context).colorScheme;
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: onMarkDone,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue[800],
-          foregroundColor: Colors.white,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -526,14 +522,16 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
   }
 
   Widget _buildDriverConfirmationRow(int index) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     return Column(
       children: [
-        const Text(
+        Text(
           "Customer claims payment is done. Confirm?",
           style: TextStyle(
             fontSize: 12,
             fontStyle: FontStyle.italic,
-            color: Colors.redAccent,
+            color: theme.colorScheme.error,
           ),
         ),
         const SizedBox(height: 8),
@@ -553,6 +551,10 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
             Expanded(
               child: OutlinedButton(
                 onPressed: () => cancelCustomerDone(index),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: scheme.onSurface,
+                  side: BorderSide(color: scheme.outline.withValues(alpha: 0.5)),
+                ),
                 child: const Text("No/Reject"),
               ),
             ),
@@ -563,35 +565,50 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
   }
 
   Widget _completedBanner(String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.green[50],
+        color: isDark
+            ? Colors.green.withValues(alpha: 0.14)
+            : Colors.green[50],
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.green.shade200),
       ),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.green[800],
-          fontWeight: FontWeight.bold,
-          fontSize: 13,
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.check_circle_rounded, size: 18, color: Colors.green[800]),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.green[800],
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _statusBadge(String status, String prefix) {
     Color color = status.toLowerCase() == "done" ? Colors.green : Colors.orange;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Color.alphaBlend(
-          color.withAlpha(26),
-          Colors.white,
-        ),
+        color: isDark
+            ? color.withValues(alpha: 0.16)
+            : Color.alphaBlend(
+                color.withAlpha(26),
+                Colors.white,
+              ),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: color.withAlpha(128)),
       ),
@@ -606,16 +623,28 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
     );
   }
 
-  Widget _buildTotalSection() {
+  Widget _buildTotalSection({
+    required ThemeData theme,
+    required Color cardColor,
+    required Color borderColor,
+    required Color subtleTextColor,
+  }) {
     final caseDuration = CaseDurationUtils.formatDuration(
       fareDetails['caseDuration'] ?? fareDetails['duration'],
     );
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [const BoxShadow(color: Colors.black12, blurRadius: 10)],
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.16 : 0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          )
+        ],
       ),
       child: Column(
         children: [
@@ -627,6 +656,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
               Text(
@@ -648,7 +678,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                   "Estimated Case Time",
                   style: GoogleFonts.poppins(
                     fontSize: 13,
-                    color: Colors.grey.shade700,
+                    color: subtleTextColor,
                   ),
                 ),
                 Text(
@@ -656,6 +686,7 @@ class _FareDetailsScreenState extends State<FareDetailsScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
               ],

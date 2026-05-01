@@ -22,7 +22,8 @@ class FreightScreen extends StatelessWidget {
         builder: (controller) {
           return Scaffold(
             backgroundColor: AppColors.primary,
-            body: controller.isLoading.value
+            body: SafeArea(
+              child: controller.isLoading.value
                 ? Constant.loader(context)
                 : Column(
                     children: [
@@ -45,7 +46,7 @@ class FreightScreen extends StatelessWidget {
                           height: Responsive.height(100, context),
                           width: Responsive.width(100, context),
                           decoration:
-                              BoxDecoration(color: Theme.of(context).colorScheme.background, borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+                              BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: controller.widgetOptions.elementAt(controller.selectedIndex.value),
@@ -54,6 +55,7 @@ class FreightScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+            ),
             bottomNavigationBar: BottomNavigationBar(
                 items: <BottomNavigationBarItem>[
                   BottomNavigationBarItem(

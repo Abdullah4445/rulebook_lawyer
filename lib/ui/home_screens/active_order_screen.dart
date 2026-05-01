@@ -287,7 +287,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                                                 style: GoogleFonts.poppins(
                                                                     fontSize: 16,
                                                                     fontWeight: FontWeight.w600,
-                                                                    color: Colors.black),
+                                                                    color: Theme.of(context).colorScheme.onSurface),
                                                               ),
                                                               const SizedBox(height: 8),
 
@@ -299,7 +299,11 @@ class ActiveOrderScreen extends StatelessWidget {
                                                                       "Estimated Case Time".tr,
                                                                       style: GoogleFonts.poppins(
                                                                         fontSize: 13,
-                                                                        color: Colors.black54,
+                                                                        color: Theme.of(context)
+                                                                            .textTheme
+                                                                            .bodyMedium
+                                                                            ?.color
+                                                                            ?.withValues(alpha: 0.72),
                                                                       ),
                                                                     ),
                                                                     Text(
@@ -307,7 +311,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                                                       style: GoogleFonts.poppins(
                                                                         fontSize: 13,
                                                                         fontWeight: FontWeight.w600,
-                                                                        color: Colors.black87,
+                                                                        color: Theme.of(context).colorScheme.onSurface,
                                                                       ),
                                                                     ),
                                                                   ],
@@ -336,7 +340,8 @@ class ActiveOrderScreen extends StatelessWidget {
                                                                                 Text(
                                                                                   step['title']?.toString() ?? '',
                                                                                   style: GoogleFonts.poppins(
-                                                                                      fontSize: 14, color: Colors.black87),
+                                                                                      fontSize: 14,
+                                                                                      color: Theme.of(context).colorScheme.onSurface),
                                                                                 ),
                                                                                 if (stepDuration.isNotEmpty)
                                                                                   Padding(
@@ -357,7 +362,7 @@ class ActiveOrderScreen extends StatelessWidget {
                                                                                 amount: step['price']?.toString() ?? '0'),
                                                                             style: GoogleFonts.poppins(
                                                                                 fontWeight: FontWeight.w600,
-                                                                                color: Colors.black),
+                                                                                color: Theme.of(context).colorScheme.onSurface),
                                                                           ),
                                                                         ],
                                                                       ),
@@ -378,13 +383,17 @@ class ActiveOrderScreen extends StatelessWidget {
                                                                   Text(
                                                                     "Total".tr,
                                                                     style: GoogleFonts.poppins(
-                                                                        fontSize: 15, fontWeight: FontWeight.bold,color: Colors.black),
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: Theme.of(context).colorScheme.onSurface),
                                                                   ),
                                                                   Text(
                                                                     Constant.amountShow(
                                                                         amount: fareDetails['total']?.toString() ?? '0'),
                                                                     style: GoogleFonts.poppins(
-                                                                        fontSize: 15, fontWeight: FontWeight.bold,color: Colors.black),
+                                                                        fontSize: 15,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: Theme.of(context).colorScheme.onSurface),
                                                                   ),
                                                                 ],
                                                               ),
