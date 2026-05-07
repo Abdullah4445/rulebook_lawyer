@@ -1,4 +1,4 @@
-﻿import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,14 +10,23 @@ class Styles {
       brightness: isDarkTheme ? Brightness.dark : Brightness.light,
     ).copyWith(
       primary: isDarkTheme ? AppColors.darkModePrimary : AppColors.primary,
-      onPrimary: isDarkTheme ? AppColors.primary : Colors.white,
-      secondary: isDarkTheme ? AppColors.brandGold : AppColors.brandNavy,
-      onSecondary: isDarkTheme ? AppColors.primary : Colors.white,
-      surface: isDarkTheme ? AppColors.darkBackground : Colors.white,
-      onSurface: isDarkTheme ? Colors.white : AppColors.primary,
-      error: Colors.redAccent,
+      onPrimary: isDarkTheme ? AppColors.brandNavy : Colors.white,
+      secondary: AppColors.brandGold,
+      onSecondary: AppColors.brandNavy,
+      surface: isDarkTheme
+          ? AppColors.darkContainerBackground
+          : AppColors.containerBackground,
+      onSurface: isDarkTheme ? Colors.white : AppColors.brandNavy,
+      surfaceContainerHighest: isDarkTheme
+          ? AppColors.darkSurfaceElevated
+          : AppColors.surfaceTint,
+      error: AppColors.error,
       onError: Colors.white,
+      outline: isDarkTheme
+          ? AppColors.darkContainerBorder
+          : AppColors.containerBorder,
     );
+
     final baseTextTheme = GoogleFonts.poppinsTextTheme(
       Theme.of(context).textTheme,
     ).apply(
@@ -26,57 +35,92 @@ class Styles {
     );
 
     return ThemeData(
-      primarySwatch: Colors.blue,
       useMaterial3: true,
       colorScheme: scheme,
       scaffoldBackgroundColor:
           isDarkTheme ? AppColors.brandSurfaceDark : AppColors.brandSurface,
       primaryColor: scheme.primary,
-      hintColor: isDarkTheme ? Colors.white38 : AppColors.gray500,
+      hintColor: isDarkTheme ? AppColors.gray500 : AppColors.gray500,
       brightness: isDarkTheme ? Brightness.dark : Brightness.light,
       cardColor: scheme.surface,
-      dividerColor: isDarkTheme ? AppColors.gray700 : AppColors.gray200,
+      dividerColor:
+          isDarkTheme ? AppColors.darkContainerBorder : AppColors.containerBorder,
       fontFamily: GoogleFonts.poppins().fontFamily,
-      textTheme: baseTextTheme,
+      textTheme: baseTextTheme.copyWith(
+        displayLarge: baseTextTheme.displayLarge?.copyWith(
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.5,
+        ),
+        displayMedium: baseTextTheme.displayMedium?.copyWith(
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.4,
+        ),
+        headlineLarge: baseTextTheme.headlineLarge?.copyWith(
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.3,
+        ),
+        headlineMedium: baseTextTheme.headlineMedium?.copyWith(
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.2,
+        ),
+        titleLarge: baseTextTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.1,
+        ),
+        titleMedium: baseTextTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
+        bodyLarge: baseTextTheme.bodyLarge?.copyWith(height: 1.55),
+        bodyMedium: baseTextTheme.bodyMedium?.copyWith(height: 1.55),
+      ),
+      splashFactory: InkSparkle.splashFactory,
+      pageTransitionsTheme: const PageTransitionsTheme(builders: {
+        TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      }),
 
-      // 🎨 Enhanced AppBar Theme - Professional Legal Look
       appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: isDarkTheme ? AppColors.darkBackground : Colors.white,
-        foregroundColor: isDarkTheme ? Colors.white : AppColors.primary,
+        backgroundColor: isDarkTheme
+            ? AppColors.brandSurfaceDark
+            : AppColors.containerBackground,
+        foregroundColor: isDarkTheme ? Colors.white : AppColors.brandNavy,
         elevation: 0,
+        scrolledUnderElevation: 0.5,
         surfaceTintColor: Colors.transparent,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness: isDarkTheme ? Brightness.light : Brightness.dark,
-          statusBarBrightness: isDarkTheme ? Brightness.dark : Brightness.light,
+          statusBarIconBrightness:
+              isDarkTheme ? Brightness.light : Brightness.dark,
+          statusBarBrightness:
+              isDarkTheme ? Brightness.dark : Brightness.light,
         ),
         iconTheme: IconThemeData(
-          color: isDarkTheme ? AppColors.brandGold : AppColors.primary,
+          color: isDarkTheme ? AppColors.brandGold : AppColors.brandNavy,
+          size: 22,
+        ),
+        actionsIconTheme: IconThemeData(
+          color: isDarkTheme ? AppColors.brandGold : AppColors.brandNavy,
+          size: 22,
         ),
         titleTextStyle: GoogleFonts.poppins(
-          color: isDarkTheme ? Colors.white : AppColors.primary,
+          color: isDarkTheme ? Colors.white : AppColors.brandNavy,
           fontSize: 18,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.2,
         ),
         shadowColor: Colors.black.withOpacity(0.05),
       ),
 
-      // 🎨 Enhanced Button Themes - Premium Legal Design
-      buttonTheme: ButtonThemeData(
-        textTheme: ButtonTextTheme.primary,
-        colorScheme: Theme.of(context)
-            .colorScheme
-            .copyWith(primary: isDarkTheme ? AppColors.darkModePrimary : AppColors.primary),
-      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: isDarkTheme ? AppColors.brandGold : AppColors.primary,
-          foregroundColor: isDarkTheme ? AppColors.primary : Colors.white,
-          minimumSize: const Size.fromHeight(56),
+          backgroundColor:
+              isDarkTheme ? AppColors.brandGold : AppColors.brandNavy,
+          foregroundColor:
+              isDarkTheme ? AppColors.brandNavy : Colors.white,
+          minimumSize: const Size.fromHeight(54),
           elevation: 0,
-          shadowColor: (isDarkTheme ? AppColors.brandGold : AppColors.primary).withOpacity(0.3),
+          shadowColor: AppColors.brandGold.withOpacity(0.25),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -84,26 +128,26 @@ class Styles {
           textStyle: GoogleFonts.poppins(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
+            letterSpacing: 0.4,
           ),
         ).copyWith(
-          overlayColor: WidgetStateProperty.resolveWith<Color?>(
-            (Set<WidgetState> states) {
-              if (states.contains(WidgetState.pressed)) {
-                return Colors.white.withOpacity(0.1);
-              }
-              return null;
-            },
-          ),
+          overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
+            if (states.contains(WidgetState.pressed)) {
+              return AppColors.brandGold.withOpacity(0.18);
+            }
+            return null;
+          }),
         ),
       ),
+
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size.fromHeight(56),
-          foregroundColor: isDarkTheme ? AppColors.brandGold : AppColors.primary,
+          minimumSize: const Size.fromHeight(54),
+          foregroundColor:
+              isDarkTheme ? AppColors.brandGold : AppColors.brandNavy,
           side: BorderSide(
-            color: isDarkTheme ? AppColors.brandGold : AppColors.primary,
-            width: 1.5,
+            color: isDarkTheme ? AppColors.brandGold : AppColors.brandNavy,
+            width: 1.4,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -112,56 +156,60 @@ class Styles {
           textStyle: GoogleFonts.poppins(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
-        ),
-      ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: isDarkTheme ? AppColors.brandGold : AppColors.primary,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          textStyle: GoogleFonts.poppins(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            letterSpacing: 0.4,
           ),
         ),
       ),
 
-      // 🎨 Enhanced Drawer Theme
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor:
+              isDarkTheme ? AppColors.brandGold : AppColors.brandNavy,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          textStyle: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
       drawerTheme: DrawerThemeData(
-        backgroundColor: isDarkTheme ? AppColors.darkBackground : Colors.white,
+        backgroundColor: isDarkTheme
+            ? AppColors.brandSurfaceDark
+            : AppColors.containerBackground,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topRight: Radius.circular(24),
-            bottomRight: Radius.circular(24),
+            topRight: Radius.circular(28),
+            bottomRight: Radius.circular(28),
           ),
         ),
       ),
 
-      // 🎨 Enhanced Card Theme - Premium Legal Cards
       cardTheme: CardThemeData(
-        color: isDarkTheme ? AppColors.darkContainerBackground : Colors.white,
+        color: isDarkTheme
+            ? AppColors.darkContainerBackground
+            : AppColors.containerBackground,
         surfaceTintColor: Colors.transparent,
-        shadowColor: Colors.black.withOpacity(0.08),
-        elevation: 2,
-        margin: const EdgeInsets.all(0),
+        shadowColor: Colors.black.withOpacity(isDarkTheme ? 0.4 : 0.06),
+        elevation: 1.5,
+        margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
             color: isDarkTheme
-              ? AppColors.darkContainerBorder.withOpacity(0.3)
-              : AppColors.containerBorder.withOpacity(0.5),
+                ? AppColors.darkContainerBorder
+                : AppColors.containerBorder,
             width: 1,
           ),
         ),
       ),
 
-      // 🎨 Enhanced Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDarkTheme ? AppColors.darkTextField : AppColors.gray50,
+        fillColor:
+            isDarkTheme ? AppColors.darkTextField : AppColors.textField,
         hintStyle: GoogleFonts.poppins(
           color: isDarkTheme ? AppColors.gray400 : AppColors.gray500,
           fontSize: 14,
@@ -172,60 +220,52 @@ class Styles {
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: isDarkTheme ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder,
-            width: 1,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: isDarkTheme ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder,
-            width: 1,
-          ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        border: _border(isDarkTheme, AppColors.containerBorder),
+        enabledBorder: _border(
+          isDarkTheme,
+          isDarkTheme
+              ? AppColors.darkTextFieldBorder
+              : AppColors.textFieldBorder,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(
-            color: isDarkTheme ? AppColors.brandGold : AppColors.primary,
-            width: 2,
+            color: AppColors.brandGold,
+            width: 1.6,
           ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: AppColors.error,
-            width: 1,
-          ),
+          borderSide: const BorderSide(color: AppColors.error, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: AppColors.error,
-            width: 2,
-          ),
+          borderSide: const BorderSide(color: AppColors.error, width: 1.6),
         ),
       ),
 
-      // 🎨 Enhanced List Tile Theme
       listTileTheme: ListTileThemeData(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
         ),
-        selectedColor: isDarkTheme ? AppColors.brandGold : AppColors.primary,
-        iconColor: isDarkTheme ? AppColors.gray400 : AppColors.gray600,
-        textColor: isDarkTheme ? Colors.white : AppColors.primary,
+        selectedColor:
+            isDarkTheme ? AppColors.brandGold : AppColors.brandNavy,
+        iconColor: isDarkTheme ? AppColors.gray300 : AppColors.gray700,
+        textColor: isDarkTheme ? Colors.white : AppColors.brandNavy,
       ),
 
-      // 🎨 Enhanced Bottom Navigation Bar Theme
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: isDarkTheme ? AppColors.darkBackground : Colors.white,
-        selectedItemColor: isDarkTheme ? AppColors.brandGold : AppColors.primary,
-        unselectedItemColor: isDarkTheme ? AppColors.gray500 : AppColors.gray400,
+        backgroundColor: isDarkTheme
+            ? AppColors.brandSurfaceDark
+            : AppColors.containerBackground,
+        selectedItemColor:
+            isDarkTheme ? AppColors.brandGold : AppColors.brandNavy,
+        unselectedItemColor:
+            isDarkTheme ? AppColors.gray500 : AppColors.gray400,
         selectedLabelStyle: GoogleFonts.poppins(
           fontSize: 12,
           fontWeight: FontWeight.w600,
@@ -235,88 +275,191 @@ class Styles {
           fontWeight: FontWeight.w500,
         ),
         type: BottomNavigationBarType.fixed,
-        elevation: 8,
+        elevation: 12,
       ),
 
-      // 🎨 Enhanced Floating Action Button Theme
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: isDarkTheme
+            ? AppColors.brandSurfaceDark
+            : AppColors.containerBackground,
+        indicatorColor: AppColors.brandGold.withOpacity(0.18),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          return GoogleFonts.poppins(
+            fontSize: 12,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+            color: selected
+                ? (isDarkTheme ? AppColors.brandGold : AppColors.brandNavy)
+                : (isDarkTheme ? AppColors.gray400 : AppColors.gray500),
+          );
+        }),
+        height: 68,
+        elevation: 0,
+      ),
+
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: isDarkTheme ? AppColors.brandGold : AppColors.primary,
-        foregroundColor: isDarkTheme ? AppColors.primary : Colors.white,
-        elevation: 4,
+        backgroundColor: AppColors.brandGold,
+        foregroundColor: AppColors.brandNavy,
+        elevation: 6,
+        focusElevation: 8,
+        highlightElevation: 10,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
         ),
       ),
 
-      // 🎨 Enhanced Chip Theme
       chipTheme: ChipThemeData(
-        backgroundColor: isDarkTheme ? AppColors.darkGray : AppColors.gray100,
-        selectedColor: isDarkTheme ? AppColors.brandGold : AppColors.primary,
+        backgroundColor: isDarkTheme
+            ? AppColors.darkSurfaceElevated
+            : AppColors.surfaceTint,
+        selectedColor: AppColors.brandGold,
         labelStyle: GoogleFonts.poppins(
           fontSize: 13,
           fontWeight: FontWeight.w500,
+          color: isDarkTheme ? Colors.white : AppColors.brandNavy,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
+        side: BorderSide(
+          color: isDarkTheme
+              ? AppColors.darkContainerBorder
+              : AppColors.containerBorder,
+        ),
       ),
 
-      // 🎨 Enhanced Dialog Theme
       dialogTheme: DialogThemeData(
-        backgroundColor: isDarkTheme ? AppColors.darkContainerBackground : Colors.white,
+        backgroundColor: isDarkTheme
+            ? AppColors.darkContainerBackground
+            : AppColors.containerBackground,
         surfaceTintColor: Colors.transparent,
-        elevation: 8,
+        elevation: 12,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
         ),
         titleTextStyle: GoogleFonts.poppins(
-          color: isDarkTheme ? Colors.white : AppColors.primary,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+          color: isDarkTheme ? Colors.white : AppColors.brandNavy,
+          fontSize: 19,
+          fontWeight: FontWeight.w700,
         ),
         contentTextStyle: GoogleFonts.poppins(
           color: isDarkTheme ? AppColors.gray300 : AppColors.gray700,
           fontSize: 14,
           fontWeight: FontWeight.w400,
+          height: 1.55,
         ),
       ),
 
-      // 🎨 Enhanced Bottom Sheet Theme
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: isDarkTheme ? AppColors.darkBackground : Colors.white,
+        backgroundColor: isDarkTheme
+            ? AppColors.darkContainerBackground
+            : AppColors.containerBackground,
         surfaceTintColor: Colors.transparent,
-        modalBackgroundColor: isDarkTheme ? AppColors.darkBackground : Colors.white,
-        elevation: 8,
+        modalBackgroundColor: isDarkTheme
+            ? AppColors.darkContainerBackground
+            : AppColors.containerBackground,
+        elevation: 12,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
+            topLeft: Radius.circular(28),
+            topRight: Radius.circular(28),
           ),
         ),
       ),
 
-      // 🎨 Enhanced Progress Indicator Theme
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: isDarkTheme ? AppColors.brandGold : AppColors.primary,
-        linearTrackColor: isDarkTheme ? AppColors.gray700 : AppColors.gray200,
-        circularTrackColor: isDarkTheme ? AppColors.gray700 : AppColors.gray200,
+        color: AppColors.brandGold,
+        linearTrackColor: isDarkTheme
+            ? AppColors.darkContainerBorder
+            : AppColors.containerBorder,
+        circularTrackColor: isDarkTheme
+            ? AppColors.darkContainerBorder
+            : AppColors.containerBorder,
       ),
 
-      // 🎨 Enhanced Snackbar Theme
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: isDarkTheme ? AppColors.gray800 : AppColors.gray900,
+        backgroundColor:
+            isDarkTheme ? AppColors.gray800 : AppColors.brandNavy,
         contentTextStyle: GoogleFonts.poppins(
           color: Colors.white,
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
+        actionTextColor: AppColors.brandGold,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
         ),
         behavior: SnackBarBehavior.floating,
-        elevation: 4,
+        elevation: 6,
       ),
+
+      tabBarTheme: TabBarThemeData(
+        labelColor: isDarkTheme ? AppColors.brandGold : AppColors.brandNavy,
+        unselectedLabelColor:
+            isDarkTheme ? AppColors.gray500 : AppColors.gray400,
+        labelStyle: GoogleFonts.poppins(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
+        ),
+        unselectedLabelStyle: GoogleFonts.poppins(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        indicator: const UnderlineTabIndicator(
+          borderSide: BorderSide(color: AppColors.brandGold, width: 2.5),
+        ),
+        indicatorSize: TabBarIndicatorSize.label,
+      ),
+
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.brandGold;
+          }
+          return isDarkTheme ? AppColors.gray500 : AppColors.gray300;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.brandGold.withOpacity(0.4);
+          }
+          return isDarkTheme ? AppColors.gray800 : AppColors.gray200;
+        }),
+      ),
+
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.brandGold;
+          }
+          return Colors.transparent;
+        }),
+        checkColor: WidgetStateProperty.all(AppColors.brandNavy),
+        side: BorderSide(
+          color: isDarkTheme ? AppColors.gray500 : AppColors.gray400,
+          width: 1.5,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6),
+        ),
+      ),
+
+      radioTheme: RadioThemeData(
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.brandGold;
+          }
+          return isDarkTheme ? AppColors.gray500 : AppColors.gray400;
+        }),
+      ),
+    );
+  }
+
+  static OutlineInputBorder _border(bool isDarkTheme, Color borderColor) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: BorderSide(color: borderColor, width: 1),
     );
   }
 }

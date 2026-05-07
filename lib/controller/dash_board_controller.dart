@@ -21,8 +21,30 @@ import 'package:get/get.dart';
 
 class DashBoardController extends GetxController {
   RxList<DrawerItem> drawerItems = <DrawerItem>[].obs;
+  int get logoutIndex => drawerItems.isEmpty ? -1 : drawerItems.length - 1;
 
-  getDrawerItemWidget(int pos) {
+  DrawerItem? get selectedDrawerItem {
+    final index = selectedDrawerIndex.value;
+    if (index < 0 || index >= drawerItems.length) {
+      return null;
+    }
+
+    return drawerItems[index];
+  }
+
+  bool shouldShowAppBarTitle(int index) {
+    if (index < 0 || index >= drawerItems.length) {
+      return false;
+    }
+
+    if (index == logoutIndex) {
+      return false;
+    }
+
+    return drawerItems[index].showAppBarTitle;
+  }
+
+  Widget getDrawerItemWidget(int pos) {
     if (Constant.isSubscriptionModelApplied == true) {
       switch (pos) {
         case 0:
@@ -96,21 +118,12 @@ class DashBoardController extends GetxController {
 
   RxInt selectedDrawerIndex = 0.obs;
 
-  onSelectItem(int index) async {
-    if (Constant.isSubscriptionModelApplied == true) {
-      if (index == 13) { // Logout index (14 items, last = 13)
-        await FirebaseAuth.instance.signOut();
-        Get.offAll(const LoginScreen());
-      } else {
-        selectedDrawerIndex.value = index;
-      }
+  Future<void> onSelectItem(int index) async {
+    if (index == logoutIndex) {
+      await FirebaseAuth.instance.signOut();
+      Get.offAll(const LoginScreen());
     } else {
-      if (index == 12) { // Logout index (13 items, last = 12)
-        await FirebaseAuth.instance.signOut();
-        Get.offAll(const LoginScreen());
-      } else {
-        selectedDrawerIndex.value = index;
-      }
+      selectedDrawerIndex.value = index;
     }
 
     Get.back();
@@ -124,39 +137,149 @@ class DashBoardController extends GetxController {
     super.onInit();
   }
 
-  setDrawerList() {
+  void setDrawerList() {
     if (Constant.isSubscriptionModelApplied == true) {
       drawerItems.value = [
-        DrawerItem('Cases'.tr, "assets/icons/ic_city.svg"),            // 0
-        DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),      // 1
-        DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),  // 2
-        DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),           // 3
-        DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),       // 4
-        DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"), // 5
-        DrawerItem('Lawyer Information'.tr, "assets/icons/ic_city.svg"), // 6
-        DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),     // 7
-        DrawerItem('AI Legal Research'.tr, "assets/icons/ic_city.svg"), // 8
-        DrawerItem('Subscription'.tr, "assets/icons/ic_subscription.svg"), // 9
-        DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"), // 10
-        DrawerItem('Terms and Conditions', "assets/icons/ic_terms.svg"), // 11
-        DrawerItem('Privacy Policy', "assets/icons/ic_terms.svg"),     // 12
-        DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),        // 13
+        const DrawerItem(
+          'Cases',
+          "assets/icons/cases.svg",
+          subtitle: 'Track your ongoing and past matters',
+          showAppBarTitle: false,
+        ),
+        const DrawerItem(
+          'My Wallet',
+          "assets/icons/ic_wallet.svg",
+          subtitle: 'Top up and review payment activity',
+        ),
+        const DrawerItem(
+          'Bank Details',
+          "assets/icons/ic_profile.svg",
+          subtitle: 'Manage your payout account information',
+        ),
+        const DrawerItem(
+          'Inbox',
+          "assets/icons/ic_inbox.svg",
+          subtitle: 'Stay connected with clients and updates',
+        ),
+        const DrawerItem(
+          'Profile',
+          "assets/icons/ic_profile.svg",
+          subtitle: 'Update your professional details',
+        ),
+        const DrawerItem(
+          'Online Registration',
+          "assets/icons/ic_document.svg",
+          subtitle: 'Upload and manage your verification documents',
+        ),
+        const DrawerItem(
+          'Lawyer Information',
+          "assets/icons/lawyer.svg",
+          subtitle: 'Maintain your practice and service details',
+        ),
+        const DrawerItem(
+          'Settings',
+          "assets/icons/ic_settings.svg",
+          subtitle: 'Preferences, language and notifications',
+        ),
+        const DrawerItem(
+          'AI Legal System',
+          "assets/icons/ic_support.svg",
+          subtitle: 'Research, drafting and smart legal assistance',
+        ),
+        const DrawerItem(
+          'Subscription',
+          "assets/icons/ic_subscription.svg",
+          subtitle: 'Review available plans and upgrades',
+        ),
+        const DrawerItem(
+          'Subscription History',
+          "assets/icons/ic_subscription_history.svg",
+          subtitle: 'View your past membership payments',
+        ),
+        const DrawerItem(
+          'Terms and Conditions',
+          "assets/icons/ic_terms.svg",
+          subtitle: 'Read platform rules and usage policies',
+        ),
+        const DrawerItem(
+          'Privacy Policy',
+          "assets/icons/ic_terms.svg",
+          subtitle: 'Understand how your data is protected',
+        ),
+        const DrawerItem(
+          'Log out',
+          "assets/icons/ic_logout.svg",
+          subtitle: 'Securely sign out from your account',
+        ),
       ];
     } else {
       drawerItems.value = [
-        DrawerItem('Cases'.tr, "assets/icons/ic_city.svg"),            // 0
-        DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),      // 1
-        DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),  // 2
-        DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),           // 3
-        DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),       // 4
-        DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"), // 5
-        DrawerItem('Lawyer Information'.tr, "assets/icons/ic_city.svg"), // 6
-        DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),     // 7
-        DrawerItem('AI Legal Research'.tr, "assets/icons/ic_city.svg"), // 8
-        DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"), // 9
-        DrawerItem('Terms and Conditions', "assets/icons/ic_terms.svg"), // 10
-        DrawerItem('Privacy Policy', "assets/icons/ic_terms.svg"),     // 11
-        DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),        // 12
+        const DrawerItem(
+          'Cases',
+          "assets/icons/cases1.svg",
+          subtitle: 'Track your ongoing and past matters',
+          showAppBarTitle: false,
+        ),
+        const DrawerItem(
+          'My Wallet',
+          "assets/icons/ic_wallet.svg",
+          subtitle: 'Top up and review payment activity',
+        ),
+        const DrawerItem(
+          'Bank Details',
+          "assets/icons/ic_profile.svg",
+          subtitle: 'Manage your payout account information',
+        ),
+        const DrawerItem(
+          'Inbox',
+          "assets/icons/ic_inbox.svg",
+          subtitle: 'Stay connected with clients and updates',
+        ),
+        const DrawerItem(
+          'Profile',
+          "assets/icons/ic_profile.svg",
+          subtitle: 'Update your professional details',
+        ),
+        const DrawerItem(
+          'Online Registration',
+          "assets/icons/ic_document.svg",
+          subtitle: 'Upload and manage your verification documents',
+        ),
+        const DrawerItem(
+          'Lawyer Information',
+          "assets/icons/lawyer.svg",
+          subtitle: 'Maintain your practice and service details',
+        ),
+        const DrawerItem(
+          'Settings',
+          "assets/icons/ic_settings.svg",
+          subtitle: 'Preferences, language and notifications',
+        ),
+        const DrawerItem(
+          'AI Legal System',
+          "assets/icons/ic_support.svg",
+          subtitle: 'Research, drafting and smart legal assistance',
+        ),
+        const DrawerItem(
+          'Subscription History',
+          "assets/icons/ic_subscription_history.svg",
+          subtitle: 'View your past membership payments',
+        ),
+        const DrawerItem(
+          'Terms and Conditions',
+          "assets/icons/ic_terms.svg",
+          subtitle: 'Read platform rules and usage policies',
+        ),
+        const DrawerItem(
+          'Privacy Policy',
+          "assets/icons/ic_terms.svg",
+          subtitle: 'Understand how your data is protected',
+        ),
+        const DrawerItem(
+          'Log out',
+          "assets/icons/ic_logout.svg",
+          subtitle: 'Securely sign out from your account',
+        ),
       ];
     }
   }
@@ -176,8 +299,15 @@ class DashBoardController extends GetxController {
 }
 
 class DrawerItem {
-  String title;
-  String icon;
+  final String title;
+  final String icon;
+  final String subtitle;
+  final bool showAppBarTitle;
 
-  DrawerItem(this.title, this.icon);
+  const DrawerItem(
+    this.title,
+    this.icon, {
+    this.subtitle = '',
+    this.showAppBarTitle = true,
+  });
 }

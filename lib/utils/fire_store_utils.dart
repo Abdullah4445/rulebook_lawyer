@@ -450,14 +450,33 @@ class FireStoreUtils {
     StreamController<List<OrderModel>>.broadcast();
     List<OrderModel> ordersList = [];
 
-    print("Current Driver details are:::ðŸ˜‡:");
-    print(driverUserModel.serviceId);
-    print(driverUserModel.zoneIds);
+    print("Current Driver details are:::");
+    print("specialties: ${driverUserModel.serviceIds}");
+    print("zones: ${driverUserModel.zoneIds}");
     print(Constant.casePlaced);
+
+    // Match cases whose serviceId is in ANY of the lawyer's selected specialties.
+    // Fall back to the legacy single serviceId so unmigrated profiles still work.
+    final List<String> lawyerServiceIds =
+        (driverUserModel.serviceIds != null && driverUserModel.serviceIds!.isNotEmpty)
+            ? List<String>.from(driverUserModel.serviceIds!)
+            : (driverUserModel.serviceId != null && driverUserModel.serviceId!.isNotEmpty
+                ? [driverUserModel.serviceId!]
+                : <String>[]);
+
+    if (lawyerServiceIds.isEmpty || (driverUserModel.zoneIds ?? []).isEmpty) {
+      // Nothing to match on — emit empty list and stop.
+      yield <OrderModel>[];
+      return;
+    }
+
+    // Firestore caps `whereIn` at 30 elements; clip defensively.
+    final List<String> serviceIdsForQuery =
+        lawyerServiceIds.length > 30 ? lawyerServiceIds.sublist(0, 30) : lawyerServiceIds;
 
     Query<Map<String, dynamic>> query = fireStore
         .collection(CollectionName.orders)
-        .where('serviceId', isEqualTo: driverUserModel.serviceId)
+        .where('serviceId', whereIn: serviceIdsForQuery)
         .where('zoneId', whereIn: driverUserModel.zoneIds)
         .where('status', isEqualTo: Constant.casePlaced);
 

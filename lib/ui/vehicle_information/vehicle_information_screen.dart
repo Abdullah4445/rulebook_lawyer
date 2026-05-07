@@ -52,8 +52,52 @@ class VehicleInformationScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(
-                                  height: 10,
+                                  height: 14,
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Your specialties'.tr,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700,
+                                          color: themeChange.getThem()
+                                              ? Colors.white
+                                              : AppColors.brandNavy,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Select every category you can handle as a lawyer. Tap to toggle, you can pick more than one.'
+                                            .tr,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          color: (themeChange.getThem()
+                                                  ? Colors.white
+                                                  : AppColors.brandNavy)
+                                              .withOpacity(0.65),
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Obx(() => Text(
+                                            controller.selectedServiceIds.isEmpty
+                                                ? 'No category selected yet'.tr
+                                                : '${controller.selectedServiceIds.length} ${controller.selectedServiceIds.length == 1 ? "category" : "categories"} selected'
+                                                    .tr,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.brandGold,
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
                                 SizedBox(
                                   height: Responsive.height(18, context),
                                   child: ListView.builder(
@@ -63,67 +107,114 @@ class VehicleInformationScreen extends StatelessWidget {
                                     itemBuilder: (context, index) {
                                       ServiceModel serviceModel = controller.serviceList[index];
                                       return Obx(
-                                        () => InkWell(
-                                          onTap: () async {
-                                            if (controller.driverModel.value.serviceId == null) {
-                                              controller.selectedServiceId.value = serviceModel.id;
-                                            }
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(6.0),
-                                            child: Container(
-                                              width: Responsive.width(28, context),
-                                              decoration: BoxDecoration(
-                                                  color: controller.selectedServiceId.value == serviceModel.id
-                                                      ? themeChange.getThem()
-                                                          ? AppColors.darkModePrimary
-                                                          : AppColors.primary
-                                                      : themeChange.getThem()
-                                                          ? AppColors.darkService
-                                                          : controller.colors[index % controller.colors.length],
-                                                  borderRadius: const BorderRadius.all(
-                                                    Radius.circular(20),
-                                                  )),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                mainAxisAlignment: MainAxisAlignment.center,
+                                        () {
+                                          final isSelected = controller.isServiceSelected(serviceModel.id);
+                                          return InkWell(
+                                            onTap: () => controller.toggleService(serviceModel.id),
+                                            borderRadius: BorderRadius.circular(20),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(6.0),
+                                              child: Stack(
                                                 children: [
-                                                  Container(
-                                                    decoration: const BoxDecoration(
-                                                        color: AppColors.background,
-                                                        borderRadius: BorderRadius.all(
-                                                          Radius.circular(20),
-                                                        )),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.all(8.0),
-                                                      child: CachedNetworkImage(
-                                                        imageUrl: serviceModel.image.toString(),
-                                                        fit: BoxFit.contain,
-                                                        height: Responsive.height(8, context),
-                                                        width: Responsive.width(18, context),
-                                                        placeholder: (context, url) => Constant.loader(context),
-                                                        errorWidget: (context, url, error) => Image.network(
-                                                            'https://firebasestorage.googleapis.com/v0/b/goflow-1a752.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115'),
+                                                  AnimatedContainer(
+                                                    duration: const Duration(milliseconds: 220),
+                                                    curve: Curves.easeOut,
+                                                    width: Responsive.width(28, context),
+                                                    decoration: BoxDecoration(
+                                                      color: isSelected
+                                                          ? (themeChange.getThem()
+                                                              ? AppColors.darkModePrimary
+                                                              : AppColors.primary)
+                                                          : (themeChange.getThem()
+                                                              ? AppColors.darkService
+                                                              : controller.colors[
+                                                                  index % controller.colors.length]),
+                                                      borderRadius: BorderRadius.circular(20),
+                                                      border: Border.all(
+                                                        color: isSelected
+                                                            ? AppColors.brandGold
+                                                            : Colors.transparent,
+                                                        width: 2,
                                                       ),
+                                                      boxShadow: isSelected
+                                                          ? [
+                                                              BoxShadow(
+                                                                color: AppColors.brandGold
+                                                                    .withOpacity(0.30),
+                                                                blurRadius: 14,
+                                                                offset: const Offset(0, 4),
+                                                              ),
+                                                            ]
+                                                          : null,
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        Container(
+                                                          decoration: const BoxDecoration(
+                                                            color: AppColors.background,
+                                                            borderRadius:
+                                                                BorderRadius.all(Radius.circular(20)),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: const EdgeInsets.all(8.0),
+                                                            child: CachedNetworkImage(
+                                                              imageUrl: serviceModel.image.toString(),
+                                                              fit: BoxFit.contain,
+                                                              height: Responsive.height(8, context),
+                                                              width: Responsive.width(18, context),
+                                                              placeholder: (context, url) =>
+                                                                  Constant.loader(context),
+                                                              errorWidget: (context, url, error) =>
+                                                                  Image.network(
+                                                                      'https://firebasestorage.googleapis.com/v0/b/goflow-1a752.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115'),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 10),
+                                                        Text(
+                                                          Constant().localizationTitle(
+                                                              serviceModel.title!, 'defaultText'),
+                                                          style: GoogleFonts.poppins(
+                                                            fontWeight: isSelected
+                                                                ? FontWeight.w700
+                                                                : FontWeight.w500,
+                                                            color: isSelected
+                                                                ? (themeChange.getThem()
+                                                                    ? Colors.black
+                                                                    : Colors.white)
+                                                                : (themeChange.getThem()
+                                                                    ? Colors.white
+                                                                    : Colors.black),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
-                                                  const SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  Text(Constant().localizationTitle(serviceModel.title!,'defaultText'),
-                                                      style: GoogleFonts.poppins(
-                                                          color: controller.selectedServiceId.value! == serviceModel.id
-                                                              ? themeChange.getThem()
-                                                                  ? Colors.black
-                                                                  : Colors.white
-                                                              : themeChange.getThem()
-                                                                  ? Colors.white
-                                                                  : Colors.black)),
+                                                  if (isSelected)
+                                                    Positioned(
+                                                      top: 8,
+                                                      right: 8,
+                                                      child: Container(
+                                                        width: 22,
+                                                        height: 22,
+                                                        decoration: const BoxDecoration(
+                                                          color: AppColors.brandGold,
+                                                          shape: BoxShape.circle,
+                                                        ),
+                                                        child: const Icon(
+                                                          Icons.check_rounded,
+                                                          color: Colors.white,
+                                                          size: 14,
+                                                        ),
+                                                      ),
+                                                    ),
                                                 ],
                                               ),
                                             ),
-                                          ),
-                                        ),
+                                          );
+                                        },
                                       );
                                     },
                                   ),
@@ -318,8 +409,9 @@ class VehicleInformationScreen extends StatelessWidget {
                                     onPress: () async {
                                       ShowToastDialog.showLoader("Please wait".tr);
 
-                                      if (controller.selectedServiceId.value!.isEmpty) {
-                                        ShowToastDialog.showToast("Please select service".tr);
+                                      if (controller.selectedServiceIds.isEmpty) {
+                                        ShowToastDialog.showToast(
+                                            "Please select at least one specialty".tr);
                                       } else if (controller.vehicleNumberController.value.text.isEmpty) {
                                         ShowToastDialog.showToast("Please enter Vehicle number".tr);
                                       } else if (controller.registrationDateController.value.text.isEmpty) {
@@ -333,10 +425,11 @@ class VehicleInformationScreen extends StatelessWidget {
                                       } else if (controller.selectedZone.isEmpty) {
                                         ShowToastDialog.showToast("Please select Zone".tr);
                                       } else {
-                                        if (controller.driverModel.value.serviceId == null) {
-                                          controller.driverModel.value.serviceId = controller.selectedServiceId.value;
-                                          await FireStoreUtils.updateDriverUser(controller.driverModel.value);
-                                        }
+                                        // Lawyers can update their specialties at any time.
+                                        controller.driverModel.value.serviceIds =
+                                            controller.selectedServiceIds.toList();
+                                        controller.driverModel.value.serviceId =
+                                            controller.selectedServiceIds.first;
                                         controller.driverModel.value.zoneIds = controller.selectedZone;
 
                                         controller.driverModel.value.vehicleInformation = VehicleInformation(
@@ -361,8 +454,19 @@ class VehicleInformationScreen extends StatelessWidget {
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                Text("You can not change once you select one service type if you want to change please contact to administrator ".tr,
-                                    textAlign: TextAlign.center, style: GoogleFonts.poppins()),
+                                Text(
+                                  "You can update your specialties any time. Lawyers handling more categories receive more case requests."
+                                      .tr,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: (themeChange.getThem()
+                                            ? Colors.white
+                                            : AppColors.brandNavy)
+                                        .withOpacity(0.6),
+                                    height: 1.5,
+                                  ),
+                                ),
                               ],
                             ),
                           ),

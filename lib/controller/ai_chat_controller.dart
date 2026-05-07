@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,6 +21,17 @@ class ChatMessage {
 }
 
 class AiChatController extends GetxController {
+  static const List<String> _allowedExtensions = <String>[
+    'pdf',
+    'jpg',
+    'jpeg',
+    'png',
+    'gif',
+    'doc',
+    'docx',
+    'txt',
+  ];
+
   final messages = <ChatMessage>[].obs;
   final textController = TextEditingController();
   final isLoading = false.obs;
@@ -37,12 +50,48 @@ class AiChatController extends GetxController {
   }
 
   Future<void> pickFile() async {
+    await pickDocument();
+  }
+
+  Future<void> pickImageFromGallery() async {
     final picker = ImagePicker();
     final xFile = await picker.pickImage(source: ImageSource.gallery);
     if (xFile != null) {
-      selectedFile.value = File(xFile.path);
-      selectedFileName.value = xFile.name;
+      _setSelectedFile(File(xFile.path), xFile.name);
     }
+  }
+
+  Future<void> pickImageFromCamera() async {
+    final picker = ImagePicker();
+    final xFile = await picker.pickImage(source: ImageSource.camera);
+    if (xFile != null) {
+      _setSelectedFile(File(xFile.path), xFile.name);
+    }
+  }
+
+  Future<void> pickDocument() async {
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: _allowedExtensions,
+    );
+
+    if (result == null || result.files.isEmpty) {
+      return;
+    }
+
+    final picked = result.files.single;
+    if (picked.path == null || picked.path!.isEmpty) {
+      ShowToastDialog.showToast('Please select a valid file.');
+      return;
+    }
+
+    _setSelectedFile(File(picked.path!), picked.name);
+  }
+
+  void _setSelectedFile(File file, String name) {
+    selectedFile.value = file;
+    selectedFileName.value = name;
   }
 
   void clearFile() {
@@ -51,12 +100,13 @@ class AiChatController extends GetxController {
   }
 
   Future<void> sendMessage() async {
-    final text = textController.text.trim();
-    if (text.isEmpty) return;
+    final inputText = textController.text.trim();
+    final file = selectedFile.value;
 
-    messages.add(ChatMessage(role: 'user', text: text));
-    textController.clear();
-    isLoading.value = true;
+    if (inputText.isEmpty && file == null) {
+      ShowToastDialog.showToast('Please enter text');
+      return;
+    }
 
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -64,6 +114,15 @@ class AiChatController extends GetxController {
         ShowToastDialog.showToast('Please log in again.');
         return;
       }
+
+      final text = inputText.isEmpty
+          ? _buildAttachmentPrompt(selectedFileName.value)
+          : inputText;
+
+      messages.add(ChatMessage(role: 'user', text: text));
+      textController.clear();
+      isLoading.value = true;
+
       final idToken = await user.getIdToken();
 
       final history = messages
@@ -78,7 +137,6 @@ class AiChatController extends GetxController {
       request.fields['message'] = text;
       request.fields['history'] = jsonEncode(history);
 
-      final file = selectedFile.value;
       if (file != null) {
         final mimeType = _guessMime(file.path);
         request.files.add(await http.MultipartFile.fromPath(
@@ -93,7 +151,7 @@ class AiChatController extends GetxController {
       final responseBody     = await http.Response.fromStream(streamedResponse);
 
       if (responseBody.statusCode == 200) {
-        final data    = jsonDecode(responseBody.body) as Map<String, dynamic>;
+        final data    = _decodeBody(responseBody.body);
         final reply   = (data['reply'] as String?) ?? 'No response.';
         final sources = (data['sources'] as List<dynamic>?)
                 ?.map((s) => s.toString())
@@ -101,17 +159,56 @@ class AiChatController extends GetxController {
             [];
         messages.add(ChatMessage(role: 'model', text: reply, sources: sources));
       } else {
-        final err = jsonDecode(responseBody.body);
-        final msg = (err['error'] as String?) ?? 'Something went wrong.';
+        final err = _decodeBody(responseBody.body);
+        final msg = (err['error'] as String?)
+            ?? 'Server error (${responseBody.statusCode}).';
         ShowToastDialog.showToast(msg);
-        messages.add(ChatMessage(role: 'model', text: 'Error: $msg'));
+        messages.add(ChatMessage(role: 'model', text: msg));
       }
+    } on SocketException catch (e) {
+      final msg = 'Cannot reach the AI server.\n'
+          'Make sure the backend is running at ${Constant.globalUrl} '
+          'and that your phone is on the same network.\n\n'
+          'Details: ${e.message}';
+      ShowToastDialog.showToast('Cannot reach server.');
+      messages.add(ChatMessage(role: 'model', text: msg));
+    } on TimeoutException {
+      const msg = 'The AI server took too long to respond (90s timeout). '
+          'The provider may be slow — please try again.';
+      ShowToastDialog.showToast('Request timed out.');
+      messages.add(ChatMessage(role: 'model', text: msg));
+    } on HttpException catch (e) {
+      ShowToastDialog.showToast('Network error.');
+      messages.add(ChatMessage(role: 'model', text: 'Network error: ${e.message}'));
     } catch (e) {
-      ShowToastDialog.showToast('Network error. Please try again.');
-      messages.add(ChatMessage(role: 'model', text: 'Could not reach the server. Please check your connection.'));
+      ShowToastDialog.showToast('Something went wrong.');
+      messages.add(ChatMessage(role: 'model', text: 'Unexpected error: $e'));
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Map<String, dynamic> _decodeBody(String body) {
+    try {
+      final decoded = jsonDecode(body);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+    } catch (_) {
+      // Fall through to a safe fallback map.
+    }
+
+    return <String, dynamic>{'error': 'Something went wrong.'};
+  }
+
+  String _buildAttachmentPrompt(String fileName) {
+    final fileLabel = fileName.isEmpty ? 'the attached file' : 'the attached file "$fileName"';
+
+    if (role == 'lawyer') {
+      return 'Please analyze $fileLabel, identify the legal issues, highlight risks, summarize important facts, and suggest the next professional steps with any relevant principles or case law if available.';
+    }
+
+    return 'Please review $fileLabel and explain it in simple terms, including key issues, possible risks, and practical next steps.';
   }
 
   String _guessMime(String path) {

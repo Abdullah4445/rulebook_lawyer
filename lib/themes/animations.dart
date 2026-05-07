@@ -1,238 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:lawyer/themes/app_colors.dart';
 
-/// 🎨 Professional Animation System for Lawyer App
-/// Smooth, elegant animations for a premium legal platform
+/// Premium animation toolkit for the Lawyer app.
 class AppAnimations {
-  // Animation Durations
+  // ─── Durations ────────────────────────────────────
   static const Duration fast = Duration(milliseconds: 200);
-  static const Duration normal = Duration(milliseconds: 300);
-  static const Duration slow = Duration(milliseconds: 500);
-  static const Duration verySlow = Duration(milliseconds: 700);
+  static const Duration normal = Duration(milliseconds: 350);
+  static const Duration slow = Duration(milliseconds: 550);
+  static const Duration verySlow = Duration(milliseconds: 800);
 
-  // Curves
+  // ─── Curves ───────────────────────────────────────
   static const Curve easeIn = Curves.easeIn;
   static const Curve easeOut = Curves.easeOut;
   static const Curve easeInOut = Curves.easeInOut;
-  static const Curve bounceOut = Curves.bounceOut;
+  static const Curve smooth = Curves.easeOutCubic;
+  static const Curve overshoot = Curves.easeOutBack;
   static const Curve elasticOut = Curves.elasticOut;
-  static const Curve smooth = Curves.easeInOutCubic;
 
-  /// Fade In Animation
+  /// Drop-in fade in.
   static Widget fadeIn({
     required Widget child,
-    Duration? duration,
-    Curve? curve,
-    double? delay,
+    Duration duration = normal,
+    Curve curve = easeOut,
   }) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
-      duration: duration ?? normal,
-      curve: curve ?? easeInOut,
-      builder: (context, value, child) {
-        return Opacity(
-          opacity: value,
-          child: child,
-        );
-      },
+      duration: duration,
+      curve: curve,
+      builder: (_, v, c) => Opacity(opacity: v, child: c),
       child: child,
     );
   }
 
-  /// Scale In Animation
+  /// Drop-in scale + fade.
   static Widget scaleIn({
     required Widget child,
-    Duration? duration,
-    Curve? curve,
+    Duration duration = normal,
+    Curve curve = overshoot,
+    double from = 0.85,
   }) {
     return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.8, end: 1.0),
-      duration: duration ?? normal,
-      curve: curve ?? elasticOut,
-      builder: (context, value, child) {
-        return Transform.scale(
-          scale: value,
-          child: Opacity(
-            opacity: value,
-            child: child,
-          ),
-        );
-      },
+      tween: Tween(begin: from, end: 1.0),
+      duration: duration,
+      curve: curve,
+      builder: (_, v, c) => Opacity(
+        opacity: ((v - from) / (1 - from)).clamp(0.0, 1.0),
+        child: Transform.scale(scale: v, child: c),
+      ),
       child: child,
     );
   }
 
-  /// Slide In From Bottom
+  /// Slide + fade entrance from a direction.
   static Widget slideInFromBottom({
     required Widget child,
-    Duration? duration,
-    Curve? curve,
-    double offset = 50.0,
-  }) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: offset, end: 0.0),
-      duration: duration ?? normal,
-      curve: curve ?? smooth,
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(0, value),
-          child: Opacity(
-            opacity: 1 - (value / offset),
-            child: child,
-          ),
-        );
-      },
-      child: child,
-    );
-  }
+    Duration duration = normal,
+    Curve curve = smooth,
+    double offset = 40.0,
+  }) =>
+      EntranceFadeSlide(
+          duration: duration,
+          curve: curve,
+          offset: Offset(0, offset),
+          child: child);
 
-  /// Slide In From Right
   static Widget slideInFromRight({
     required Widget child,
-    Duration? duration,
-    Curve? curve,
-    double offset = 50.0,
-  }) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: offset, end: 0.0),
-      duration: duration ?? normal,
-      curve: curve ?? smooth,
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(value, 0),
-          child: Opacity(
-            opacity: 1 - (value / offset),
-            child: child,
-          ),
-        );
-      },
-      child: child,
-    );
-  }
+    Duration duration = normal,
+    Curve curve = smooth,
+    double offset = 40.0,
+  }) =>
+      EntranceFadeSlide(
+          duration: duration,
+          curve: curve,
+          offset: Offset(offset, 0),
+          child: child);
 
-  /// Slide In From Left
   static Widget slideInFromLeft({
     required Widget child,
-    Duration? duration,
-    Curve? curve,
-    double offset = 50.0,
-  }) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: -offset, end: 0.0),
-      duration: duration ?? normal,
-      curve: curve ?? smooth,
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(value, 0),
-          child: Opacity(
-            opacity: 1 - (value.abs() / offset),
-            child: child,
-          ),
-        );
-      },
-      child: child,
-    );
-  }
+    Duration duration = normal,
+    Curve curve = smooth,
+    double offset = 40.0,
+  }) =>
+      EntranceFadeSlide(
+          duration: duration,
+          curve: curve,
+          offset: Offset(-offset, 0),
+          child: child);
 
-  /// Animated List Item
+  /// Staggered list-item animation (call inside ListView.builder).
   static Widget listItemAnimation({
     required Widget child,
     required int index,
-    Duration? delay,
+    Duration delay = const Duration(milliseconds: 60),
   }) {
-    final itemDelay = (delay ?? const Duration(milliseconds: 50)) * index;
-    
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: normal + itemDelay,
+    return EntranceFadeSlide(
+      duration: normal + delay * index,
       curve: smooth,
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(0, 20 * (1 - value)),
-          child: Opacity(
-            opacity: value,
-            child: child,
-          ),
-        );
-      },
+      offset: const Offset(0, 18),
       child: child,
     );
   }
 
-  /// Shimmer Loading Effect
-  static Widget shimmer({
-    required Widget child,
-    Color? baseColor,
-    Color? highlightColor,
-  }) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: -1.0, end: 2.0),
-      duration: const Duration(milliseconds: 1500),
-      curve: Curves.linear,
-      builder: (context, value, child) {
-        return ShaderMask(
-          shaderCallback: (bounds) {
-            return LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                baseColor ?? Colors.grey.shade300,
-                highlightColor ?? Colors.grey.shade100,
-                baseColor ?? Colors.grey.shade300,
-              ],
-              stops: [
-                value - 0.3,
-                value,
-                value + 0.3,
-              ],
-            ).createShader(bounds);
-          },
-          child: child,
-        );
-      },
-      child: child,
-    );
-  }
-
-  /// Pulse Animation (for notifications)
-  static Widget pulse({
-    required Widget child,
-    Duration? duration,
-  }) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 1.0, end: 1.1),
-      duration: duration ?? const Duration(milliseconds: 800),
-      curve: Curves.easeInOut,
-      builder: (context, value, child) {
-        return Transform.scale(
-          scale: value,
-          child: child,
-        );
-      },
-      onEnd: () {},
-      child: child,
-    );
-  }
-
-  /// Bounce Animation
-  static Widget bounce({
-    required Widget child,
-    Duration? duration,
-  }) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: duration ?? slow,
-      curve: Curves.bounceOut,
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(0, -20 * (1 - value)),
-          child: child,
-        );
-      },
-      child: child,
-    );
-  }
-
-  /// Page Transition Builder
+  /// Page transition helper (for use with GetX or Navigator).
   static Widget pageTransition({
     required Widget child,
     required Animation<double> animation,
@@ -240,138 +110,177 @@ class AppAnimations {
   }) {
     switch (type) {
       case PageTransitionType.fade:
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
+        return FadeTransition(opacity: animation, child: child);
       case PageTransitionType.slide:
         return SlideTransition(
           position: Tween<Offset>(
-            begin: const Offset(1.0, 0.0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: animation,
-            curve: smooth,
-          )),
+                  begin: const Offset(1, 0), end: Offset.zero)
+              .animate(CurvedAnimation(parent: animation, curve: smooth)),
           child: child,
         );
       case PageTransitionType.scale:
-        return ScaleTransition(
-          scale: animation,
-          child: child,
-        );
+        return ScaleTransition(scale: animation, child: child);
       case PageTransitionType.rotation:
-        return RotationTransition(
-          turns: animation,
-          child: child,
-        );
+        return RotationTransition(turns: animation, child: child);
     }
   }
+}
 
-  /// Card Elevation Animation
-  static Widget elevationAnimation({
-    required Widget child,
-    required bool isElevated,
-  }) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: isElevated ? 8.0 : 0.0),
-      duration: fast,
-      curve: smooth,
-      builder: (context, value, child) {
-        return Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1 * (value / 8)),
-                blurRadius: value,
-                offset: Offset(0, value / 2),
-              ),
-            ],
-          ),
-          child: child,
+enum PageTransitionType { fade, slide, scale, rotation }
+
+// ─────────────────────────────────────────────────────
+// Reusable widgets
+// ─────────────────────────────────────────────────────
+
+/// Combined fade + slide entrance animation.
+/// Use anywhere a widget needs to "land" on screen.
+class EntranceFadeSlide extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+  final Duration delay;
+  final Curve curve;
+  final Offset offset;
+
+  const EntranceFadeSlide({
+    super.key,
+    required this.child,
+    this.duration = const Duration(milliseconds: 400),
+    this.delay = Duration.zero,
+    this.curve = Curves.easeOutCubic,
+    this.offset = const Offset(0, 24),
+  });
+
+  @override
+  State<EntranceFadeSlide> createState() => _EntranceFadeSlideState();
+}
+
+class _EntranceFadeSlideState extends State<EntranceFadeSlide>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl =
+      AnimationController(vsync: this, duration: widget.duration);
+  late final Animation<double> _t =
+      CurvedAnimation(parent: _ctrl, curve: widget.curve);
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(widget.delay, () {
+      if (mounted) _ctrl.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _t,
+      builder: (_, child) {
+        final dx = widget.offset.dx * (1 - _t.value);
+        final dy = widget.offset.dy * (1 - _t.value);
+        return Opacity(
+          opacity: _t.value,
+          child: Transform.translate(offset: Offset(dx, dy), child: child),
         );
       },
-      child: child,
+      child: widget.child,
     );
   }
 }
 
-enum PageTransitionType {
-  fade,
-  slide,
-  scale,
-  rotation,
-}
-
-/// Animated Button Widget
-class AnimatedButton extends StatefulWidget {
+/// Scale-down on press for premium tactile feedback.
+/// Wrap any tappable: `PressScale(onTap: ..., child: ...)`.
+class PressScale extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
-  final Duration? duration;
-  final double scaleValue;
+  final double scale;
+  final Duration duration;
+  final HitTestBehavior behavior;
 
-  const AnimatedButton({
+  const PressScale({
     super.key,
     required this.child,
     this.onTap,
-    this.duration,
-    this.scaleValue = 0.95,
+    this.scale = 0.96,
+    this.duration = const Duration(milliseconds: 120),
+    this.behavior = HitTestBehavior.opaque,
   });
 
   @override
-  State<AnimatedButton> createState() => _AnimatedButtonState();
+  State<PressScale> createState() => _PressScaleState();
 }
 
-class _AnimatedButtonState extends State<AnimatedButton> {
-  bool _isPressed = false;
+class _PressScaleState extends State<PressScale> {
+  bool _down = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
+      behavior: widget.behavior,
+      onTapDown: (_) => setState(() => _down = true),
+      onTapUp: (_) => setState(() => _down = false),
+      onTapCancel: () => setState(() => _down = false),
       onTap: widget.onTap,
       child: AnimatedScale(
-        scale: _isPressed ? widget.scaleValue : 1.0,
-        duration: widget.duration ?? AppAnimations.fast,
-        curve: AppAnimations.smooth,
+        scale: _down ? widget.scale : 1.0,
+        duration: widget.duration,
+        curve: Curves.easeOut,
         child: widget.child,
       ),
     );
   }
 }
 
-/// Animated Card Widget
-class AnimatedCard extends StatefulWidget {
+/// Backwards-compat alias used by older code paths.
+class AnimatedButton extends StatelessWidget {
   final Widget child;
   final VoidCallback? onTap;
-
-  const AnimatedCard({
+  final double scaleValue;
+  const AnimatedButton({
     super.key,
     required this.child,
     this.onTap,
+    this.scaleValue = 0.95,
   });
+
+  @override
+  Widget build(BuildContext context) =>
+      PressScale(scale: scaleValue, onTap: onTap, child: child);
+}
+
+/// Card with hover-lift effect (web/desktop) and press scale (mobile).
+class AnimatedCard extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  const AnimatedCard({super.key, required this.child, this.onTap});
 
   @override
   State<AnimatedCard> createState() => _AnimatedCardState();
 }
 
 class _AnimatedCardState extends State<AnimatedCard> {
-  bool _isHovered = false;
+  bool _hover = false;
+  bool _down = false;
 
   @override
   Widget build(BuildContext context) {
+    final scale = _down ? 0.98 : (_hover ? 1.02 : 1.0);
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
       child: GestureDetector(
         onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: AppAnimations.fast,
-          curve: AppAnimations.smooth,
-          transform: Matrix4.identity()
-            ..scale(_isHovered ? 1.02 : 1.0),
+        onTapDown: (_) => setState(() => _down = true),
+        onTapUp: (_) => setState(() => _down = false),
+        onTapCancel: () => setState(() => _down = false),
+        child: AnimatedScale(
+          scale: scale,
+          duration: const Duration(milliseconds: 140),
+          curve: Curves.easeOut,
           child: widget.child,
         ),
       ),
@@ -379,3 +288,142 @@ class _AnimatedCardState extends State<AnimatedCard> {
   }
 }
 
+/// Looping shimmer effect for skeleton/loading states.
+class ShimmerBox extends StatefulWidget {
+  final double? width;
+  final double? height;
+  final BorderRadius borderRadius;
+  final Color? baseColor;
+  final Color? highlightColor;
+
+  const ShimmerBox({
+    super.key,
+    this.width,
+    this.height,
+    this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.baseColor,
+    this.highlightColor,
+  });
+
+  @override
+  State<ShimmerBox> createState() => _ShimmerBoxState();
+}
+
+class _ShimmerBoxState extends State<ShimmerBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1400),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final base = widget.baseColor ??
+        (dark ? AppColors.darkSurfaceElevated : AppColors.gray200);
+    final hl = widget.highlightColor ??
+        (dark ? AppColors.gray700 : AppColors.gray100);
+
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (_, __) {
+        return Container(
+          width: widget.width,
+          height: widget.height,
+          decoration: BoxDecoration(
+            borderRadius: widget.borderRadius,
+            gradient: LinearGradient(
+              begin: Alignment(-1 + _ctrl.value * 2, 0),
+              end: Alignment(1 + _ctrl.value * 2, 0),
+              colors: [base, hl, base],
+              stops: const [0.0, 0.5, 1.0],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Subtle gold glow halo behind a child — perfect for hero icons & buttons.
+class GoldGlow extends StatelessWidget {
+  final Widget child;
+  final double blurRadius;
+  final double spread;
+  final double opacity;
+
+  const GoldGlow({
+    super.key,
+    required this.child,
+    this.blurRadius = 22,
+    this.spread = 0,
+    this.opacity = 0.45,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.brandGold.withOpacity(opacity),
+            blurRadius: blurRadius,
+            spreadRadius: spread,
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+/// Slow continuous breathing animation — useful on hero brand elements.
+class BreathingScale extends StatefulWidget {
+  final Widget child;
+  final double from;
+  final double to;
+  final Duration duration;
+
+  const BreathingScale({
+    super.key,
+    required this.child,
+    this.from = 0.97,
+    this.to = 1.03,
+    this.duration = const Duration(seconds: 3),
+  });
+
+  @override
+  State<BreathingScale> createState() => _BreathingScaleState();
+}
+
+class _BreathingScaleState extends State<BreathingScale>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl =
+      AnimationController(vsync: this, duration: widget.duration)
+        ..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (_, child) {
+        final t = Curves.easeInOut.transform(_ctrl.value);
+        final scale = widget.from + (widget.to - widget.from) * t;
+        return Transform.scale(scale: scale, child: child);
+      },
+      child: widget.child,
+    );
+  }
+}

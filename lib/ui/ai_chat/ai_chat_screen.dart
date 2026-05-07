@@ -1,164 +1,354 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lawyer/controller/ai_chat_controller.dart';
 import 'package:lawyer/themes/app_colors.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AiChatScreen extends StatelessWidget {
-  /// Always 'lawyer' in the driver/lawyer app
   static const String role = 'lawyer';
 
   const AiChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(AiChatController(role: role));
+    final controller = Get.isRegistered<AiChatController>(tag: role)
+        ? Get.find<AiChatController>(tag: role)
+        : Get.put(AiChatController(role: role), tag: role);
     final scrollController = ScrollController();
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final scaffoldBg = isDark ? const Color(0xFF0B0F18) : const Color(0xFFF7F4EC);
+    final aiBubbleBg = isDark ? const Color(0xFF1B2230) : Colors.white;
+    final aiBubbleBorder = isDark ? const Color(0xFF2A3243) : const Color(0xFFEFE6CC);
+    final inputSurface = isDark ? const Color(0xFF111723) : Colors.white;
+    final inputFill = isDark ? const Color(0xFF1B2230) : const Color(0xFFF1ECDD);
+    final onSurface = isDark ? Colors.white : const Color(0xFF0F172A);
+    final muted = onSurface.withValues(alpha: 0.65);
 
     return Scaffold(
-      backgroundColor: AppColors.lightGray,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        title: const Row(
-          children: [
-            Icon(Icons.balance, color: AppColors.brandGold, size: 22),
-            SizedBox(width: 8),
-            Text('AI Legal Research', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-          ],
-        ),
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          // ----------------------------------------------------------------
-          // Message list
-          // ----------------------------------------------------------------
-          Expanded(
-            child: Obx(() {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (scrollController.hasClients) {
-                  scrollController.animateTo(
-                    scrollController.position.maxScrollExtent,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOut,
-                  );
-                }
-              });
-
-              if (controller.messages.isEmpty) {
-                return _buildWelcomePlaceholder();
-              }
-
-              return ListView.builder(
-                controller: scrollController,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                itemCount: controller.messages.length,
-                itemBuilder: (ctx, i) => _buildBubble(controller.messages[i]),
-              );
-            }),
-          ),
-
-          // ----------------------------------------------------------------
-          // Loading indicator
-          // ----------------------------------------------------------------
-          Obx(() => controller.isLoading.value
-              ? const LinearProgressIndicator(
-                  color: AppColors.brandGold,
-                  backgroundColor: AppColors.brandGoldLight,
-                )
-              : const SizedBox.shrink()),
-
-          // ----------------------------------------------------------------
-          // File attachment badge
-          // ----------------------------------------------------------------
-          Obx(() {
-            if (controller.selectedFileName.value.isEmpty) return const SizedBox.shrink();
-            return Container(
-              color: AppColors.infoLight,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              child: Row(
-                children: [
-                  const Icon(Icons.attach_file, size: 16, color: AppColors.info),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      controller.selectedFileName.value,
-                      style: const TextStyle(fontSize: 13, color: AppColors.info),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: controller.clearFile,
-                    child: const Icon(Icons.close, size: 16, color: AppColors.info),
-                  ),
-                ],
-              ),
-            );
-          }),
-
-          // ----------------------------------------------------------------
-          // Input row
-          // ----------------------------------------------------------------
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: const Offset(0, -2))],
+      backgroundColor: scaffoldBg,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(64),
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF0B0F18), Color(0xFF1B2230)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            border: Border(
+              bottom: BorderSide(color: AppColors.brandGold, width: 1.5),
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            title: Row(
               children: [
-                IconButton(
-                  onPressed: controller.pickFile,
-                  icon: const Icon(Icons.attach_file, color: AppColors.subTitleColor),
-                  tooltip: 'Attach PDF or Image',
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.goldGradient,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.gavel, color: Colors.white, size: 18),
                 ),
-                Expanded(
-                  child: TextField(
-                    controller: controller.textController,
-                    maxLines: 4,
-                    minLines: 1,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      hintText: 'Research a statute, case law, contract clause...',
-                      hintStyle: TextStyle(color: AppColors.subTitleColor.withOpacity(0.7)),
-                      filled: true,
-                      fillColor: AppColors.lightGray,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    onSubmitted: (_) => controller.sendMessage(),
+                const SizedBox(width: 10),
+                const Text(
+                  'AI Legal System',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Obx(() => GestureDetector(
-                  onTap: controller.isLoading.value ? null : controller.sendMessage,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: controller.isLoading.value ? AppColors.subTitleColor : AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
-                  ),
-                )),
               ],
             ),
           ),
-        ],
+        ),
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Obx(() {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (scrollController.hasClients) {
+                    scrollController.animateTo(
+                      scrollController.position.maxScrollExtent,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOut,
+                    );
+                  }
+                });
+
+                if (controller.messages.isEmpty) {
+                  return _buildWelcomePlaceholder(onSurface, muted);
+                }
+
+                return ListView.builder(
+                  controller: scrollController,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  itemCount: controller.messages.length,
+                  itemBuilder: (ctx, i) => _buildBubble(
+                    controller.messages[i],
+                    aiBubbleBg: aiBubbleBg,
+                    aiBubbleBorder: aiBubbleBorder,
+                    onSurface: onSurface,
+                    isDark: isDark,
+                  ),
+                );
+              }),
+            ),
+
+            Obx(() => controller.isLoading.value
+                ? const LinearProgressIndicator(
+                    minHeight: 2,
+                    color: AppColors.brandGold,
+                    backgroundColor: AppColors.brandGoldLight,
+                  )
+                : const SizedBox.shrink()),
+
+            Obx(() {
+              if (controller.selectedFileName.value.isEmpty) return const SizedBox.shrink();
+              return Container(
+                color: AppColors.brandGoldLight,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  children: [
+                    const Icon(Icons.attach_file, size: 16, color: AppColors.brandGold),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        controller.selectedFileName.value,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF6B5310),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: controller.clearFile,
+                      child: const Icon(Icons.close, size: 16, color: AppColors.brandGold),
+                    ),
+                  ],
+                ),
+              );
+            }),
+
+            Container(
+              decoration: BoxDecoration(
+                color: inputSurface,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 12,
+                    offset: const Offset(0, -3),
+                  )
+                ],
+              ),
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () => _showAttachmentOptions(context, controller),
+                    icon: Icon(Icons.attach_file, color: muted),
+                    tooltip: 'Attach File',
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: controller.textController,
+                      maxLines: 4,
+                      minLines: 1,
+                      textCapitalization: TextCapitalization.sentences,
+                      style: TextStyle(color: onSurface, fontSize: 14),
+                      decoration: InputDecoration(
+                        hintText: 'Ask a legal research question...',
+                        hintStyle: TextStyle(color: muted, fontSize: 14),
+                        filled: true,
+                        fillColor: inputFill,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      onSubmitted: (_) => controller.sendMessage(),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Obx(() => GestureDetector(
+                        onTap: controller.isLoading.value
+                            ? null
+                            : controller.sendMessage,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: 46,
+                          height: 46,
+                          decoration: BoxDecoration(
+                            gradient: controller.isLoading.value
+                                ? null
+                                : AppColors.goldGradient,
+                            color: controller.isLoading.value
+                                ? AppColors.gray400
+                                : null,
+                            shape: BoxShape.circle,
+                            boxShadow: controller.isLoading.value
+                                ? null
+                                : [
+                                    BoxShadow(
+                                      color: AppColors.brandGold
+                                          .withValues(alpha: 0.45),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 3),
+                                    )
+                                  ],
+                          ),
+                          child: const Icon(
+                            Icons.send_rounded,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      )),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // --------------------------------------------------------------------------
-  // Welcome placeholder
-  // --------------------------------------------------------------------------
-  Widget _buildWelcomePlaceholder() {
+  Future<void> _showAttachmentOptions(
+    BuildContext context,
+    AiChatController controller,
+  ) async {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final optionTextColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final secondaryColor = optionTextColor.withValues(alpha: 0.65);
+
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF111723) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Attach File',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: optionTextColor,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(sheetContext).pop(),
+                      icon: Icon(Icons.close, color: secondaryColor),
+                    ),
+                  ],
+                ),
+                _buildAttachmentTile(
+                  context: sheetContext,
+                  icon: Icons.camera_alt_outlined,
+                  iconBackground: AppColors.brandGoldLight,
+                  iconColor: AppColors.brandGold,
+                  title: 'Camera'.tr,
+                  subtitle: 'Capture an image for legal review',
+                  onTap: () async {
+                    Navigator.of(sheetContext).pop();
+                    await controller.pickImageFromCamera();
+                  },
+                ),
+                _buildAttachmentTile(
+                  context: sheetContext,
+                  icon: Icons.photo_library_outlined,
+                  iconBackground: AppColors.infoLight,
+                  iconColor: AppColors.info,
+                  title: 'Gallery'.tr,
+                  subtitle: 'Choose a photo from your gallery',
+                  onTap: () async {
+                    Navigator.of(sheetContext).pop();
+                    await controller.pickImageFromGallery();
+                  },
+                ),
+                _buildAttachmentTile(
+                  context: sheetContext,
+                  icon: Icons.description_outlined,
+                  iconBackground: AppColors.successLight,
+                  iconColor: AppColors.success,
+                  title: 'Files',
+                  subtitle: 'Upload PDF, DOC, DOCX, TXT or image files',
+                  onTap: () async {
+                    Navigator.of(sheetContext).pop();
+                    await controller.pickDocument();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAttachmentTile({
+    required BuildContext context,
+    required IconData icon,
+    required Color iconBackground,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required Future<void> Function() onTap,
+  }) {
+    final theme = Theme.of(context);
+    final titleColor = theme.colorScheme.onSurface;
+    final subtitleColor = theme.textTheme.bodySmall?.color?.withValues(alpha: 0.72) ?? AppColors.subTitleColor;
+
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: CircleAvatar(
+        radius: 22,
+        backgroundColor: iconBackground,
+        child: Icon(icon, color: iconColor),
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: titleColor,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(color: subtitleColor),
+      ),
+      onTap: () {
+        onTap();
+      },
+    );
+  }
+
+  Widget _buildWelcomePlaceholder(Color onSurface, Color muted) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -166,23 +356,49 @@ class AiChatScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+              width: 96,
+              height: 96,
               decoration: BoxDecoration(
-                color: AppColors.brandGoldLight,
+                gradient: AppColors.goldGradient,
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.brandGold.withValues(alpha: 0.35),
+                    blurRadius: 24,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
-              child: const Icon(Icons.balance, size: 48, color: AppColors.brandGold),
+              child: const Icon(Icons.gavel, size: 44, color: Colors.white),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'AI Legal Research',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.primary),
-            ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 24),
             Text(
-              'Get technical legal analysis with citations.\n\nResearch statutes, case law, contract clauses, or procedural questions.\nAttach a document or image for context.',
+              'AI Legal System',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: onSurface,
+                letterSpacing: 0.3,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              width: 48,
+              height: 3,
+              decoration: BoxDecoration(
+                gradient: AppColors.goldGradient,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Get professional legal research, document review, case-law support, drafting guidance, and admin-managed knowledge base answers in one place.\n\nAttach documents or images for deeper analysis.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: AppColors.subTitleColor, height: 1.5),
+              style: TextStyle(
+                fontSize: 14,
+                color: muted,
+                height: 1.55,
+              ),
             ),
           ],
         ),
@@ -190,72 +406,118 @@ class AiChatScreen extends StatelessWidget {
     );
   }
 
-  // --------------------------------------------------------------------------
-  // Chat bubble
-  // --------------------------------------------------------------------------
-  Widget _buildBubble(ChatMessage message) {
+  Widget _buildBubble(
+    ChatMessage message, {
+    required Color aiBubbleBg,
+    required Color aiBubbleBorder,
+    required Color onSurface,
+    required bool isDark,
+  }) {
     final isUser = message.role == 'user';
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!isUser) ...[
-            CircleAvatar(
-              radius: 16,
-              backgroundColor: AppColors.brandGold,
-              child: const Icon(Icons.balance, size: 14, color: Colors.white),
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                gradient: AppColors.goldGradient,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.brandGold.withValues(alpha: 0.35),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.gavel, size: 17, color: Colors.white),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
           ],
           Flexible(
             child: Column(
-              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
-                    color: isUser ? AppColors.primary : Colors.white,
+                    gradient: isUser
+                        ? const LinearGradient(
+                            colors: [Color(0xFF1B2230), Color(0xFF0F172A)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          )
+                        : null,
+                    color: isUser ? null : aiBubbleBg,
+                    border: isUser
+                        ? null
+                        : Border.all(color: aiBubbleBorder, width: 1),
                     borderRadius: BorderRadius.only(
-                      topLeft:     const Radius.circular(18),
-                      topRight:    const Radius.circular(18),
-                      bottomLeft:  Radius.circular(isUser ? 18 : 4),
+                      topLeft: const Radius.circular(18),
+                      topRight: const Radius.circular(18),
+                      bottomLeft: Radius.circular(isUser ? 18 : 4),
                       bottomRight: Radius.circular(isUser ? 4 : 18),
                     ),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 6, offset: const Offset(0, 2))
+                      BoxShadow(
+                        color: isUser
+                            ? Colors.black.withValues(alpha: 0.18)
+                            : Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      )
                     ],
                   ),
                   child: Text(
                     message.text,
                     style: TextStyle(
-                      color: isUser ? Colors.white : AppColors.primary,
-                      fontSize: 14,
+                      color: isUser ? Colors.white : onSurface,
+                      fontSize: 14.5,
                       height: 1.55,
                     ),
                   ),
                 ),
-                // Citation sources
                 if (message.sources.isNotEmpty) ...[
                   const SizedBox(height: 6),
                   Wrap(
                     spacing: 6,
                     runSpacing: 4,
                     children: message.sources
-                        .map((s) => Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: AppColors.brandGoldLight,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: AppColors.brandGold.withOpacity(0.3)),
+                        .map(
+                          (s) => Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.brandGoldLight,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: AppColors.brandGold.withValues(alpha: 0.4),
+                                width: 0.8,
                               ),
-                              child: Text(
-                                s,
-                                style: const TextStyle(fontSize: 10, color: AppColors.primary),
+                            ),
+                            child: Text(
+                              s,
+                              style: const TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF6B5310),
                               ),
-                            ))
+                            ),
+                          ),
+                        )
                         .toList(),
                   ),
                 ],
@@ -263,11 +525,21 @@ class AiChatScreen extends StatelessWidget {
             ),
           ),
           if (isUser) ...[
-            const SizedBox(width: 8),
-            const CircleAvatar(
-              radius: 16,
-              backgroundColor: AppColors.lightGray,
-              child: Icon(Icons.person, size: 16, color: AppColors.subTitleColor),
+            const SizedBox(width: 10),
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF334155)
+                    : const Color(0xFFE2E8F0),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.person,
+                size: 17,
+                color: isDark ? Colors.white70 : const Color(0xFF475569),
+              ),
             ),
           ],
         ],

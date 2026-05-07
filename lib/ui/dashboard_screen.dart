@@ -74,7 +74,10 @@ class DashBoardScreen extends StatelessWidget {
                                 ShowToastDialog.closeLoader();
                                 _showAlertDialog(context, "document");
                               } else if (driverModel.vehicleInformation == null ||
-                                  driverModel.serviceId == null) {
+                                  ((driverModel.serviceIds == null ||
+                                          driverModel.serviceIds!.isEmpty) &&
+                                      (driverModel.serviceId == null ||
+                                          driverModel.serviceId!.isEmpty))) {
                                 ShowToastDialog.closeLoader();
                                 _showAlertDialog(context, "vehicleInformation");
                               } else {
@@ -132,12 +135,9 @@ class DashBoardScreen extends StatelessWidget {
                       ),
                     );
                   })
-                  : (controller.selectedDrawerIndex.value != 9 &&
-                  controller.selectedDrawerIndex.value != 10 &&
-                  controller.selectedDrawerIndex.value != 11)
+                  : controller.shouldShowAppBarTitle(controller.selectedDrawerIndex.value)
                   ? Text(
-                controller
-                    .drawerItems[controller.selectedDrawerIndex.value].title.tr,
+                (controller.selectedDrawerItem?.title ?? '').tr,
                 style: GoogleFonts.poppins(
                   color: Colors.white,
                 ),
@@ -218,45 +218,26 @@ class DashBoardScreen extends StatelessWidget {
     );
   }
 
-  buildAppDrawer(BuildContext context, DashBoardController controller) {
-    List<DrawerItem> drawerItems = [];
-    if (Constant.isSubscriptionModelApplied == true) {
-      drawerItems = [
-        DrawerItem('Cases'.tr, "assets/icons/cases.svg"),
-        DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
-        DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
-        DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
-        DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),
-        DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"),
-        DrawerItem('Lawyer Information'.tr, "assets/icons/lawyer.svg"),
-        DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
-        DrawerItem('Subscription'.tr, "assets/icons/ic_subscription.svg"),
-        DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
-        DrawerItem('Terms and Conditions'.tr, "assets/icons/ic_terms.svg"),
-        DrawerItem('Privacy Policy'.tr, "assets/icons/ic_terms.svg"),
-        DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),
-      ];
-    } else {
-      drawerItems = [
-        DrawerItem('Cases'.tr, "assets/icons/cases1.svg"),
-        DrawerItem('My Wallet'.tr, "assets/icons/ic_wallet.svg"),
-        DrawerItem('Bank Details'.tr, "assets/icons/ic_profile.svg"),
-        DrawerItem('Inbox'.tr, "assets/icons/ic_inbox.svg"),
-        DrawerItem('Profile'.tr, "assets/icons/ic_profile.svg"),
-        DrawerItem('Online Registration'.tr, "assets/icons/ic_document.svg"),
-        DrawerItem('Lawyer Information'.tr, "assets/icons/ic_city.svg"),
-        DrawerItem('Settings'.tr, "assets/icons/ic_settings.svg"),
-        DrawerItem('Subscription History'.tr, "assets/icons/ic_subscription_history.svg"),
-        DrawerItem('Terms and Conditions'.tr, "assets/icons/ic_terms.svg"),
-        DrawerItem('Privacy Policy'.tr, "assets/icons/ic_terms.svg"),
-        DrawerItem('Log out'.tr, "assets/icons/ic_logout.svg"),
-      ];
-    }
+  Widget buildAppDrawer(BuildContext context, DashBoardController controller) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final selectedBg = isDark
+        ? AppColors.brandGold
+        : AppColors.brandNavy;
+    final unselectedBg = isDark
+        ? AppColors.darkContainerBackground
+        : AppColors.containerBackground;
+    final unselectedBorder = isDark
+        ? AppColors.darkContainerBorder
+        : AppColors.containerBorder;
+    final unselectedText = isDark ? Colors.white : AppColors.brandNavy;
+    final unselectedSubtitle = isDark ? AppColors.gray400 : AppColors.gray500;
+
+    final drawerItems = controller.drawerItems;
     var drawerOptions = <Widget>[];
     for (var i = 0; i < drawerItems.length; i++) {
       var d = drawerItems[i];
       final isSelected = i == controller.selectedDrawerIndex.value;
-      final isLogout = d.title.toLowerCase().contains('log out');
 
       drawerOptions.add(InkWell(
         onTap: () {
@@ -264,64 +245,72 @@ class DashBoardScreen extends StatelessWidget {
         },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
             decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF1F1F1F) : Colors.white,
-              borderRadius: const BorderRadius.all(Radius.circular(26)),
+              color: isSelected ? selectedBg : unselectedBg,
+              borderRadius: const BorderRadius.all(Radius.circular(24)),
               border: Border.all(
-                color: isSelected ? Colors.transparent : AppColors.grey200,
+                color: isSelected ? Colors.transparent : unselectedBorder,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: isSelected ? 0.12 : 0.05),
-                  blurRadius: isSelected ? 18 : 12,
-                  offset: const Offset(0, 8),
+                  color: isSelected
+                      ? AppColors.brandGold.withOpacity(isDark ? 0.35 : 0.18)
+                      : Colors.black.withOpacity(isDark ? 0.25 : 0.04),
+                  blurRadius: isSelected ? 18 : 10,
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
                 Container(
-                  height: 52,
-                  width: 52,
+                  height: 48,
+                  width: 48,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppColors.brandGold
-                        : const Color(0xFFFFF4D9),
-                    borderRadius: BorderRadius.circular(18),
+                        ? Colors.white.withOpacity(0.18)
+                        : AppColors.brandGold.withOpacity(isDark ? 0.18 : 0.14),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(12),
                   child: SvgPicture.asset(
                     d.icon,
                     colorFilter: ColorFilter.mode(
                       isSelected
-                          ? Colors.black
-                          : (isLogout ? Colors.black87 : AppColors.grey900),
+                          ? (isDark ? AppColors.brandNavy : Colors.white)
+                          : AppColors.brandGold,
                       BlendMode.srcIn,
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        d.title,
+                        d.title.tr,
                         style: GoogleFonts.poppins(
                           color: isSelected
-                              ? Colors.white
-                              : (isLogout ? Colors.black : AppColors.grey900),
+                              ? (isDark ? AppColors.brandNavy : Colors.white)
+                              : unselectedText,
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 3),
                       Text(
-                        _drawerSubtitle(d.title),
+                        d.subtitle.tr,
                         style: GoogleFonts.poppins(
-                          color: isSelected ? Colors.white70 : AppColors.grey500,
+                          color: isSelected
+                              ? (isDark
+                                  ? AppColors.brandNavy.withOpacity(0.7)
+                                  : Colors.white70)
+                              : unselectedSubtitle,
                           fontWeight: FontWeight.w400,
                           fontSize: 12,
                           height: 1.35,
@@ -332,7 +321,9 @@ class DashBoardScreen extends StatelessWidget {
                 ),
                 Icon(
                   Icons.chevron_right_rounded,
-                  color: isSelected ? Colors.white : AppColors.grey500,
+                  color: isSelected
+                      ? (isDark ? AppColors.brandNavy : Colors.white)
+                      : unselectedSubtitle,
                 ),
               ],
             ),
@@ -341,7 +332,7 @@ class DashBoardScreen extends StatelessWidget {
       ));
     }
     return Drawer(
-      backgroundColor: const Color(0xFFF7F8FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       child: SafeArea(
         child: Column(
           children: [
@@ -500,38 +491,6 @@ class DashBoardScreen extends StatelessWidget {
     );
   }
 
-  String _drawerSubtitle(String title) {
-    switch (title.toLowerCase()) {
-      case 'cases':
-        return 'Track your ongoing and past matters';
-      case 'my wallet':
-        return 'Top up and review payment activity';
-      case 'bank details':
-        return 'Manage your payout account information';
-      case 'inbox':
-        return 'Stay connected with clients and updates';
-      case 'profile':
-        return 'Update your professional details';
-      case 'online registration':
-        return 'Upload and manage your verification documents';
-      case 'lawyer information':
-        return 'Maintain your practice and service details';
-      case 'settings':
-        return 'Preferences, language and notifications';
-      case 'subscription':
-        return 'Review available plans and upgrades';
-      case 'subscription history':
-        return 'View your past membership payments';
-      case 'terms and conditions':
-        return 'Read platform rules and usage policies';
-      case 'privacy policy':
-        return 'Understand how your data is protected';
-      case 'log out':
-        return 'Securely sign out from your account';
-      default:
-        return 'Professional legal workspace';
-    }
-  }
 
   String _initialsFromName(String? name) {
     final parts = (name ?? '')

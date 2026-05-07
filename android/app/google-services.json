@@ -8,6 +8,50 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:82480771693:android:f4c39828f50526369b4564",
+        "android_client_info": {
+          "package_name": "com.Ailab.rulebook.customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82480771693-be7b24m4pl7p52te5on92gqcqm2hiq37.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Ailab.rulebook.customer",
+            "certificate_hash": "527bcf7be50f3d016915c8157f52bca8e3df3e41"
+          }
+        },
+        {
+          "client_id": "82480771693-is2grp5q30rlgtfc72to4emfu5kilg9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7FVMu1XeNYVorDa4gmb2jH8kI2WMUYsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82480771693-is2grp5q30rlgtfc72to4emfu5kilg9i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "82480771693-acithlooppulv4ecmkb7rir5hkktu6rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ailab.rulebooklawyer"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:82480771693:android:2f30d76fa5f709f09b4564",
         "android_client_info": {
           "package_name": "com.ailab.rulebooklawyer"
@@ -15,11 +59,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "82480771693-mhne7e6q8ofloa700mq7kv31re8h42g9.apps.googleusercontent.com",
+          "client_id": "82480771693-4ms0v0g54futa7u5soo8e6cjdmjnnegq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.ailab.rulebooklawyer",
-            "certificate_hash": "21e22db1bcacc618880968fbd8dcd360288d567f"
+            "certificate_hash": "14cbdc4f930cbfa39f03aef9a2846e7e0c38a616"
+          }
+        },
+        {
+          "client_id": "82480771693-gkpf6cvtlfkj4obo41ennvgptmgsp6dm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ailab.rulebooklawyer",
+            "certificate_hash": "527bcf7be50f3d016915c8157f52bca8e3df3e41"
           }
         },
         {

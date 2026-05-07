@@ -110,19 +110,23 @@ class _SplashScreenState extends State<SplashScreen>
       init: SplashController(),
       builder: (controller) {
         return Scaffold(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColors.brandSurfaceDark,
           body: Stack(
             children: [
-              // Background gradient
+              // Lush deep ink-to-navy gradient
               Container(
                 width: double.infinity,
                 height: double.infinity,
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF020617), AppColors.primary, Color(0xFF1E293B)],
+                    colors: [
+                      AppColors.brandSurfaceDark,
+                      AppColors.brandNavy,
+                      AppColors.darkSurfaceElevated,
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    stops: [0.0, 0.5, 1.0],
+                    stops: [0.0, 0.55, 1.0],
                   ),
                 ),
               ),
@@ -250,7 +254,7 @@ class _SplashScreenState extends State<SplashScreen>
                                   child: child!,
                                 ),
                                 child: Image.asset(
-                                  "assets/appicon/app_logo2.png",
+                                  "assets/appicon/lawyer_splash1.png",
                                   width: 110,
                                   height: 110,
                                   errorBuilder: (context, error, stackTrace) =>

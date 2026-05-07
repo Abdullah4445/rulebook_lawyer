@@ -46,8 +46,26 @@ class VehicleInformationController extends GetxController {
   RxList<ZoneModel> zoneList = <ZoneModel>[].obs;
   RxList selectedZone = <String>[].obs;
 
+  /// Legacy: kept as the first item of [selectedServiceIds] for compatibility
+  /// with any code that still reads a single value.
   Rx<String?> selectedServiceId = "".obs;
+  /// All categories the lawyer is an expert in.
+  RxList<String> selectedServiceIds = <String>[].obs;
   RxString zoneString = "".obs;
+
+  bool isServiceSelected(String? id) =>
+      id != null && selectedServiceIds.contains(id);
+
+  void toggleService(String? id) {
+    if (id == null || id.isEmpty) return;
+    if (selectedServiceIds.contains(id)) {
+      selectedServiceIds.remove(id);
+    } else {
+      selectedServiceIds.add(id);
+    }
+    selectedServiceId.value =
+        selectedServiceIds.isEmpty ? null : selectedServiceIds.first;
+  }
 
   getVehicleTye() async {
     await FireStoreUtils.getService().then((value) {
@@ -84,9 +102,17 @@ class VehicleInformationController extends GetxController {
 
     });
 
-    if (driverModel.value.serviceId != null) {
-      selectedServiceId.value = driverModel.value.serviceId;
+    // Hydrate multi-select state from the loaded profile (handles both new
+    // serviceIds list and legacy single serviceId docs).
+    final existingIds = driverModel.value.serviceIds;
+    if (existingIds != null && existingIds.isNotEmpty) {
+      selectedServiceIds.assignAll(existingIds);
+    } else if (driverModel.value.serviceId != null &&
+        driverModel.value.serviceId!.isNotEmpty) {
+      selectedServiceIds.add(driverModel.value.serviceId!);
     }
+    selectedServiceId.value =
+        selectedServiceIds.isEmpty ? null : selectedServiceIds.first;
     await FireStoreUtils.getVehicleType().then((value) {
       vehicleList = value!;
       if (driverModel.value.vehicleInformation != null) {

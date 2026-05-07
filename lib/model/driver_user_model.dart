@@ -15,7 +15,12 @@ class DriverUserModel {
   String? fullName;
   bool? isOnline;
   String? id;
+  /// Legacy single service id — kept in sync with the first item of [serviceIds]
+  /// for backwards compatibility with documents that haven't been migrated yet
+  /// and with downstream code that still reads a single value.
   String? serviceId;
+  /// All categories the lawyer is an expert in. Source of truth for matching.
+  List<String>? serviceIds;
   String? fcmToken;
   String? email;
   VehicleInformation? vehicleInformation;
@@ -43,6 +48,7 @@ class DriverUserModel {
       this.isOnline,
       this.id,
       this.serviceId,
+      this.serviceIds,
       this.fcmToken,
       this.email,
       this.location,
@@ -69,6 +75,17 @@ class DriverUserModel {
     isOnline = json['isOnline'];
     id = json['id'];
     serviceId = json['serviceId'];
+    if (json['serviceIds'] is List) {
+      serviceIds = (json['serviceIds'] as List)
+          .map((e) => e.toString())
+          .where((e) => e.isNotEmpty)
+          .toList();
+    } else if (serviceId != null && serviceId!.isNotEmpty) {
+      // Legacy doc with only the single field — promote it to the list.
+      serviceIds = [serviceId!];
+    } else {
+      serviceIds = [];
+    }
     fcmToken = json['fcmToken'];
     email = json['email'];
     vehicleInformation = json['vehicleInformation'] != null ? VehicleInformation.fromJson(json['vehicleInformation']) : null;
@@ -97,7 +114,13 @@ class DriverUserModel {
     data['fullName'] = fullName;
     data['isOnline'] = isOnline;
     data['id'] = id;
-    data['serviceId'] = serviceId;
+    // Keep legacy single field in sync with the first specialty so old code
+    // and unmigrated queries continue to work.
+    final List<String> normalisedIds =
+        (serviceIds ?? const <String>[]).where((e) => e.isNotEmpty).toList();
+    data['serviceIds'] = normalisedIds;
+    data['serviceId'] =
+        normalisedIds.isNotEmpty ? normalisedIds.first : serviceId;
     data['fcmToken'] = fcmToken;
     data['email'] = email;
     data['rotation'] = rotation;
