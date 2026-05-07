@@ -37,6 +37,22 @@ class DriverUserModel {
   Timestamp? subscriptionExpiryDate;
   SubscriptionPlanModel? subscriptionPlan;
 
+  // ─── Lawyer professional credentials (Phase 6 — additive, all nullable) ───
+  /// Bar Council registration number (e.g. PBC-12345)
+  String? barCouncilId;
+  /// Date the lawyer was admitted to the bar
+  Timestamp? barRegistrationDate;
+  /// Years of legal practice — independent of the legacy `seats` field
+  int? practiceYears;
+  /// Highest legal qualification (LLB, LLM, etc.)
+  String? qualification;
+  /// Office / chamber address
+  String? officeAddress;
+  /// Per-consultation flat fee (in the platform currency)
+  double? consultationFee;
+  /// Hourly billing rate (in the platform currency)
+  double? hourlyRate;
+
 
   DriverUserModel(
       {this.phoneNumber,
@@ -49,6 +65,13 @@ class DriverUserModel {
       this.id,
       this.serviceId,
       this.serviceIds,
+      this.barCouncilId,
+      this.barRegistrationDate,
+      this.practiceYears,
+      this.qualification,
+      this.officeAddress,
+      this.consultationFee,
+      this.hourlyRate,
       this.fcmToken,
       this.email,
       this.location,
@@ -102,6 +125,22 @@ class DriverUserModel {
     subscriptionExpiryDate = json['subscriptionExpiryDate'];
     subscriptionPlan = json['subscription_plan'] != null ? SubscriptionPlanModel.fromJson(json['subscription_plan']) : null;
 
+    // Lawyer credentials (all nullable — older docs simply won't have these)
+    barCouncilId = json['barCouncilId'] as String?;
+    barRegistrationDate = json['barRegistrationDate'] as Timestamp?;
+    practiceYears = (json['practiceYears'] is int)
+        ? json['practiceYears'] as int
+        : (json['practiceYears'] != null
+            ? int.tryParse(json['practiceYears'].toString())
+            : null);
+    qualification = json['qualification'] as String?;
+    officeAddress = json['officeAddress'] as String?;
+    consultationFee = (json['consultationFee'] != null)
+        ? double.tryParse(json['consultationFee'].toString())
+        : null;
+    hourlyRate = (json['hourlyRate'] != null)
+        ? double.tryParse(json['hourlyRate'].toString())
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -142,6 +181,14 @@ class DriverUserModel {
     data['subscriptionPlanId'] = subscriptionPlanId;
     data['subscriptionExpiryDate'] = subscriptionExpiryDate;
     data['subscription_plan'] = subscriptionPlan?.toJson();
+    // Lawyer credentials — only persist non-null values to keep docs lean.
+    if (barCouncilId != null) data['barCouncilId'] = barCouncilId;
+    if (barRegistrationDate != null) data['barRegistrationDate'] = barRegistrationDate;
+    if (practiceYears != null) data['practiceYears'] = practiceYears;
+    if (qualification != null) data['qualification'] = qualification;
+    if (officeAddress != null) data['officeAddress'] = officeAddress;
+    if (consultationFee != null) data['consultationFee'] = consultationFee;
+    if (hourlyRate != null) data['hourlyRate'] = hourlyRate;
     return data;
   }
 }
