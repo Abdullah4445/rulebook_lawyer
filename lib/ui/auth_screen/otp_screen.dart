@@ -4,6 +4,7 @@ import 'package:lawyer/constant/constant.dart';
 import 'package:lawyer/constant/show_toast_dialog.dart';
 import 'package:lawyer/controller/otp_controller.dart';
 import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/themes/animations.dart';
 import 'package:lawyer/themes/app_colors.dart';
 import 'package:lawyer/themes/button_them.dart';
 import 'package:lawyer/ui/auth_screen/information_screen.dart';
@@ -30,55 +31,133 @@ class OtpScreen extends StatelessWidget {
     return GetX<OtpController>(
         init: OtpController(),
         builder: (controller) {
+          final isDark = themeChange.getThem();
+          final theme = Theme.of(context);
           return Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.background,
+            backgroundColor: theme.scaffoldBackgroundColor,
             body: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset("assets/images/login_image.png", width: Responsive.width(100, context)),
+                  // Hero header with gold halo
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        height: 220,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            radius: 0.9,
+                            colors: [
+                              AppColors.brandGold.withOpacity(isDark ? 0.18 : 0.10),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                      ),
+                      EntranceFadeSlide(
+                        duration: const Duration(milliseconds: 600),
+                        offset: const Offset(0, -16),
+                        child: Image.asset(
+                          "assets/images/login_image.png",
+                          width: Responsive.width(60, context),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ],
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text("Verify Phone Number".tr, style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 18)),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: Text("We just send a verification code to \n${controller.countryCode.value + controller.phoneNumber.value}".tr, style: GoogleFonts.poppins()),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 50),
-                          child: PinCodeTextField(
-                            textStyle: TextStyle(color: Colors.black),
-                            length: 6,
-                            appContext: context,
-                            keyboardType: TextInputType.phone,
-                            pinTheme: PinTheme(
-                              fieldHeight: 50,
-                              fieldWidth: 50,
-                              activeColor: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder,
-                              selectedColor: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder,
-                              inactiveColor: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder,
-                              activeFillColor: themeChange.getThem() ? AppColors.darkTextField : AppColors.textField,
-                              inactiveFillColor: themeChange.getThem() ? AppColors.darkTextField : AppColors.textField,
-                              selectedFillColor: themeChange.getThem() ? AppColors.darkTextField : AppColors.textField,
-                              shape: PinCodeFieldShape.box,
-                              borderRadius: BorderRadius.circular(10),
+                        EntranceFadeSlide(
+                          duration: const Duration(milliseconds: 500),
+                          delay: const Duration(milliseconds: 100),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              "Verify Phone Number".tr,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 26,
+                                letterSpacing: -0.3,
+                                color: theme.colorScheme.onSurface,
+                              ),
                             ),
-                            enableActiveFill: true,
-                            cursorColor: AppColors.primary,
-                            controller: controller.otpController.value,
-                            onCompleted: (v) async {},
-                            onChanged: (value) {},
                           ),
                         ),
-                        const SizedBox(
-                          height: 30,
+                        EntranceFadeSlide(
+                          duration: const Duration(milliseconds: 500),
+                          delay: const Duration(milliseconds: 200),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: RichText(
+                              text: TextSpan(
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  height: 1.5,
+                                  color: theme.colorScheme.onSurface.withOpacity(0.65),
+                                ),
+                                children: [
+                                  TextSpan(text: '${"We just send a verification code to".tr}\n'),
+                                  TextSpan(
+                                    text: controller.countryCode.value + controller.phoneNumber.value,
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.brandGold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
+                        EntranceFadeSlide(
+                          duration: const Duration(milliseconds: 500),
+                          delay: const Duration(milliseconds: 350),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 36),
+                            child: PinCodeTextField(
+                              textStyle: GoogleFonts.poppins(
+                                color: theme.colorScheme.onSurface,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              length: 6,
+                              appContext: context,
+                              keyboardType: TextInputType.phone,
+                              pinTheme: PinTheme(
+                                fieldHeight: 56,
+                                fieldWidth: 48,
+                                activeColor: AppColors.brandGold,
+                                selectedColor: AppColors.brandGold,
+                                inactiveColor: isDark
+                                    ? AppColors.darkTextFieldBorder
+                                    : AppColors.textFieldBorder,
+                                activeFillColor: isDark
+                                    ? AppColors.darkTextField
+                                    : AppColors.textField,
+                                inactiveFillColor: isDark
+                                    ? AppColors.darkTextField
+                                    : AppColors.textField,
+                                selectedFillColor: AppColors.brandGold.withOpacity(0.1),
+                                shape: PinCodeFieldShape.box,
+                                borderRadius: BorderRadius.circular(14),
+                                borderWidth: 1.4,
+                              ),
+                              enableActiveFill: true,
+                              cursorColor: AppColors.brandGold,
+                              animationType: AnimationType.fade,
+                              animationDuration: const Duration(milliseconds: 250),
+                              controller: controller.otpController.value,
+                              onCompleted: (v) async {},
+                              onChanged: (value) {},
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
                         ButtonThem.buildButton(
                           context,
                           title: "Verify".tr,

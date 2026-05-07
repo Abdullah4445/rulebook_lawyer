@@ -4,6 +4,7 @@ import 'package:lawyer/constant/constant.dart';
 import 'package:lawyer/constant/show_toast_dialog.dart';
 import 'package:lawyer/controller/information_controller.dart';
 import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/themes/animations.dart';
 import 'package:lawyer/themes/app_colors.dart';
 import 'package:lawyer/themes/button_them.dart';
 import 'package:lawyer/themes/text_field_them.dart';
@@ -28,87 +29,148 @@ class InformationScreen extends StatelessWidget {
     return GetX<InformationController>(
         init: InformationController(),
         builder: (controller) {
+          final isDark = themeChange.getThem();
+          final theme = Theme.of(context);
           return Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
             body: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset("assets/images/login_image.png", width: Responsive.width(100, context)),
+                  // Hero header with gold halo
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        height: 200,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            radius: 0.9,
+                            colors: [
+                              AppColors.brandGold.withOpacity(isDark ? 0.18 : 0.10),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                      ),
+                      EntranceFadeSlide(
+                        duration: const Duration(milliseconds: 600),
+                        offset: const Offset(0, -16),
+                        child: Image.asset(
+                          "assets/images/login_image.png",
+                          width: Responsive.width(55, context),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ],
+                  ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Text("Sign up".tr, style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 18)),
+                        EntranceFadeSlide(
+                          duration: const Duration(milliseconds: 500),
+                          delay: const Duration(milliseconds: 100),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              "Sign up".tr,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 26,
+                                letterSpacing: -0.3,
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Text("Create your account to start using goflow".tr, style: GoogleFonts.poppins(fontWeight: FontWeight.w400)),
+                        EntranceFadeSlide(
+                          duration: const Duration(milliseconds: 500),
+                          delay: const Duration(milliseconds: 200),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 6, bottom: 4),
+                            child: Text(
+                              "Create your account to start using GoRide".tr,
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                height: 1.5,
+                                color: theme.colorScheme.onSurface.withOpacity(0.65),
+                              ),
+                            ),
+                          ),
                         ),
-                        const SizedBox(
-                          height: 20,
+                        const SizedBox(height: 24),
+                        EntranceFadeSlide(
+                          duration: const Duration(milliseconds: 500),
+                          delay: const Duration(milliseconds: 300),
+                          child: TextFieldThem.buildTextFiled(
+                            context,
+                            hintText: 'Full name'.tr,
+                            controller: controller.fullNameController.value,
+                          ),
                         ),
-                        TextFieldThem.buildTextFiled(context, hintText: 'Full name'.tr, controller: controller.fullNameController.value),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextFormField(
-                            validator: (value) => value != null && value.isNotEmpty ? null : 'Required',
+                        const SizedBox(height: 10),
+                        EntranceFadeSlide(
+                          duration: const Duration(milliseconds: 500),
+                          delay: const Duration(milliseconds: 400),
+                          child: TextFormField(
+                            validator: (value) =>
+                                value != null && value.isNotEmpty ? null : 'Required',
                             keyboardType: TextInputType.number,
                             textCapitalization: TextCapitalization.sentences,
                             controller: controller.phoneNumberController.value,
                             textAlign: TextAlign.start,
-                            enabled: controller.loginType.value == Constant.phoneLoginType ? false : true,
+                            enabled: controller.loginType.value == Constant.phoneLoginType
+                                ? false
+                                : true,
+                            style: GoogleFonts.poppins(
+                                color: theme.colorScheme.onSurface),
                             decoration: InputDecoration(
-                                isDense: true,
-                                filled: true,
-                                fillColor: themeChange.getThem() ? AppColors.darkTextField : AppColors.textField,
-                                contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                                prefixIcon: CountryCodePicker(
-                                  textStyle: TextStyle(color: Colors.black),
-                                  searchStyle: TextStyle(color: Colors.black),
-                                  onChanged: (value) {
-                                    controller.countryCode.value = value.dialCode.toString();
-                                  },
-                                  dialogBackgroundColor: themeChange.getThem() ? AppColors.darkBackground : AppColors.background,
-                                  initialSelection: controller.countryCode.value,
-                                  comparator: (a, b) => b.name!.compareTo(a.name.toString()),
-                                  flagDecoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(2)),
-                                  ),
+                              prefixIcon: CountryCodePicker(
+                                textStyle: GoogleFonts.poppins(
+                                    color: theme.colorScheme.onSurface,
+                                    fontWeight: FontWeight.w600),
+                                searchStyle: GoogleFonts.poppins(
+                                    color: theme.colorScheme.onSurface),
+                                onChanged: (value) {
+                                  controller.countryCode.value =
+                                      value.dialCode.toString();
+                                },
+                                dialogBackgroundColor: isDark
+                                    ? AppColors.darkContainerBackground
+                                    : AppColors.containerBackground,
+                                initialSelection: controller.countryCode.value,
+                                comparator: (a, b) =>
+                                    b.name!.compareTo(a.name.toString()),
+                                flagDecoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(3)),
                                 ),
-                                disabledBorder: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(Radius.circular(4)),
-                                  borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder, width: 1),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(Radius.circular(4)),
-                                  borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder, width: 1),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(Radius.circular(4)),
-                                  borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder, width: 1),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(Radius.circular(4)),
-                                  borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder, width: 1),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: const BorderRadius.all(Radius.circular(4)),
-                                  borderSide: BorderSide(color: themeChange.getThem() ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder, width: 1),
-                                ),
-                                hintText: "Phone number".tr)),
-                        const SizedBox(
-                          height: 10,
+                              ),
+                              hintText: "Phone number".tr,
+                            ),
+                          ),
                         ),
-                        TextFieldThem.buildTextFiled(context,
-                            hintText: 'Email'.tr, controller: controller.emailController.value, enable: controller.loginType.value == Constant.googleLoginType ? false : true),
-                        const SizedBox(
-                          height: 60,
+                        const SizedBox(height: 10),
+                        EntranceFadeSlide(
+                          duration: const Duration(milliseconds: 500),
+                          delay: const Duration(milliseconds: 500),
+                          child: TextFieldThem.buildTextFiled(
+                            context,
+                            hintText: 'Email'.tr,
+                            controller: controller.emailController.value,
+                            enable: controller.loginType.value == Constant.googleLoginType
+                                ? false
+                                : true,
+                          ),
                         ),
-                        ButtonThem.buildButton(context, title: "Create account".tr, onPress: () async {
+                        const SizedBox(height: 50),
+                        EntranceFadeSlide(
+                          duration: const Duration(milliseconds: 500),
+                          delay: const Duration(milliseconds: 600),
+                          child: ButtonThem.buildButton(context, title: "Create account".tr, onPress: () async {
                           if (controller.fullNameController.value.text.isEmpty) {
                             ShowToastDialog.showToast("Please enter full name".tr);
                           } else if (controller.emailController.value.text.isEmpty) {
@@ -162,6 +224,7 @@ class InformationScreen extends StatelessWidget {
                             });
                           }
                         }),
+                        ),
                       ],
                     ),
                   )

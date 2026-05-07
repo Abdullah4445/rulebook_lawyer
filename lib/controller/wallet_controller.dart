@@ -222,7 +222,7 @@ class WalletController extends GetxController {
                     primary: AppColors.primary,
                   ),
                 ),
-                merchantDisplayName: 'GoRide'));
+                merchantDisplayName: 'Rulebook Lawyer'));
         displayStripePaymentSheet(amount: amount);
       }
     } catch (e, s) {
@@ -810,7 +810,7 @@ class WalletController extends GetxController {
     var options = {
       'key': paymentModel.value.razorpay!.razorpayKey,
       'amount': amount * 100,
-      'name': 'GoRide',
+      'name': 'Rulebook Lawyer',
       'order_id': orderId,
       "currency": "INR",
       'description': 'wallet Topup',
