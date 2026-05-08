@@ -68,86 +68,120 @@ class VehicleInformationController extends GetxController {
   }
 
   getVehicleTye() async {
-    await FireStoreUtils.getService().then((value) {
-      serviceList.value = value;
-    });
+    // Each Firestore call is wrapped + timed out so a single hung query can
+    // never trap the screen on the loader. Whatever happens, the `finally`
+    // block at the bottom guarantees `isLoading.value = false`.
+    try {
+      await Future.wait<void>([
+        // Services (legal categories)
+        FireStoreUtils.getService()
+            .then((value) {
+          serviceList.value = value;
+        }).catchError((e, s) {
+          debugPrint('getService failed: $e');
+        }).timeout(const Duration(seconds: 15), onTimeout: () {
+          debugPrint('getService timed out — continuing with empty list');
+        }),
+        // Zones / jurisdictions
+        FireStoreUtils.getZone()
+            .then((value) {
+          if (value != null) zoneList.value = value;
+        }).catchError((e, s) {
+          debugPrint('getZone failed: $e');
+        }).timeout(const Duration(seconds: 15), onTimeout: () {
+          debugPrint('getZone timed out — continuing with empty list');
+        }),
+        // Vehicle / court-of-practice types
+        FireStoreUtils.getVehicleType()
+            .then((value) {
+          if (value != null) vehicleList = value;
+        }).catchError((e, s) {
+          debugPrint('getVehicleType failed: $e');
+        }).timeout(const Duration(seconds: 15), onTimeout: () {
+          debugPrint('getVehicleType timed out — continuing with empty list');
+        }),
+        // Driver rules / code of conduct
+        FireStoreUtils.getDriverRules()
+            .then((value) {
+          if (value != null) driverRulesList.value = value;
+        }).catchError((e, s) {
+          debugPrint('getDriverRules failed: $e');
+        }).timeout(const Duration(seconds: 15), onTimeout: () {
+          debugPrint('getDriverRules timed out — continuing with empty list');
+        }),
+      ]);
 
-    await FireStoreUtils.getZone().then((value) {
-      if (value != null) {
-        zoneList.value = value;
-      }
-    });
-
-    // Be resilient to brand-new lawyers who have authenticated but haven't yet
-    // completed their profile in Firestore — getDriverProfile may return null.
-    final profile = await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid());
-    if (profile != null) {
-      driverModel.value = profile;
-    } else {
-      // First-time visit — keep the empty model and stamp the auth uid so
-      // the eventual updateDriverUser writes against the right document.
-      driverModel.value.id = FireStoreUtils.getCurrentUid();
-    }
-
-    if (driverModel.value.vehicleInformation != null) {
-      final v = driverModel.value.vehicleInformation!;
-      vehicleNumberController.value.text = v.vehicleNumber?.toString() ?? '';
-      if (v.registrationDate != null) {
-        selectedDate.value = v.registrationDate!.toDate();
-        registrationDateController.value.text =
-            DateFormat("dd-MM-yyyy").format(selectedDate.value!);
-      }
-      selectedColor.value = v.vehicleColor?.toString() ?? '';
-      seatsController.value.text = v.seats ?? '2';
-    }
-
-    if (driverModel.value.zoneIds != null) {
-      for (var element in driverModel.value.zoneIds!) {
-        List<ZoneModel> list = zoneList.where((p0) => p0.id == element).toList();
-        if (list.isNotEmpty) {
-          selectedZone.add(element);
-          zoneString.value =
-              "$zoneString${zoneString.isEmpty ? "" : ","} ${Constant.localizationName(list.first.name)}";
+      // Lawyer profile fetch — null-safe, never crashes.
+      try {
+        final profile = await FireStoreUtils.getDriverProfile(
+                FireStoreUtils.getCurrentUid())
+            .timeout(const Duration(seconds: 15));
+        if (profile != null) {
+          driverModel.value = profile;
+        } else {
+          driverModel.value.id = FireStoreUtils.getCurrentUid();
         }
+      } catch (e) {
+        debugPrint('getDriverProfile failed/timed out: $e');
+        driverModel.value.id = FireStoreUtils.getCurrentUid();
       }
-      zoneNameController.value.text = zoneString.value;
-    }
 
-    // Hydrate multi-select state from the loaded profile (handles both new
-    // serviceIds list and legacy single serviceId docs).
-    final existingIds = driverModel.value.serviceIds;
-    if (existingIds != null && existingIds.isNotEmpty) {
-      selectedServiceIds.assignAll(existingIds);
-    } else if (driverModel.value.serviceId != null &&
-        driverModel.value.serviceId!.isNotEmpty) {
-      selectedServiceIds.add(driverModel.value.serviceId!);
-    }
-    selectedServiceId.value =
-        selectedServiceIds.isEmpty ? null : selectedServiceIds.first;
-    await FireStoreUtils.getVehicleType().then((value) {
-      vehicleList = value!;
+      // Hydrate vehicle/credential fields if present
       if (driverModel.value.vehicleInformation != null) {
+        final v = driverModel.value.vehicleInformation!;
+        vehicleNumberController.value.text = v.vehicleNumber?.toString() ?? '';
+        if (v.registrationDate != null) {
+          selectedDate.value = v.registrationDate!.toDate();
+          registrationDateController.value.text =
+              DateFormat("dd-MM-yyyy").format(selectedDate.value!);
+        }
+        selectedColor.value = v.vehicleColor?.toString() ?? '';
+        seatsController.value.text = v.seats ?? '2';
+
+        // Match selected vehicle/court-of-practice from loaded list
         for (var element in vehicleList) {
-          if (element.id == driverModel.value.vehicleInformation!.vehicleTypeId) {
+          if (element.id == v.vehicleTypeId) {
             selectedVehicle.value = element;
           }
         }
-      }
-    });
-
-    await FireStoreUtils.getDriverRules().then((value) {
-      if (value != null) {
-        driverRulesList.value = value;
-        if (driverModel.value.vehicleInformation != null) {
-          if (driverModel.value.vehicleInformation!.driverRules != null) {
-            for (var element in driverModel.value.vehicleInformation!.driverRules!) {
-              selectedDriverRulesList.add(element);
-            }
+        // Hydrate selected driver rules
+        if (v.driverRules != null) {
+          for (var element in v.driverRules!) {
+            selectedDriverRulesList.add(element);
           }
         }
       }
-    });
-    isLoading.value = false;
-    update();
+
+      // Hydrate selected zones
+      if (driverModel.value.zoneIds != null) {
+        for (var element in driverModel.value.zoneIds!) {
+          final list =
+              zoneList.where((p0) => p0.id == element).toList();
+          if (list.isNotEmpty) {
+            selectedZone.add(element);
+            zoneString.value =
+                "$zoneString${zoneString.isEmpty ? "" : ","} ${Constant.localizationName(list.first.name)}";
+          }
+        }
+        zoneNameController.value.text = zoneString.value;
+      }
+
+      // Hydrate multi-specialty selection
+      final existingIds = driverModel.value.serviceIds;
+      if (existingIds != null && existingIds.isNotEmpty) {
+        selectedServiceIds.assignAll(existingIds);
+      } else if (driverModel.value.serviceId != null &&
+          driverModel.value.serviceId!.isNotEmpty) {
+        selectedServiceIds.add(driverModel.value.serviceId!);
+      }
+      selectedServiceId.value =
+          selectedServiceIds.isEmpty ? null : selectedServiceIds.first;
+    } catch (e, s) {
+      // Catch-all so we still drop the loader.
+      debugPrint('getVehicleTye unexpected error: $e\n$s');
+    } finally {
+      isLoading.value = false;
+      update();
+    }
   }
 }
