@@ -78,29 +78,40 @@ class VehicleInformationController extends GetxController {
       }
     });
 
-    await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid()).then((value) {
-      driverModel.value = value!;
-      if (driverModel.value.vehicleInformation != null) {
-        vehicleNumberController.value.text = driverModel.value.vehicleInformation!.vehicleNumber.toString();
-        selectedDate.value = driverModel.value.vehicleInformation!.registrationDate!.toDate();
-        registrationDateController.value.text = DateFormat("dd-MM-yyyy").format(selectedDate.value!);
-        selectedColor.value = driverModel.value.vehicleInformation!.vehicleColor.toString();
-        seatsController.value.text = driverModel.value.vehicleInformation!.seats ?? "2";
-      }
+    // Be resilient to brand-new lawyers who have authenticated but haven't yet
+    // completed their profile in Firestore — getDriverProfile may return null.
+    final profile = await FireStoreUtils.getDriverProfile(FireStoreUtils.getCurrentUid());
+    if (profile != null) {
+      driverModel.value = profile;
+    } else {
+      // First-time visit — keep the empty model and stamp the auth uid so
+      // the eventual updateDriverUser writes against the right document.
+      driverModel.value.id = FireStoreUtils.getCurrentUid();
+    }
 
-      if(driverModel.value.zoneIds != null){
-        for (var element in driverModel.value.zoneIds!) {
-          List<ZoneModel> list = zoneList.where((p0) => p0.id == element).toList();
-          if(list.isNotEmpty){
-            selectedZone.add(element);
-            print("My Driver Zone: ${selectedZone.value.toString()}");
-            zoneString.value = "$zoneString${zoneString.isEmpty ? "" : ","} ${Constant.localizationName(list.first.name)}";
-          }
+    if (driverModel.value.vehicleInformation != null) {
+      final v = driverModel.value.vehicleInformation!;
+      vehicleNumberController.value.text = v.vehicleNumber?.toString() ?? '';
+      if (v.registrationDate != null) {
+        selectedDate.value = v.registrationDate!.toDate();
+        registrationDateController.value.text =
+            DateFormat("dd-MM-yyyy").format(selectedDate.value!);
+      }
+      selectedColor.value = v.vehicleColor?.toString() ?? '';
+      seatsController.value.text = v.seats ?? '2';
+    }
+
+    if (driverModel.value.zoneIds != null) {
+      for (var element in driverModel.value.zoneIds!) {
+        List<ZoneModel> list = zoneList.where((p0) => p0.id == element).toList();
+        if (list.isNotEmpty) {
+          selectedZone.add(element);
+          zoneString.value =
+              "$zoneString${zoneString.isEmpty ? "" : ","} ${Constant.localizationName(list.first.name)}";
         }
-        zoneNameController.value.text = zoneString.value;
       }
-
-    });
+      zoneNameController.value.text = zoneString.value;
+    }
 
     // Hydrate multi-select state from the loaded profile (handles both new
     // serviceIds list and legacy single serviceId docs).

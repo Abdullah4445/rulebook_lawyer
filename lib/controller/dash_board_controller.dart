@@ -13,6 +13,8 @@ import 'package:lawyer/ui/terms_and_condition/terms_and_condition_screen.dart';
 import 'package:lawyer/ui/vehicle_information/vehicle_information_screen.dart';
 import 'package:lawyer/ui/ai_chat/ai_chat_screen.dart';
 import 'package:lawyer/ui/wallet/wallet_screen.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
+import 'package:lawyer/model/driver_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -131,10 +133,36 @@ class DashBoardController extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
     setDrawerList();
-
+    _enforceProfileGate();
     super.onInit();
+  }
+
+  /// Returns true when the lawyer has supplied the bare minimum needed to be
+  /// matched against new cases: at least one specialty AND vehicle/credentials
+  /// data. Used by both the online toggle and the launch-time gate.
+  static bool isProfileComplete(DriverUserModel m) {
+    final hasSpecialty = (m.serviceIds != null && m.serviceIds!.isNotEmpty) ||
+        (m.serviceId != null && m.serviceId!.isNotEmpty);
+    return m.vehicleInformation != null && hasSpecialty;
+  }
+
+  /// On every dashboard launch, if the lawyer's profile is incomplete force
+  /// `isOnline = false` in Firestore so they cannot accidentally appear in
+  /// the available pool to clients.
+  Future<void> _enforceProfileGate() async {
+    try {
+      final uid = FireStoreUtils.getCurrentUid();
+      if (uid.isEmpty) return;
+      final profile = await FireStoreUtils.getDriverProfile(uid);
+      if (profile == null) return;
+      if (!isProfileComplete(profile) && profile.isOnline == true) {
+        profile.isOnline = false;
+        await FireStoreUtils.updateDriverUser(profile);
+      }
+    } catch (_) {
+      // Non-fatal — dashboard should always render.
+    }
   }
 
   void setDrawerList() {
