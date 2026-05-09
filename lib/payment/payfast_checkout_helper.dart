@@ -9,9 +9,14 @@ import 'package:payfast_flutter/payfast_flutter.dart';
 class PayFastCheckoutHelper {
   static const String _tokenEndpoint =
       'https://ipg1.apps.net.pk/Ecommerce/api/Transaction/GetAccessToken';
-  static const String defaultMerchantId = '241665';
-  static const String defaultSecuredKey = 'stqiinqRfCjySfx00J9ySIzIR';
   static const String defaultGatewayName = 'PayFast';
+
+  // PayFast credentials are fetched from Firestore (`settings/payment.payfast`)
+  // which the admin panel writes to from
+  // /settings/payments/payfast. Hardcoded fallbacks have been removed
+  // intentionally — if the admin hasn't configured PayFast the user
+  // sees a clear "Payment gateway not configured" error rather than a
+  // silent payment failure against sandbox keys.
 
   static Payfast normalizePayfast(Payfast? payfast) {
     final Payfast normalized = payfast ?? Payfast();
@@ -21,28 +26,17 @@ class PayFastCheckoutHelper {
         ? normalized.name!.trim()
         : defaultGatewayName;
     normalized.currencyCode = resolveCurrencyCode(normalized);
-    normalized.enable = true;
     return normalized;
   }
 
   static String resolveMerchantId(Payfast payfast) {
-    final String merchantId = payfast.merchantId?.trim() ?? '';
-    if (merchantId.isNotEmpty) {
-      return merchantId;
-    }
-    return defaultMerchantId;
+    return payfast.merchantId?.trim() ?? '';
   }
 
   static String resolveSecuredKey(Payfast payfast) {
     final String securedKey = payfast.securedKey?.trim() ?? '';
-    if (securedKey.isNotEmpty) {
-      return securedKey;
-    }
-    final String merchantKey = payfast.merchantKey?.trim() ?? '';
-    if (merchantKey.isNotEmpty) {
-      return merchantKey;
-    }
-    return defaultSecuredKey;
+    if (securedKey.isNotEmpty) return securedKey;
+    return payfast.merchantKey?.trim() ?? '';
   }
 
   static String resolveCurrencyCode(Payfast payfast) {
@@ -129,19 +123,19 @@ class PayFastCheckoutHelper {
   static String? validateSettings(Payfast? payfast) {
     final Payfast normalized = normalizePayfast(payfast);
     if (normalized.enable != true) {
-      return 'PayFast is not enabled.';
+      return 'PayFast is not enabled. Please contact the admin to enable it from the panel.';
     }
     if (resolveMerchantId(normalized).isEmpty) {
-      return 'PayFast merchant ID is missing.';
+      return 'PayFast Merchant ID is missing. Please contact the admin to configure it from the panel (Settings → Payments → PayFast).';
     }
     if (resolveSecuredKey(normalized).isEmpty) {
-      return 'PayFast secured key is missing.';
+      return 'PayFast Secured Key is missing. Please contact the admin to configure it from the panel (Settings → Payments → PayFast).';
     }
     if (resolveCallbackBaseUrl(normalized).isEmpty) {
-      return 'PayFast callback base URL is missing.';
+      return 'PayFast callback URLs are missing. Please contact the admin to configure them from the panel.';
     }
     if (kIsWeb && (resolveWebTokenUrl(normalized)?.isEmpty ?? true)) {
-      return 'PayFast web token URL is missing.';
+      return 'PayFast web token URL is missing. Please contact the admin.';
     }
     return null;
   }
