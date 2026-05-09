@@ -53,6 +53,12 @@ class VehicleInformationController extends GetxController {
   RxList<String> selectedServiceIds = <String>[].obs;
   RxString zoneString = "".obs;
 
+  // ─── Pakistan jurisdiction state ───
+  /// Currently selected province (single).
+  Rx<String?> selectedProvince = Rx<String?>(null);
+  /// Cities within [selectedProvince] the lawyer covers (multi).
+  RxList<String> selectedCities = <String>[].obs;
+
   bool isServiceSelected(String? id) =>
       id != null && selectedServiceIds.contains(id);
 
@@ -65,6 +71,25 @@ class VehicleInformationController extends GetxController {
     }
     selectedServiceId.value =
         selectedServiceIds.isEmpty ? null : selectedServiceIds.first;
+  }
+
+  /// Switch province. Clears any city selection that doesn't belong
+  /// to the new province (cities are scoped per-province by design).
+  void setProvince(String? province) {
+    if (selectedProvince.value == province) return;
+    selectedProvince.value = province;
+    selectedCities.clear();
+  }
+
+  bool isCitySelected(String city) => selectedCities.contains(city);
+
+  void toggleCity(String city) {
+    if (city.isEmpty) return;
+    if (selectedCities.contains(city)) {
+      selectedCities.remove(city);
+    } else {
+      selectedCities.add(city);
+    }
   }
 
   getVehicleTye() async {
@@ -176,6 +201,16 @@ class VehicleInformationController extends GetxController {
       }
       selectedServiceId.value =
           selectedServiceIds.isEmpty ? null : selectedServiceIds.first;
+
+      // Hydrate Pakistan jurisdiction (province + cities)
+      if (driverModel.value.province != null &&
+          driverModel.value.province!.isNotEmpty) {
+        selectedProvince.value = driverModel.value.province;
+      }
+      if (driverModel.value.cityIds != null &&
+          driverModel.value.cityIds!.isNotEmpty) {
+        selectedCities.assignAll(driverModel.value.cityIds!);
+      }
     } catch (e, s) {
       // Catch-all so we still drop the loader.
       debugPrint('getVehicleTye unexpected error: $e\n$s');

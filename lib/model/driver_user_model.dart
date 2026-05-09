@@ -37,6 +37,15 @@ class DriverUserModel {
   Timestamp? subscriptionExpiryDate;
   SubscriptionPlanModel? subscriptionPlan;
 
+  // ─── Pakistan court jurisdiction (province + cities) ───
+  /// The single province / capital territory the lawyer practices in.
+  /// One of: Punjab, Sindh, Khyber Pakhtunkhwa, Balochistan,
+  /// Islamabad Capital Territory, Azad Jammu & Kashmir, Gilgit-Baltistan.
+  String? province;
+  /// Cities within [province] the lawyer is willing to take cases from.
+  /// City names act as IDs — see PakistanJurisdictions.
+  List<String>? cityIds;
+
   // ─── Lawyer professional credentials (Phase 6 — additive, all nullable) ───
   /// Bar Council registration number (e.g. PBC-12345)
   String? barCouncilId;
@@ -65,6 +74,8 @@ class DriverUserModel {
       this.id,
       this.serviceId,
       this.serviceIds,
+      this.province,
+      this.cityIds,
       this.barCouncilId,
       this.barRegistrationDate,
       this.practiceYears,
@@ -125,6 +136,17 @@ class DriverUserModel {
     subscriptionExpiryDate = json['subscriptionExpiryDate'];
     subscriptionPlan = json['subscription_plan'] != null ? SubscriptionPlanModel.fromJson(json['subscription_plan']) : null;
 
+    // Pakistan jurisdiction
+    province = json['province'] as String?;
+    if (json['cityIds'] is List) {
+      cityIds = (json['cityIds'] as List)
+          .map((e) => e.toString())
+          .where((e) => e.isNotEmpty)
+          .toList();
+    } else {
+      cityIds = null;
+    }
+
     // Lawyer credentials (all nullable — older docs simply won't have these)
     barCouncilId = json['barCouncilId'] as String?;
     barRegistrationDate = json['barRegistrationDate'] as Timestamp?;
@@ -181,6 +203,10 @@ class DriverUserModel {
     data['subscriptionPlanId'] = subscriptionPlanId;
     data['subscriptionExpiryDate'] = subscriptionExpiryDate;
     data['subscription_plan'] = subscriptionPlan?.toJson();
+    // Pakistan jurisdiction
+    if (province != null) data['province'] = province;
+    if (cityIds != null) data['cityIds'] = cityIds;
+
     // Lawyer credentials — only persist non-null values to keep docs lean.
     if (barCouncilId != null) data['barCouncilId'] = barCouncilId;
     if (barRegistrationDate != null) data['barRegistrationDate'] = barRegistrationDate;
