@@ -1,9 +1,11 @@
 ﻿import 'package:lawyer/constant/constant.dart';
 import 'package:lawyer/model/driver_rules_model.dart';
 import 'package:lawyer/model/driver_user_model.dart';
+import 'package:lawyer/model/jurisdiction_models.dart';
 import 'package:lawyer/model/service_model.dart';
 import 'package:lawyer/model/vehicle_type_model.dart';
 import 'package:lawyer/model/zone_model.dart';
+import 'package:lawyer/services/jurisdiction_service.dart';
 import 'package:lawyer/themes/app_colors.dart';
 import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +55,12 @@ class VehicleInformationController extends GetxController {
   RxList<String> selectedServiceIds = <String>[].obs;
   RxString zoneString = "".obs;
 
-  // ─── Pakistan jurisdiction state ───
-  /// Currently selected province (single).
+  // ─── Jurisdiction state (admin-managed: country → province → cities) ───
+  /// Full hierarchy fetched from /api/jurisdictions.
+  RxList<JurisdictionCountry> countries = <JurisdictionCountry>[].obs;
+  /// Currently selected country ISO code (single).
+  Rx<String?> selectedCountryIso = Rx<String?>(null);
+  /// Currently selected province (single, scoped to selected country).
   Rx<String?> selectedProvince = Rx<String?>(null);
   /// Cities within [selectedProvince] the lawyer covers (multi).
   RxList<String> selectedCities = <String>[].obs;
@@ -71,6 +77,14 @@ class VehicleInformationController extends GetxController {
     }
     selectedServiceId.value =
         selectedServiceIds.isEmpty ? null : selectedServiceIds.first;
+  }
+
+  /// Switch country. Clears province + cities (they're scoped per country).
+  void setCountry(String? iso) {
+    if (selectedCountryIso.value == iso) return;
+    selectedCountryIso.value = iso;
+    selectedProvince.value = null;
+    selectedCities.clear();
   }
 
   /// Switch province. Clears any city selection that doesn't belong
@@ -92,11 +106,38 @@ class VehicleInformationController extends GetxController {
     }
   }
 
+  /// Lookup helpers for the UI.
+  JurisdictionCountry? get currentCountry {
+    final iso = selectedCountryIso.value;
+    if (iso == null) return null;
+    final found = countries.firstWhereOrNull((c) => c.iso == iso);
+    return found;
+  }
+
+  List<JurisdictionProvince> get provincesForCurrentCountry =>
+      currentCountry?.provinces ?? const [];
+
+  JurisdictionProvince? get currentProvinceObject {
+    final p = selectedProvince.value;
+    if (p == null) return null;
+    return provincesForCurrentCountry.firstWhereOrNull((x) => x.name == p);
+  }
+
+  List<JurisdictionCity> get citiesForCurrentProvince =>
+      currentProvinceObject?.cities ?? const [];
+
   getVehicleTye() async {
     // Each Firestore call is wrapped + timed out so a single hung query can
     // never trap the screen on the loader. Whatever happens, the `finally`
     // block at the bottom guarantees `isLoading.value = false`.
     try {
+      // Load jurisdictions (countries → provinces → cities) from admin API
+      JurisdictionService.instance
+          .getCountries()
+          .then((list) => countries.assignAll(list))
+          .catchError((e, s) =>
+              debugPrint('getCountries failed: $e — using empty list'));
+
       await Future.wait<void>([
         // Services (legal categories)
         FireStoreUtils.getService()
@@ -202,7 +243,16 @@ class VehicleInformationController extends GetxController {
       selectedServiceId.value =
           selectedServiceIds.isEmpty ? null : selectedServiceIds.first;
 
-      // Hydrate Pakistan jurisdiction (province + cities)
+      // Hydrate jurisdiction (country / province / cities)
+      // Default to Pakistan if the lawyer hasn't picked a country yet.
+      if (driverModel.value.countryIso != null &&
+          driverModel.value.countryIso!.isNotEmpty) {
+        selectedCountryIso.value = driverModel.value.countryIso;
+      } else if (countries.isNotEmpty) {
+        selectedCountryIso.value = countries
+            .firstWhere((c) => c.iso == 'PK', orElse: () => countries.first)
+            .iso;
+      }
       if (driverModel.value.province != null &&
           driverModel.value.province!.isNotEmpty) {
         selectedProvince.value = driverModel.value.province;

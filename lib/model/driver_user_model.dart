@@ -37,13 +37,13 @@ class DriverUserModel {
   Timestamp? subscriptionExpiryDate;
   SubscriptionPlanModel? subscriptionPlan;
 
-  // ─── Pakistan court jurisdiction (province + cities) ───
-  /// The single province / capital territory the lawyer practices in.
-  /// One of: Punjab, Sindh, Khyber Pakhtunkhwa, Balochistan,
-  /// Islamabad Capital Territory, Azad Jammu & Kashmir, Gilgit-Baltistan.
+  // ─── Court jurisdiction (admin-managed country/province/cities) ───
+  /// ISO 3166-1 alpha-2 of the country the lawyer practices in (e.g. "PK").
+  String? countryIso;
+  /// The single province / state / capital territory.
   String? province;
   /// Cities within [province] the lawyer is willing to take cases from.
-  /// City names act as IDs — see PakistanJurisdictions.
+  /// City names act as IDs in Firestore docs.
   List<String>? cityIds;
 
   // ─── Lawyer professional credentials (Phase 6 — additive, all nullable) ───
@@ -74,6 +74,7 @@ class DriverUserModel {
       this.id,
       this.serviceId,
       this.serviceIds,
+      this.countryIso,
       this.province,
       this.cityIds,
       this.barCouncilId,
@@ -136,7 +137,8 @@ class DriverUserModel {
     subscriptionExpiryDate = json['subscriptionExpiryDate'];
     subscriptionPlan = json['subscription_plan'] != null ? SubscriptionPlanModel.fromJson(json['subscription_plan']) : null;
 
-    // Pakistan jurisdiction
+    // Court jurisdiction
+    countryIso = json['countryIso'] as String?;
     province = json['province'] as String?;
     if (json['cityIds'] is List) {
       cityIds = (json['cityIds'] as List)
@@ -203,7 +205,8 @@ class DriverUserModel {
     data['subscriptionPlanId'] = subscriptionPlanId;
     data['subscriptionExpiryDate'] = subscriptionExpiryDate;
     data['subscription_plan'] = subscriptionPlan?.toJson();
-    // Pakistan jurisdiction
+    // Court jurisdiction
+    if (countryIso != null) data['countryIso'] = countryIso;
     if (province != null) data['province'] = province;
     if (cityIds != null) data['cityIds'] = cityIds;
 

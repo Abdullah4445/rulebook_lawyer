@@ -3,7 +3,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lawyer/constant/constant.dart';
-import 'package:lawyer/constant/pakistan_jurisdictions.dart';
 import 'package:lawyer/constant/show_toast_dialog.dart';
 import 'package:lawyer/controller/vehicle_information_controller.dart';
 import 'package:lawyer/model/driver_user_model.dart';
@@ -366,7 +365,7 @@ class VehicleInformationScreen extends StatelessWidget {
                                       );
                                     }).toList()),
                                 const SizedBox(height: 18),
-                                // ─── Pakistan jurisdiction picker ───
+                                // ─── Jurisdiction picker (country → province → cities) ───
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 6),
                                   child: Column(
@@ -384,7 +383,7 @@ class VehicleInformationScreen extends StatelessWidget {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'Pick a province first, then select all cities you cover.'.tr,
+                                        'Pick country, then province, then all cities you cover.'.tr,
                                         style: GoogleFonts.poppins(
                                           fontSize: 12,
                                           color: (themeChange.getThem()
@@ -398,61 +397,59 @@ class VehicleInformationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 10),
-                                // Province dropdown
+                                // Country dropdown
                                 Obx(() => DropdownButtonFormField<String>(
-                                      decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: themeChange.getThem()
-                                            ? AppColors.darkTextField
-                                            : AppColors.textField,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 14, vertical: 4),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(14),
-                                          borderSide: BorderSide(
-                                              color: themeChange.getThem()
-                                                  ? AppColors.darkTextFieldBorder
-                                                  : AppColors.textFieldBorder,
-                                              width: 1),
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(14),
-                                          borderSide: BorderSide(
-                                              color: themeChange.getThem()
-                                                  ? AppColors.darkTextFieldBorder
-                                                  : AppColors.textFieldBorder,
-                                              width: 1),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(14),
-                                          borderSide: const BorderSide(
-                                              color: AppColors.brandGold, width: 1.6),
-                                        ),
-                                      ),
+                                      decoration: _jurisdictionInputDecoration(themeChange.getThem()),
                                       isExpanded: true,
-                                      value: controller.selectedProvince.value,
-                                      hint: Text('Select Province'.tr),
+                                      value: controller.selectedCountryIso.value,
+                                      hint: Text('Select Country'.tr),
                                       style: GoogleFonts.poppins(
                                         color: themeChange.getThem()
                                             ? Colors.white
                                             : AppColors.brandNavy,
                                         fontWeight: FontWeight.w500,
                                       ),
-                                      items: PakistanJurisdictions.provinceNames
-                                          .map((p) => DropdownMenuItem(
-                                                value: p,
-                                                child: Text(p),
+                                      items: controller.countries
+                                          .map((c) => DropdownMenuItem(
+                                                value: c.iso,
+                                                child: Text('${c.flag ?? ''} ${c.name}'.trim()),
                                               ))
                                           .toList(),
                                       onChanged: (value) =>
-                                          controller.setProvince(value),
+                                          controller.setCountry(value),
                                     )),
+                                const SizedBox(height: 10),
+                                // Province dropdown — scoped to selected country
+                                Obx(() {
+                                  final provinces = controller.provincesForCurrentCountry;
+                                  return DropdownButtonFormField<String>(
+                                    decoration: _jurisdictionInputDecoration(themeChange.getThem()),
+                                    isExpanded: true,
+                                    value: controller.selectedProvince.value,
+                                    hint: Text(provinces.isEmpty
+                                        ? 'Select Country first'.tr
+                                        : 'Select Province'.tr),
+                                    style: GoogleFonts.poppins(
+                                      color: themeChange.getThem()
+                                          ? Colors.white
+                                          : AppColors.brandNavy,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    items: provinces
+                                        .map((p) => DropdownMenuItem(
+                                              value: p.name,
+                                              child: Text(p.name),
+                                            ))
+                                        .toList(),
+                                    onChanged: provinces.isEmpty
+                                        ? null
+                                        : (value) => controller.setProvince(value),
+                                  );
+                                }),
                                 const SizedBox(height: 12),
                                 // Cities — chips, multi-select, scoped to selected province
                                 Obx(() {
-                                  final province =
-                                      controller.selectedProvince.value;
+                                  final province = controller.selectedProvince.value;
                                   if (province == null || province.isEmpty) {
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -470,8 +467,7 @@ class VehicleInformationScreen extends StatelessWidget {
                                       ),
                                     );
                                   }
-                                  final cities =
-                                      PakistanJurisdictions.citiesOf(province);
+                                  final cities = controller.citiesForCurrentProvince;
                                   return Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -495,10 +491,10 @@ class VehicleInformationScreen extends StatelessWidget {
                                         runSpacing: 8,
                                         children: cities.map((city) {
                                           final selected =
-                                              controller.isCitySelected(city);
+                                              controller.isCitySelected(city.name);
                                           return GestureDetector(
                                             onTap: () =>
-                                                controller.toggleCity(city),
+                                                controller.toggleCity(city.name),
                                             child: AnimatedContainer(
                                               duration: const Duration(
                                                   milliseconds: 180),
@@ -536,7 +532,7 @@ class VehicleInformationScreen extends StatelessWidget {
                                                     const SizedBox(width: 4),
                                                   ],
                                                   Text(
-                                                    city,
+                                                    city.name,
                                                     style: GoogleFonts.poppins(
                                                       fontSize: 13,
                                                       fontWeight: selected
@@ -602,6 +598,9 @@ class VehicleInformationScreen extends StatelessWidget {
                                         ShowToastDialog.showToast("Please enter Vehicle color".tr);
                                       } else if (controller.seatsController.value.text.isEmpty) {
                                         ShowToastDialog.showToast("Please enter seats".tr);
+                                      } else if (controller.selectedCountryIso.value == null ||
+                                          controller.selectedCountryIso.value!.isEmpty) {
+                                        ShowToastDialog.showToast("Please select a country".tr);
                                       } else if (controller.selectedProvince.value == null ||
                                           controller.selectedProvince.value!.isEmpty) {
                                         ShowToastDialog.showToast("Please select a province".tr);
@@ -613,7 +612,9 @@ class VehicleInformationScreen extends StatelessWidget {
                                             controller.selectedServiceIds.toList();
                                         controller.driverModel.value.serviceId =
                                             controller.selectedServiceIds.first;
-                                        // Pakistan jurisdiction
+                                        // Court jurisdiction
+                                        controller.driverModel.value.countryIso =
+                                            controller.selectedCountryIso.value;
                                         controller.driverModel.value.province =
                                             controller.selectedProvince.value;
                                         controller.driverModel.value.cityIds =
@@ -668,6 +669,35 @@ class VehicleInformationScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  /// Shared decoration for the jurisdiction dropdowns to avoid repetition.
+  InputDecoration _jurisdictionInputDecoration(bool isDark) {
+    return InputDecoration(
+      filled: true,
+      fillColor: isDark ? AppColors.darkTextField : AppColors.textField,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(
+            color: isDark
+                ? AppColors.darkTextFieldBorder
+                : AppColors.textFieldBorder,
+            width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(
+            color: isDark
+                ? AppColors.darkTextFieldBorder
+                : AppColors.textFieldBorder,
+            width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: AppColors.brandGold, width: 1.6),
+      ),
     );
   }
 
