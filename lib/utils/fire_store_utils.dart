@@ -453,6 +453,8 @@ class FireStoreUtils {
     print("Current Driver details are:::");
     print("specialties: ${driverUserModel.serviceIds}");
     print("zones: ${driverUserModel.zoneIds}");
+    print("province: ${driverUserModel.province}");
+    print("cities: ${driverUserModel.cityIds}");
     print(Constant.casePlaced);
 
     // Match cases whose serviceId is in ANY of the lawyer's selected specialties.
@@ -464,8 +466,8 @@ class FireStoreUtils {
                 ? [driverUserModel.serviceId!]
                 : <String>[]);
 
-    if (lawyerServiceIds.isEmpty || (driverUserModel.zoneIds ?? []).isEmpty) {
-      // Nothing to match on — emit empty list and stop.
+    if (lawyerServiceIds.isEmpty) {
+      // Lawyer hasn't picked a specialty yet — nothing to match on.
       yield <OrderModel>[];
       return;
     }
@@ -474,10 +476,18 @@ class FireStoreUtils {
     final List<String> serviceIdsForQuery =
         lawyerServiceIds.length > 30 ? lawyerServiceIds.sublist(0, 30) : lawyerServiceIds;
 
+    // NOTE: We deliberately do NOT include a `zoneId` whereIn filter on the
+    // server side. The customer-side flow currently writes the legacy zone
+    // polygon UUID into case.zoneId (from the old `zones` collection),
+    // while the lawyer's profile now stores city names in zoneIds (from
+    // the new country/province/city picker). A whereIn between those two
+    // formats matches nothing, which was hiding every case from every
+    // lawyer. Until the customer flow is migrated to write a city name
+    // into the case, we match purely on specialty here and leave any
+    // optional geographic filtering to the client below.
     Query<Map<String, dynamic>> query = fireStore
         .collection(CollectionName.orders)
         .where('serviceId', whereIn: serviceIdsForQuery)
-        .where('zoneId', whereIn: driverUserModel.zoneIds)
         .where('status', isEqualTo: Constant.casePlaced);
 
     print("Docs Found: ${await query.get().then((value) => value.docs.map((value) {
