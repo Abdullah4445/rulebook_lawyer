@@ -712,9 +712,12 @@ class _AnimatedNewCaseCardState extends State<_AnimatedNewCaseCard>
                       ),
                       const SizedBox(height: 10),
 
-                      // Location
+                      // Location — tappable, opens customer's exact pin in Maps
                       LocationView(
-                        sourceLocation: widget.orderModel.sourceLocationName ?? "Location not specified",
+                        sourceLocation: widget.orderModel.sourceLocationName ??
+                            "Location not specified",
+                        latitude: widget.orderModel.sourceLocationLatLng?.latitude,
+                        longitude: widget.orderModel.sourceLocationLatLng?.longitude,
                       ),
 
                       const SizedBox(height: 10),

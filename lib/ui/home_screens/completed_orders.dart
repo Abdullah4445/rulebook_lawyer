@@ -73,6 +73,8 @@ class CompletedOrders extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
                           LocationView(
+                            latitude: orderModel.sourceLocationLatLng?.latitude,
+                            longitude: orderModel.sourceLocationLatLng?.longitude,
                             sourceLocation: orderModel.sourceLocationName.toString(),
                             destinationLocation: orderModel.destinationLocationName.toString(),
                           ),

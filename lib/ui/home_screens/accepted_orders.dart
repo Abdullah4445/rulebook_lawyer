@@ -353,6 +353,8 @@ class AcceptedOrders extends StatelessWidget {
                                     height: 10,
                                   ),
                                   LocationView(
+                                      latitude: orderModel.sourceLocationLatLng?.latitude,
+                                      longitude: orderModel.sourceLocationLatLng?.longitude,
                                       sourceLocation:
                                           orderModel.sourceLocationName.toString(),
                                       destinationLocation:

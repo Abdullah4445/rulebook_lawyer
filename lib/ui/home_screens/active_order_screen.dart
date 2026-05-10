@@ -204,6 +204,8 @@ class ActiveOrderScreen extends StatelessWidget {
                                     child: Divider(),
                                   ),
                                   LocationView(
+                                    latitude: orderModel.sourceLocationLatLng?.latitude,
+                                    longitude: orderModel.sourceLocationLatLng?.longitude,
                                     sourceLocation:
                                     orderModel.sourceLocationName.toString(),
                                     // destinationLocation: orderModel
