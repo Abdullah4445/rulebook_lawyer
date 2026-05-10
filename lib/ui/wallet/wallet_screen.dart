@@ -23,6 +23,88 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+/// One row in the dynamic payment-method list.
+class _GatewayOption {
+  final String id;          // dispatch key the Topup button switches on
+  final String label;       // user-facing name
+  final IconData icon;      // fallback icon when asset is missing
+  final String? assetPath;  // optional bundled logo
+  const _GatewayOption({
+    required this.id,
+    required this.label,
+    required this.icon,
+    this.assetPath,
+  });
+}
+
+/// Reads each gateway's `enable` flag from the admin-managed payment
+/// model and returns the ones that should appear to the user. Adding a
+/// new gateway = append one entry here + a case in the Topup switch.
+List<_GatewayOption> _enabledGateways(WalletController controller) {
+  final m = controller.paymentModel.value;
+  final list = <_GatewayOption>[];
+  if (m.payfast?.enable == true) {
+    list.add(_GatewayOption(
+      id: 'payfast',
+      label: m.payfast?.name?.trim().isNotEmpty == true
+          ? m.payfast!.name!.trim()
+          : 'PayFast',
+      icon: Icons.account_balance_wallet_outlined,
+      assetPath: 'assets/images/payfast.png',
+    ));
+  }
+  if (m.strip?.enable == true) {
+    list.add(const _GatewayOption(
+      id: 'stripe',
+      label: 'Stripe',
+      icon: Icons.credit_card,
+    ));
+  }
+  if (m.razorpay?.enable == true) {
+    list.add(const _GatewayOption(
+      id: 'razorpay',
+      label: 'Razorpay',
+      icon: Icons.credit_card,
+    ));
+  }
+  if (m.paypal?.enable == true) {
+    list.add(const _GatewayOption(
+      id: 'paypal',
+      label: 'PayPal',
+      icon: Icons.payment,
+    ));
+  }
+  if (m.payStack?.enable == true) {
+    list.add(const _GatewayOption(
+      id: 'paystack',
+      label: 'Paystack',
+      icon: Icons.payment,
+    ));
+  }
+  if (m.mercadoPago?.enable == true) {
+    list.add(const _GatewayOption(
+      id: 'mercadopago',
+      label: 'MercadoPago',
+      icon: Icons.payment,
+    ));
+  }
+  if (m.orangePay?.enable == true) {
+    list.add(const _GatewayOption(
+      id: 'orangepay',
+      label: 'OrangePay',
+      icon: Icons.payment,
+    ));
+  }
+  if (m.xendit?.enable == true) {
+    list.add(const _GatewayOption(
+      id: 'xendit',
+      label: 'Xendit',
+      icon: Icons.payment,
+    ));
+  }
+  return list;
+}
+
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
 
@@ -598,118 +680,94 @@ class WalletScreen extends StatelessWidget {
                                   "Select Payment Option".tr,
                                   style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                                 ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                controller.paymentModel.value.payfast?.enable == true
-                                    ? InkWell(
-                                        onTap: () {
-                                          controller.selectedPaymentMethod.value =
-                                              controller.paymentModel.value.payfast?.name
-                                                      ?.trim() ??
-                                                  'PayFast';
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: const BorderRadius.all(
-                                                Radius.circular(10)),
-                                            border: Border.all(
-                                                color: controller.selectedPaymentMethod
-                                                            .value ==
-                                                        (controller.paymentModel.value
-                                                                .payfast?.name
-                                                                ?.trim()
-                                                            ??
-                                                            'PayFast')
-                                                    ? themeChange.getThem()
-                                                        ? AppColors.darkModePrimary
-                                                        : AppColors.primary
-                                                    : AppColors.textFieldBorder,
-                                                width: 1),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  height: 40,
-                                                  width: 80,
-                                                  decoration: const BoxDecoration(
-                                                      color: AppColors.lightGray,
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(5))),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Image.asset(
-                                                        'assets/images/payfast.png'),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    controller.paymentModel.value.payfast
-                                                            ?.name
-                                                            ?.trim()
-                                                            .isNotEmpty ==
-                                                        true
-                                                        ? controller.paymentModel.value
-                                                            .payfast!.name!
-                                                            .trim()
-                                                        : 'PayFast',
-                                                    style: GoogleFonts.poppins(),
-                                                  ),
-                                                ),
-                                                Icon(
-                                                  controller.selectedPaymentMethod.value ==
-                                                          (controller.paymentModel.value.payfast
-                                                                      ?.name
-                                                                      ?.trim()
-                                                                      .isNotEmpty ==
-                                                                  true
-                                                              ? controller.paymentModel.value
-                                                                  .payfast!.name!
-                                                                  .trim()
-                                                              : 'PayFast')
-                                                      ? Icons.radio_button_checked
-                                                      : Icons.radio_button_off,
-                                                  color: controller.selectedPaymentMethod.value ==
-                                                          (controller.paymentModel.value.payfast
-                                                                      ?.name
-                                                                      ?.trim()
-                                                                      .isNotEmpty ==
-                                                                  true
-                                                              ? controller.paymentModel.value
-                                                                  .payfast!.name!
-                                                                  .trim()
-                                                              : 'PayFast')
-                                                      ? (themeChange.getThem()
-                                                          ? AppColors.darkModePrimary
-                                                          : AppColors.primary)
-                                                      : AppColors.textFieldBorder,
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.all(12),
+                                const SizedBox(height: 10),
+                                // Dynamic list of every gateway the admin has enabled
+                                // in /settings/payments/*. Add a new gateway by appending
+                                // to _enabledGateways(controller); the Topup button
+                                // dispatches to the right handler by method id.
+                                ..._enabledGateways(controller).map((g) {
+                                  final selected =
+                                      controller.selectedPaymentMethod.value == g.id;
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 8),
+                                    child: InkWell(
+                                      onTap: () => controller.selectedPaymentMethod.value =
+                                          g.id,
+                                      child: Container(
                                         decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(10)),
+                                          borderRadius: BorderRadius.circular(10),
                                           border: Border.all(
-                                              color: AppColors.textFieldBorder, width: 1),
+                                            color: selected
+                                                ? (themeChange.getThem()
+                                                    ? AppColors.darkModePrimary
+                                                    : AppColors.primary)
+                                                : AppColors.textFieldBorder,
+                                            width: 1,
+                                          ),
                                         ),
-                                        child: Text(
-                                          'PayFast is not enabled in admin payment settings.'
-                                              .tr,
-                                          style: GoogleFonts.poppins(),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 10),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                height: 40,
+                                                width: 80,
+                                                decoration: const BoxDecoration(
+                                                  color: AppColors.lightGray,
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(5)),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: g.assetPath != null
+                                                      ? Image.asset(g.assetPath!,
+                                                          errorBuilder: (_, __, ___) =>
+                                                              Icon(g.icon,
+                                                                  color: AppColors.primary))
+                                                      : Icon(g.icon,
+                                                          color: AppColors.primary),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                child: Text(
+                                                  g.label,
+                                                  style: GoogleFonts.poppins(),
+                                                ),
+                                              ),
+                                              Icon(
+                                                selected
+                                                    ? Icons.radio_button_checked
+                                                    : Icons.radio_button_off,
+                                                color: selected
+                                                    ? (themeChange.getThem()
+                                                        ? AppColors.darkModePrimary
+                                                        : AppColors.primary)
+                                                    : AppColors.textFieldBorder,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
+                                    ),
+                                  );
+                                }).toList(),
+                                if (_enabledGateways(controller).isEmpty)
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          color: AppColors.textFieldBorder, width: 1),
+                                    ),
+                                    child: Text(
+                                      'No payment gateway is enabled. Please contact the admin to enable one from Settings → Payments.'
+                                          .tr,
+                                      style: GoogleFonts.poppins(),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
@@ -724,21 +782,46 @@ class WalletScreen extends StatelessWidget {
                           ShowToastDialog.showToast(amountError);
                           return;
                         }
-
-                        final payFastName =
-                            controller.paymentModel.value.payfast?.name?.trim() ??
-                                'PayFast';
-
-                        if (controller.paymentModel.value.payfast?.enable != true) {
+                        final amount = controller.amountController.value.text;
+                        final selected = controller.selectedPaymentMethod.value;
+                        if (selected.isEmpty) {
                           ShowToastDialog.showToast(
-                              'PayFast is not enabled in admin payment settings.'.tr);
+                              'Please select a payment method'.tr);
                           return;
                         }
-
-                        controller.selectedPaymentMethod.value = payFastName;
-                        controller.payFastPayment(
-                            context: context,
-                            amount: controller.amountController.value.text);
+                        switch (selected) {
+                          case 'payfast':
+                            controller.payFastPayment(
+                                context: context, amount: amount);
+                            break;
+                          case 'stripe':
+                            controller.stripeMakePayment(amount: amount);
+                            break;
+                          case 'razorpay':
+                            controller.cardPayment(context);
+                            break;
+                          case 'paypal':
+                            controller.paypalPaymentSheet(amount, context);
+                            break;
+                          case 'paystack':
+                            controller.payStackPayment(amount);
+                            break;
+                          case 'mercadopago':
+                            controller.mercadoPagoMakePayment(
+                                context: context, amount: amount);
+                            break;
+                          case 'orangepay':
+                            controller.orangeMakePayment(
+                                amount: amount, context: context);
+                            break;
+                          case 'xendit':
+                            controller.xenditPayment(context, amount);
+                            break;
+                          default:
+                            ShowToastDialog.showToast(
+                                'Selected payment method is not supported yet.'
+                                    .tr);
+                        }
                       }),
                       const SizedBox(
                         height: 10,
