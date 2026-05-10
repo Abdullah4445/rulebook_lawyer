@@ -58,12 +58,39 @@ class VehicleInformationController extends GetxController {
   // ─── Jurisdiction state (admin-managed: country → province → cities) ───
   /// Full hierarchy fetched from /api/jurisdictions.
   RxList<JurisdictionCountry> countries = <JurisdictionCountry>[].obs;
+  /// Whether the jurisdictions network call is currently in flight.
+  RxBool isLoadingJurisdictions = false.obs;
+  /// Last error from the jurisdictions fetch (null when last fetch succeeded).
+  RxnString jurisdictionsError = RxnString();
   /// Currently selected country ISO code (single).
   Rx<String?> selectedCountryIso = Rx<String?>(null);
   /// Currently selected province (single, scoped to selected country).
   Rx<String?> selectedProvince = Rx<String?>(null);
   /// Cities within [selectedProvince] the lawyer covers (multi).
   RxList<String> selectedCities = <String>[].obs;
+
+  /// Re-fetches the country/province/city catalog. Bound to a Retry
+  /// button in the info screen when the previous load failed (e.g. the
+  /// admin server's LAN IP changed).
+  Future<void> reloadJurisdictions() async {
+    isLoadingJurisdictions.value = true;
+    jurisdictionsError.value = null;
+    try {
+      final list = await JurisdictionService.instance
+          .getCountries(forceRefresh: true)
+          .timeout(const Duration(seconds: 15));
+      countries.assignAll(list);
+      if (list.isEmpty) {
+        jurisdictionsError.value =
+            'Could not load countries. Check that the admin server is reachable.';
+      }
+    } catch (e) {
+      jurisdictionsError.value =
+          'Failed to load jurisdictions: $e. Pull to retry once the admin server is reachable.';
+    } finally {
+      isLoadingJurisdictions.value = false;
+    }
+  }
 
   bool isServiceSelected(String? id) =>
       id != null && selectedServiceIds.contains(id);
@@ -131,14 +158,14 @@ class VehicleInformationController extends GetxController {
     // never trap the screen on the loader. Whatever happens, the `finally`
     // block at the bottom guarantees `isLoading.value = false`.
     try {
-      // Load jurisdictions (countries → provinces → cities) from admin API
-      JurisdictionService.instance
-          .getCountries()
-          .then((list) => countries.assignAll(list))
-          .catchError((e, s) =>
-              debugPrint('getCountries failed: $e — using empty list'));
+      // Load jurisdictions (countries → provinces → cities) from admin API.
+      // Awaited so the form reliably has the catalog ready before the user
+      // taps the country dropdown. reloadJurisdictions handles its own
+      // timeout and surfaces a user-visible error via jurisdictionsError.
+      final jurisdictionsFuture = reloadJurisdictions();
 
       await Future.wait<void>([
+        jurisdictionsFuture,
         // Services (legal categories)
         FireStoreUtils.getService()
             .then((value) {

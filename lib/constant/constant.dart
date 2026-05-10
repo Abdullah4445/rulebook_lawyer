@@ -100,7 +100,7 @@ class Constant {
 
   static String? referralAmount = "0";
 
-  static const globalUrl = "http://192.168.100.152:8000/";
+  static const globalUrl = "http://192.168.100.103:8000/";
 
   static const userPlaceHolder =
       "https://firebasestorage.googleapis.com/v0/b/rulebook-app.appspot.com/o/placeholderImages%2Fuser-placeholder.jpeg?alt=media&token=34a73d67-ba1d-4fe4-a29f-271d3e3ca115";

@@ -397,12 +397,82 @@ class VehicleInformationScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 10),
+                                // Loading / error / retry banner — shown only
+                                // when the jurisdictions catalog isn't ready.
+                                Obx(() {
+                                  if (controller.isLoadingJurisdictions.value) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 6),
+                                      child: Row(
+                                        children: [
+                                          const SizedBox(
+                                              width: 16,
+                                              height: 16,
+                                              child: CircularProgressIndicator(strokeWidth: 2)),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            'Loading countries...'.tr,
+                                            style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                color: themeChange.getThem()
+                                                    ? Colors.white70
+                                                    : AppColors.brandNavy.withOpacity(0.7)),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  if (controller.countries.isEmpty) {
+                                    return Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.all(10),
+                                      margin: const EdgeInsets.only(bottom: 8),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.error.withOpacity(0.08),
+                                        border: Border.all(
+                                            color: AppColors.error.withOpacity(0.4)),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            controller.jurisdictionsError.value ??
+                                                'Could not load countries. Make sure the admin server is reachable.'.tr,
+                                            style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                color: AppColors.error),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: TextButton.icon(
+                                              onPressed: controller.reloadJurisdictions,
+                                              icon: const Icon(Icons.refresh, size: 16),
+                                              label: Text('Retry'.tr,
+                                                  style: GoogleFonts.poppins(fontSize: 12)),
+                                              style: TextButton.styleFrom(
+                                                  padding: const EdgeInsets.symmetric(
+                                                      horizontal: 10, vertical: 4),
+                                                  minimumSize: Size.zero,
+                                                  tapTargetSize:
+                                                      MaterialTapTargetSize.shrinkWrap),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                }),
                                 // Country dropdown
                                 Obx(() => DropdownButtonFormField<String>(
                                       decoration: _jurisdictionInputDecoration(themeChange.getThem()),
                                       isExpanded: true,
                                       value: controller.selectedCountryIso.value,
-                                      hint: Text('Select Country'.tr),
+                                      hint: Text(controller.countries.isEmpty
+                                          ? 'No countries available'.tr
+                                          : 'Select Country'.tr),
                                       style: GoogleFonts.poppins(
                                         color: themeChange.getThem()
                                             ? Colors.white
@@ -415,8 +485,9 @@ class VehicleInformationScreen extends StatelessWidget {
                                                 child: Text('${c.flag ?? ''} ${c.name}'.trim()),
                                               ))
                                           .toList(),
-                                      onChanged: (value) =>
-                                          controller.setCountry(value),
+                                      onChanged: controller.countries.isEmpty
+                                          ? null
+                                          : (value) => controller.setCountry(value),
                                     )),
                                 const SizedBox(height: 10),
                                 // Province dropdown — scoped to selected country
