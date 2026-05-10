@@ -155,28 +155,36 @@ class SubscriptionController extends GetxController {
 
   Future<void> getSubscriptionPlanList() async {
     isLoading.value = true;
-    if (Constant.adminCommission?.isEnabled == true) {
-      await FireStoreUtils.getSubscriptionPlanById(
-              planId: Constant.commissionSubscriptionID)
-          .then(
-        (value) {
-          if (value != null) {
-            subscriptionPlanList.add(value);
-          }
-        },
-      );
+    subscriptionPlanList.clear();
+
+    // 1) Commission plan (acts as the free / pay-as-you-go option). Loaded
+    //    when admin commission is enabled OR — as a safety net — whenever the
+    //    plan exists in Firestore. Hiding it just because a flag is off was
+    //    making the free plan disappear from the list.
+    final SubscriptionPlanModel? commissionPlan =
+        await FireStoreUtils.getSubscriptionPlanById(
+            planId: Constant.commissionSubscriptionID);
+    if (commissionPlan != null && commissionPlan.id != null) {
+      subscriptionPlanList.add(commissionPlan);
     }
 
-    if (Constant.isSubscriptionModelApplied) {
-      await FireStoreUtils.getAllSubscriptionPlans().then(
-        (value) {
-          for (var element in value) {
-            subscriptionPlanList.add(element);
-          }
-        },
-      );
+    // 2) All other enabled plans always shown so the lawyer can see the
+    //    full catalog. The Constant.isSubscriptionModelApplied flag only
+    //    governs whether subscription is *enforced* downstream — it should
+    //    never silently hide a free plan from the picker.
+    final allPlans = await FireStoreUtils.getAllSubscriptionPlans();
+    for (final element in allPlans) {
+      // Don't add the commission plan twice if getAllSubscriptionPlans
+      // ever stops filtering it out in the future.
+      final alreadyAdded = subscriptionPlanList
+          .any((p) => p.id != null && p.id == element.id);
+      if (!alreadyAdded) {
+        subscriptionPlanList.add(element);
+      }
     }
-    if (driverUserModel.value.subscriptionPlanId == null) {
+
+    if (subscriptionPlanList.isNotEmpty &&
+        driverUserModel.value.subscriptionPlanId == null) {
       selectedSubscriptionPlan.value = subscriptionPlanList.first;
     }
     isLoading.value = false;
