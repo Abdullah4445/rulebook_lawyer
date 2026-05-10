@@ -9,6 +9,7 @@ import 'package:lawyer/model/order_model.dart';
 import 'package:lawyer/model/user_model.dart';
 import 'package:lawyer/themes/app_colors.dart';
 import 'package:lawyer/themes/button_them.dart';
+import 'package:lawyer/ui/ai_chat/ai_chat_screen.dart';
 import 'package:lawyer/ui/chat_screen/chat_screen.dart';
 import 'package:lawyer/ui/home_screens/live_tracking_screen.dart';
 import 'package:lawyer/utils/DarkThemeProvider.dart';
@@ -212,6 +213,13 @@ class ActiveOrderScreen extends StatelessWidget {
                                     //     .destinationLocationName
                                     //     .toString(),
                                   ),
+                                  const SizedBox(height: 12),
+                                  // ─── Analyze with AI: pre-loads the entire case
+                                  // (description, location, fee, dates etc.) into
+                                  // the AI Legal System so the lawyer arrives
+                                  // with an instant analysis and can keep chatting,
+                                  // attaching documents, etc.
+                                  _AnalyzeWithAiButton(orderModel: orderModel),
                                   const SizedBox(
                                     height: 10,
                                   ),
@@ -756,5 +764,79 @@ Future<bool> _isFareFullyApproved(String? orderId) async {
   } catch (e) {
     print('Error checking fare approval: $e');
     return false;
+  }
+}
+
+/// Gold-accented "Analyze with AI" CTA shown on every active case card.
+/// Tapping it pushes the lawyer into the AI Legal System with the case
+/// pre-loaded as the first user turn — the AI replies with an immediate
+/// case analysis, and the lawyer can continue the conversation, attach
+/// images / docs, and ask follow-up questions in full case context.
+class _AnalyzeWithAiButton extends StatelessWidget {
+  final OrderModel orderModel;
+  const _AnalyzeWithAiButton({required this.orderModel});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () => Get.to(() => AiChatScreen(initialCase: orderModel)),
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: AppColors.goldGradient,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.brandGold.withValues(alpha: 0.35),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 14, vertical: 12),
+              child: Row(
+                children: [
+                  const Icon(Icons.auto_awesome,
+                      color: Colors.white, size: 22),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Analyze with AI Legal System',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                        Text(
+                          'Reads the entire case — get instant legal analysis',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white.withValues(alpha: 0.85),
+                            fontSize: 11.5,
+                            height: 1.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_ios_rounded,
+                      color: Colors.white, size: 14),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

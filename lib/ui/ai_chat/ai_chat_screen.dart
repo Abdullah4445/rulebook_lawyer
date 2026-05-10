@@ -1,4 +1,5 @@
 import 'package:lawyer/controller/ai_chat_controller.dart';
+import 'package:lawyer/model/order_model.dart';
 import 'package:lawyer/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,13 +7,25 @@ import 'package:get/get.dart';
 class AiChatScreen extends StatelessWidget {
   static const String role = 'lawyer';
 
-  const AiChatScreen({super.key});
+  /// When supplied (e.g. from the active-case "Analyze with AI" button),
+  /// the chat is auto-seeded with a structured case summary so the
+  /// lawyer arrives with an initial AI analysis already in flight. Safe
+  /// to pass repeatedly — the controller deduplicates by case id.
+  final OrderModel? initialCase;
+
+  const AiChatScreen({super.key, this.initialCase});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.isRegistered<AiChatController>(tag: role)
         ? Get.find<AiChatController>(tag: role)
         : Get.put(AiChatController(role: role), tag: role);
+
+    if (initialCase != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.seedFromCase(initialCase!);
+      });
+    }
     final scrollController = ScrollController();
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;

@@ -11,6 +11,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lawyer/constant/constant.dart';
 import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/order_model.dart';
 
 class ChatMessage {
   final String role; // 'user' or 'model'
@@ -41,7 +42,98 @@ class AiChatController extends GetxController {
   /// Role: 'lawyer' for the driver/lawyer app
   final String role;
 
+  /// Records the case id we last seeded from so re-entering the screen
+  /// for the same case doesn't double-prompt the AI.
+  String? _seededCaseId;
+
   AiChatController({required this.role});
+
+  /// Builds a comprehensive prompt from the case and submits it to the AI
+  /// as the first user turn so the lawyer lands in the chat with an
+  /// initial legal analysis already in flight. Subsequent messages from
+  /// the lawyer continue the conversation in full case context.
+  ///
+  /// Idempotent — calling again with the same case is a no-op.
+  Future<void> seedFromCase(OrderModel order) async {
+    if (order.id == null || order.id!.isEmpty) return;
+    if (_seededCaseId == order.id) return;
+    _seededCaseId = order.id;
+
+    final summary = StringBuffer();
+    summary.writeln('Please review the following active case in full and provide:');
+    summary.writeln('  1. A concise legal summary of the matter');
+    summary.writeln('  2. Likely legal issues and applicable principles / case law');
+    summary.writeln('  3. Risks the lawyer should flag to the client');
+    summary.writeln('  4. Suggested next professional steps');
+    summary.writeln();
+    summary.writeln('=== CASE FILE ===');
+    summary.writeln('Case ID: ${order.id}');
+    if (order.caseNumber?.trim().isNotEmpty == true) {
+      summary.writeln('Case Number: ${order.caseNumber}');
+    }
+    if (order.status?.trim().isNotEmpty == true) {
+      summary.writeln('Status: ${order.status}');
+    }
+    if (order.caseStatus?.trim().isNotEmpty == true) {
+      summary.writeln('Case Stage: ${order.caseStatus}');
+    }
+    if (order.service?.title != null) {
+      try {
+        final categoryTitle =
+            Constant().localizationTitle(order.service!.title!, 'Category');
+        if (categoryTitle.isNotEmpty) {
+          summary.writeln('Category / Specialty: $categoryTitle');
+        }
+      } catch (_) {/* tolerate localization shape changes */}
+    }
+    if (order.courtName?.trim().isNotEmpty == true) {
+      summary.writeln('Court: ${order.courtName}');
+    }
+    if (order.judgeName?.trim().isNotEmpty == true) {
+      summary.writeln('Judge: ${order.judgeName}');
+    }
+    if (order.lastHearingDate?.trim().isNotEmpty == true) {
+      summary.writeln('Last hearing: ${order.lastHearingDate}');
+    }
+    if (order.nextHearingDate?.trim().isNotEmpty == true) {
+      summary.writeln('Next hearing: ${order.nextHearingDate}');
+    }
+    if (order.sourceLocationName?.trim().isNotEmpty == true) {
+      summary.writeln('Filed from: ${order.sourceLocationName}');
+    }
+    if (order.sourceLocationLatLng?.latitude != null &&
+        order.sourceLocationLatLng?.longitude != null) {
+      summary.writeln(
+          'Coordinates: ${order.sourceLocationLatLng!.latitude!.toStringAsFixed(5)}, ${order.sourceLocationLatLng!.longitude!.toStringAsFixed(5)}');
+    }
+    if (order.offerRate?.trim().isNotEmpty == true) {
+      summary.writeln('Proposed fee: ${order.offerRate}');
+    }
+    if (order.finalRate?.trim().isNotEmpty == true) {
+      summary.writeln('Agreed fee: ${order.finalRate}');
+    }
+    if (order.createdDate != null) {
+      summary.writeln(
+          'Filed at: ${Constant.dateAndTimeFormatTimestamp(order.createdDate)}');
+    }
+    if (order.description?.trim().isNotEmpty == true) {
+      summary.writeln();
+      summary.writeln('=== CLIENT DESCRIPTION ===');
+      summary.writeln(order.description!.trim());
+    } else {
+      summary.writeln();
+      summary.writeln(
+          '(The client has not yet provided a written description of the case.)');
+    }
+    summary.writeln();
+    summary.writeln(
+        'Treat the above as authoritative case context. The lawyer may follow up with additional details, attached documents, or images — please incorporate everything into your reasoning.');
+
+    // Show the seed text in the UI as a normal user turn so the lawyer
+    // sees exactly what was fed to the AI.
+    textController.text = summary.toString();
+    await sendMessage();
+  }
 
   @override
   void onClose() {
