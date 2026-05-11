@@ -9,9 +9,13 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lawyer/constant/collection_name.dart';
 import 'package:lawyer/constant/constant.dart';
 import 'package:lawyer/constant/show_toast_dialog.dart';
+import 'package:lawyer/model/conversation_model.dart';
 import 'package:lawyer/model/order_model.dart';
+import 'package:lawyer/utils/fire_store_utils.dart';
 
 class ChatMessage {
   final String role; // 'user' or 'model'
@@ -125,6 +129,50 @@ class AiChatController extends GetxController {
       summary.writeln(
           '(The client has not yet provided a written description of the case.)');
     }
+
+    // Pull the lawyer-client chat thread for this case (chat/{orderId}/thread)
+    // and any attachments so the AI gets the full conversation context, not
+    // just the headline fields. Failures are non-fatal — the seed continues
+    // with whatever was gathered so far.
+    final List<ConversationModel> thread = await _fetchChatThread(order.id!);
+    if (thread.isNotEmpty) {
+      summary.writeln();
+      summary.writeln(
+          '=== LAWYER–CLIENT CHAT THREAD (${thread.length} message${thread.length == 1 ? "" : "s"}, chronological) ===');
+      final attachments = <String>[];
+      final lawyerUid = FireStoreUtils.getCurrentUid();
+      for (final m in thread) {
+        final ts = m.createdAt != null
+            ? Constant.dateAndTimeFormatTimestamp(m.createdAt)
+            : '';
+        final author = m.senderId == lawyerUid ? 'Lawyer' : 'Client';
+        final body = (m.message ?? '').trim();
+        final mime = m.url?.mime ?? '';
+        final url = m.url?.url ?? '';
+        if (url.isNotEmpty) {
+          attachments.add('  • [$ts] $author shared (${mime.isEmpty ? "file" : mime}): $url');
+        }
+        if (body.isNotEmpty) {
+          summary.writeln('[$ts] $author: $body');
+        } else if (url.isNotEmpty) {
+          summary.writeln('[$ts] $author shared a ${mime.isEmpty ? "file" : mime}.');
+        }
+      }
+      if (attachments.isNotEmpty) {
+        summary.writeln();
+        summary.writeln('=== ATTACHMENTS IN THIS CASE ===');
+        for (final a in attachments) {
+          summary.writeln(a);
+        }
+        summary.writeln(
+            '(You cannot fetch these URLs directly. If you need to analyse a specific document or image, ask the lawyer to forward it in this chat — they can attach it with the paperclip button.)');
+      }
+    } else {
+      summary.writeln();
+      summary.writeln(
+          '(No prior chat messages between the lawyer and client for this case.)');
+    }
+
     summary.writeln();
     summary.writeln(
         'Treat the above as authoritative case context. The lawyer may follow up with additional details, attached documents, or images — please incorporate everything into your reasoning.');
@@ -133,6 +181,27 @@ class AiChatController extends GetxController {
     // sees exactly what was fed to the AI.
     textController.text = summary.toString();
     await sendMessage();
+  }
+
+  /// Reads chat/{orderId}/thread in chronological order. Caps at 200
+  /// messages so a runaway thread doesn't blow the prompt token budget.
+  Future<List<ConversationModel>> _fetchChatThread(String orderId) async {
+    try {
+      final snap = await FirebaseFirestore.instance
+          .collection(CollectionName.chat)
+          .doc(orderId)
+          .collection('thread')
+          .orderBy('createdAt', descending: false)
+          .limit(200)
+          .get()
+          .timeout(const Duration(seconds: 12));
+      return snap.docs
+          .map((d) => ConversationModel.fromJson(d.data()))
+          .toList();
+    } catch (e) {
+      debugPrint('seedFromCase: chat thread fetch failed: $e');
+      return [];
+    }
   }
 
   @override
