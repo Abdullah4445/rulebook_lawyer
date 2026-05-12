@@ -500,15 +500,15 @@ class _AvailabilityToggle extends StatelessWidget {
         isDark ? Colors.white.withValues(alpha: 0.72) : AppColors.brandNavy;
 
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 280, minHeight: 36),
+      constraints: const BoxConstraints(maxWidth: 220, minHeight: 30),
       child: Container(
-        height: 38,
+        height: 32,
         decoration: BoxDecoration(
           color: trackColor,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: trackBorder),
         ),
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.all(2),
         child: Row(
           children: [
             Expanded(
@@ -555,33 +555,33 @@ class _AvailabilityToggle extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: selected ? AppColors.goldGradient : null,
           color: selected ? null : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(18),
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: AppColors.brandGold.withValues(alpha: 0.35),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    color: AppColors.brandGold.withValues(alpha: 0.30),
+                    blurRadius: 6,
+                    offset: const Offset(0, 1),
                   ),
                 ]
               : null,
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               if (selected) ...[
                 Container(
-                  width: 6,
-                  height: 6,
+                  width: 5,
+                  height: 5,
                   decoration: const BoxDecoration(
                     color: Color(0xFF22C55E),
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 4),
               ],
               Flexible(
                 child: Text(
@@ -589,7 +589,7 @@ class _AvailabilityToggle extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
-                    fontSize: 12.5,
+                    fontSize: 11,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                     color: selected ? pillTextOn : inactiveText,
                     letterSpacing: 0.2,
