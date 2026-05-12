@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lawyer/themes/app_colors.dart';
-import 'package:lawyer/themes/responsive.dart';
 import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -94,21 +93,30 @@ class LocationView extends StatelessWidget {
               ),
               if (_hasCoords) ...[
                 const SizedBox(height: 4),
-                Row(
+                // Wrap (not Row) so coords + hint flow to a second line on
+                // narrow screens instead of overflowing horizontally.
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 6,
+                  runSpacing: 2,
                   children: [
-                    Icon(Icons.location_on,
-                        size: 13, color: AppColors.brandGold),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${latitude!.toStringAsFixed(5)}, ${longitude!.toStringAsFixed(5)}',
-                      style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        color: textColor.withOpacity(0.6),
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.location_on,
+                            size: 13, color: AppColors.brandGold),
+                        const SizedBox(width: 3),
+                        Text(
+                          '${latitude!.toStringAsFixed(5)}, ${longitude!.toStringAsFixed(5)}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            color: textColor.withOpacity(0.6),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
                     Text(
-                      '· Tap to open in Maps',
+                      'Tap to open in Maps',
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -118,22 +126,12 @@ class LocationView extends StatelessWidget {
                   ],
                 ),
               ],
-              SizedBox(
-                height: calculateLineWraps(
-                  text: sourceLocation.toString(),
-                  textStyle: const TextStyle(),
-                  maxWidth: Responsive.width(80, context),
-                ) ==
-                        2
-                    ? Responsive.height(2.2, context)
-                    : Responsive.height(4.4, context),
-              ),
             ],
           ),
         ),
         if (_hasCoords)
           Padding(
-            padding: const EdgeInsets.only(left: 4, top: 2),
+            padding: const EdgeInsets.only(left: 6, top: 2),
             child: Icon(
               Icons.open_in_new_rounded,
               size: 18,
@@ -155,16 +153,4 @@ class LocationView extends StatelessWidget {
     );
   }
 
-  int calculateLineWraps({
-    required String text,
-    required TextStyle textStyle,
-    required double maxWidth,
-  }) {
-    final TextPainter textPainter = TextPainter(
-      text: TextSpan(text: text, style: textStyle),
-      textDirection: TextDirection.ltr,
-      maxLines: null,
-    )..layout(maxWidth: maxWidth);
-    return textPainter.computeLineMetrics().length;
-  }
 }
