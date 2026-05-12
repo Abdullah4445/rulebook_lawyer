@@ -88,20 +88,26 @@ class CompletedOrders extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Expanded(
                                     child: Text(
                                       orderModel.status.toString().tr,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.poppins(
                                         color: Theme.of(context).colorScheme.onSurface,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ),
+                                  const SizedBox(width: 8),
                                   Text(
                                     Constant().formatTimestamp(orderModel.createdDate),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.poppins(
+                                      fontSize: 12,
                                       color: Theme.of(context).colorScheme.onSurface,
                                     ),
                                   ),
@@ -124,6 +130,8 @@ class CompletedOrders extends StatelessWidget {
                                       padding: const EdgeInsets.only(bottom: 4.0),
                                       child: Text(
                                         "Case No: ${orderModel.caseNumber}".tr,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.poppins(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
@@ -136,6 +144,8 @@ class CompletedOrders extends StatelessWidget {
                                       padding: const EdgeInsets.only(bottom: 4.0),
                                       child: Text(
                                         "Court: ${orderModel.courtName}".tr,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.poppins(
                                           fontSize: 13,
                                           color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.72),
@@ -147,6 +157,8 @@ class CompletedOrders extends StatelessWidget {
                                       padding: const EdgeInsets.only(bottom: 4.0),
                                       child: Text(
                                         "Judge: ${orderModel.judgeName}".tr,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.poppins(
                                           fontSize: 13,
                                           color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.72),

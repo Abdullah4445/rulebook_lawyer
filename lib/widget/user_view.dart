@@ -124,9 +124,11 @@ class UserView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// ðŸ‘¤ User name
+              /// 👤 User name
               Text(
                 name.isEmpty ? "No Name" : name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,

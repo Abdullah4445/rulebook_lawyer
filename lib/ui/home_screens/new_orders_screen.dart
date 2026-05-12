@@ -589,31 +589,39 @@ class _AnimatedNewCaseCardState extends State<_AnimatedNewCaseCard>
                         ),
                       ),
                       const Spacer(),
-                      // Pulsing dot
-                      TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0.5, end: 1.0),
-                        duration: const Duration(milliseconds: 800),
-                        builder: (ctx, v, _) => Opacity(
-                          opacity: v,
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF4ADE80),
-                                  shape: BoxShape.circle,
+                      // Pulsing dot — Flexible to clip gracefully on very
+                      // narrow screens instead of overflowing.
+                      Flexible(
+                        child: TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0.5, end: 1.0),
+                          duration: const Duration(milliseconds: 800),
+                          builder: (ctx, v, _) => Opacity(
+                            opacity: v,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF4ADE80),
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                "Available",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  color: Colors.white70,
+                                const SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    "Available",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 11,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -749,18 +757,26 @@ class _AnimatedNewCaseCardState extends State<_AnimatedNewCaseCard>
 
                       const SizedBox(height: 10),
 
-                      // Date + tap hint
+                      // Date + tap hint — date is Expanded so a long localised
+                      // timestamp never pushes the CTA chip off the card.
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            widget.orderModel.createdDate?.toDate().toLocal()
-                                    .toString().split('.')[0] ?? 'Unknown',
-                            style: GoogleFonts.poppins(
-                              fontSize: 11,
-                              color: AppColors.subTitleColor,
+                          Expanded(
+                            child: Text(
+                              widget.orderModel.createdDate != null
+                                  ? Constant.dateAndTimeFormatTimestamp(
+                                      widget.orderModel.createdDate!)
+                                  : 'Unknown',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                color: AppColors.subTitleColor,
+                              ),
                             ),
                           ),
+                          const SizedBox(width: 8),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 5),

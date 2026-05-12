@@ -303,21 +303,28 @@ class ActiveOrderScreen extends StatelessWidget {
 
                                                               if (caseDuration.isNotEmpty) ...[
                                                                 Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  crossAxisAlignment: CrossAxisAlignment.center,
                                                                   children: [
-                                                                    Text(
-                                                                      "Estimated Case Time".tr,
-                                                                      style: GoogleFonts.poppins(
-                                                                        fontSize: 13,
-                                                                        color: Theme.of(context)
-                                                                            .textTheme
-                                                                            .bodyMedium
-                                                                            ?.color
-                                                                            ?.withValues(alpha: 0.72),
+                                                                    Expanded(
+                                                                      child: Text(
+                                                                        "Estimated Case Time".tr,
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                        style: GoogleFonts.poppins(
+                                                                          fontSize: 13,
+                                                                          color: Theme.of(context)
+                                                                              .textTheme
+                                                                              .bodyMedium
+                                                                              ?.color
+                                                                              ?.withValues(alpha: 0.72),
+                                                                        ),
                                                                       ),
                                                                     ),
+                                                                    const SizedBox(width: 8),
                                                                     Text(
                                                                       caseDuration,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
                                                                       style: GoogleFonts.poppins(
                                                                         fontSize: 13,
                                                                         fontWeight: FontWeight.w600,
@@ -341,7 +348,6 @@ class ActiveOrderScreen extends StatelessWidget {
                                                                       padding: const EdgeInsets.symmetric(vertical: 2),
                                                                       child: Row(
                                                                         crossAxisAlignment: CrossAxisAlignment.start,
-                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                         children: [
                                                                           Expanded(
                                                                             child: Column(
@@ -349,6 +355,8 @@ class ActiveOrderScreen extends StatelessWidget {
                                                                               children: [
                                                                                 Text(
                                                                                   step['title']?.toString() ?? '',
+                                                                                  maxLines: 2,
+                                                                                  overflow: TextOverflow.ellipsis,
                                                                                   style: GoogleFonts.poppins(
                                                                                       fontSize: 14,
                                                                                       color: Theme.of(context).colorScheme.onSurface),
@@ -358,6 +366,8 @@ class ActiveOrderScreen extends StatelessWidget {
                                                                                     padding: const EdgeInsets.only(top: 4),
                                                                                     child: Text(
                                                                                       stepDuration,
+                                                                                      maxLines: 1,
+                                                                                      overflow: TextOverflow.ellipsis,
                                                                                       style: GoogleFonts.poppins(
                                                                                         fontSize: 12,
                                                                                         color: Colors.blueGrey,
@@ -367,9 +377,12 @@ class ActiveOrderScreen extends StatelessWidget {
                                                                               ],
                                                                             ),
                                                                           ),
+                                                                          const SizedBox(width: 8),
                                                                           Text(
                                                                             Constant.amountShow(
                                                                                 amount: step['price']?.toString() ?? '0'),
+                                                                            maxLines: 1,
+                                                                            overflow: TextOverflow.ellipsis,
                                                                             style: GoogleFonts.poppins(
                                                                                 fontWeight: FontWeight.w600,
                                                                                 color: Theme.of(context).colorScheme.onSurface),
@@ -388,18 +401,25 @@ class ActiveOrderScreen extends StatelessWidget {
 
                                                               // Total
                                                               Row(
-                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
                                                                 children: [
-                                                                  Text(
-                                                                    "Total".tr,
-                                                                    style: GoogleFonts.poppins(
-                                                                        fontSize: 15,
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color: Theme.of(context).colorScheme.onSurface),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      "Total".tr,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize: 15,
+                                                                          fontWeight: FontWeight.bold,
+                                                                          color: Theme.of(context).colorScheme.onSurface),
+                                                                    ),
                                                                   ),
+                                                                  const SizedBox(width: 8),
                                                                   Text(
                                                                     Constant.amountShow(
                                                                         amount: fareDetails['total']?.toString() ?? '0'),
+                                                                    maxLines: 1,
+                                                                    overflow: TextOverflow.ellipsis,
                                                                     style: GoogleFonts.poppins(
                                                                         fontSize: 15,
                                                                         fontWeight: FontWeight.bold,
