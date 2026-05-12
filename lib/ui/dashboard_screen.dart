@@ -5,7 +5,6 @@ import 'package:lawyer/constant/show_toast_dialog.dart';
 import 'package:lawyer/controller/dash_board_controller.dart';
 import 'package:lawyer/model/driver_user_model.dart';
 import 'package:lawyer/themes/app_colors.dart';
-import 'package:lawyer/themes/responsive.dart';
 import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,9 +19,25 @@ class DashBoardScreen extends StatelessWidget {
     return GetX<DashBoardController>(
         init: DashBoardController(),
         builder: (controller) {
+          final theme = Theme.of(context);
+          final isDark = theme.brightness == Brightness.dark;
+          // Tint applied to the hamburger SVG so it stays visible against the
+          // themed AppBar background (gold in dark mode, navy in light mode).
+          final headerIconTint =
+              isDark ? AppColors.brandGold : AppColors.brandNavy;
+
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: AppColors.primary,
+              // Removed hardcoded backgroundColor / iconTheme — defer to the
+              // AppBarTheme defined in Styles.dart which is theme-aware
+              // (white surface in light mode, ink-dark in dark mode).
+              backgroundColor: isDark
+                  ? AppColors.brandSurfaceDark
+                  : AppColors.containerBackground,
+              foregroundColor: isDark ? Colors.white : AppColors.brandNavy,
+              elevation: 0,
+              shadowColor: Colors.black.withValues(alpha: 0.06),
+              scrolledUnderElevation: 0.5,
               title: controller.selectedDrawerIndex.value == 0
                   ? StreamBuilder(
                   stream: FireStoreUtils.fireStore
@@ -39,110 +54,47 @@ class DashBoardScreen extends StatelessWidget {
                     }
 
                     DriverUserModel driverModel =
-                    DriverUserModel.fromJson(snapshot.data!.data()!);
-                    return Container(
-                      width: Responsive.width(50, context),
-                      height: Responsive.height(5.5, context),
-                      decoration: const BoxDecoration(
-                        color: AppColors.darkBackground,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50.0),
-                        ),
-                      ),
-                      child: Stack(
-                        children: [
-                          AnimatedAlign(
-                            alignment:
-                            Alignment(driverModel.isOnline == true ? -1 : 1, 0),
-                            duration: const Duration(milliseconds: 300),
-                            child: Container(
-                              width: Responsive.width(26, context),
-                              height: Responsive.height(8, context),
-                              decoration: const BoxDecoration(
-                                color: AppColors.darkModePrimary,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              ShowToastDialog.showLoader("Please wait".tr);
-                              if (driverModel.documentVerification == false &&
-                                  Constant.isVerifyDocument == true) {
-                                ShowToastDialog.closeLoader();
-                                _showAlertDialog(context, "document");
-                              } else if (driverModel.vehicleInformation == null ||
-                                  ((driverModel.serviceIds == null ||
-                                          driverModel.serviceIds!.isEmpty) &&
-                                      (driverModel.serviceId == null ||
-                                          driverModel.serviceId!.isEmpty))) {
-                                ShowToastDialog.closeLoader();
-                                _showAlertDialog(context, "vehicleInformation");
-                              } else {
-                                driverModel.isOnline = true;
-                                await FireStoreUtils.updateDriverUser(driverModel);
-
-                                ShowToastDialog.closeLoader();
-                              }
-                            },
-                            child: Align(
-                              alignment: const Alignment(-1, 0),
-                              child: Container(
-                                width: Responsive.width(26, context),
-                                color: Colors.transparent,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'Online'.tr,
-                                  style: GoogleFonts.poppins(
-                                      color: driverModel.isOnline == true
-                                          ? Colors.black
-                                          : Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14),
-                                ),
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              ShowToastDialog.showLoader("Please wait".tr);
-                              driverModel.isOnline = false;
-                              await FireStoreUtils.updateDriverUser(driverModel);
-
-                              ShowToastDialog.closeLoader();
-                            },
-                            child: Align(
-                              alignment: const Alignment(1, 0),
-                              child: Container(
-                                width: Responsive.width(26, context),
-                                color: Colors.transparent,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'Offline'.tr,
-                                  style: GoogleFonts.poppins(
-                                      color: driverModel.isOnline == false
-                                          ? Colors.black
-                                          : Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        DriverUserModel.fromJson(snapshot.data!.data()!);
+                    return _AvailabilityToggle(
+                      isOnline: driverModel.isOnline == true,
+                      onGoOnline: () async {
+                        ShowToastDialog.showLoader("Please wait".tr);
+                        if (driverModel.documentVerification == false &&
+                            Constant.isVerifyDocument == true) {
+                          ShowToastDialog.closeLoader();
+                          _showAlertDialog(context, "document");
+                        } else if (driverModel.vehicleInformation == null ||
+                            ((driverModel.serviceIds == null ||
+                                    driverModel.serviceIds!.isEmpty) &&
+                                (driverModel.serviceId == null ||
+                                    driverModel.serviceId!.isEmpty))) {
+                          ShowToastDialog.closeLoader();
+                          _showAlertDialog(context, "vehicleInformation");
+                        } else {
+                          driverModel.isOnline = true;
+                          await FireStoreUtils.updateDriverUser(driverModel);
+                          ShowToastDialog.closeLoader();
+                        }
+                      },
+                      onGoOffline: () async {
+                        ShowToastDialog.showLoader("Please wait".tr);
+                        driverModel.isOnline = false;
+                        await FireStoreUtils.updateDriverUser(driverModel);
+                        ShowToastDialog.closeLoader();
+                      },
                     );
                   })
                   : controller.shouldShowAppBarTitle(controller.selectedDrawerIndex.value)
-                  ? Text(
-                (controller.selectedDrawerItem?.title ?? '').tr,
-                style: GoogleFonts.poppins(
-                  color: Colors.white,
-                ),
-              )
-                  : Text(""),
+                      ? Text(
+                          (controller.selectedDrawerItem?.title ?? '').tr,
+                          style: GoogleFonts.poppins(
+                            color: isDark ? Colors.white : AppColors.brandNavy,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 17,
+                            letterSpacing: 0.2,
+                          ),
+                        )
+                      : const Text(""),
               centerTitle: true,
               leading: Builder(builder: (context) {
                 return InkWell(
@@ -150,9 +102,13 @@ class DashBoardScreen extends StatelessWidget {
                     Scaffold.of(context).openDrawer();
                   },
                   child: Padding(
-                    padding:
-                    const EdgeInsets.only(left: 10, right: 20, top: 20, bottom: 20),
-                    child: SvgPicture.asset('assets/icons/ic_humber.svg'),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 18),
+                    child: SvgPicture.asset(
+                      'assets/icons/ic_humber.svg',
+                      colorFilter: ColorFilter.mode(
+                          headerIconTint, BlendMode.srcIn),
+                    ),
                   ),
                 );
               }),
@@ -506,5 +462,144 @@ class DashBoardScreen extends StatelessWidget {
     }
     return (parts.first.substring(0, 1) + parts.last.substring(0, 1))
         .toUpperCase();
+  }
+}
+
+/// Premium segmented Available / Unavailable toggle for the dashboard
+/// AppBar. Theme-aware (light + dark), pixel-perfect math (each segment
+/// gets exactly half the row), and animated colour swap on tap.
+///
+/// Why a dedicated widget?  The previous inline version stacked a
+/// hand-positioned pill on top of two GestureDetectors with hard-coded
+/// percentages — pill height > parent, label widths > parent width, and
+/// the dark background never adapted to light mode. This is a clean
+/// re-do that fixes all three.
+class _AvailabilityToggle extends StatelessWidget {
+  final bool isOnline;
+  final Future<void> Function() onGoOnline;
+  final Future<void> Function() onGoOffline;
+
+  const _AvailabilityToggle({
+    required this.isOnline,
+    required this.onGoOnline,
+    required this.onGoOffline,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Track + pill colours — gold accent everywhere, surface differs.
+    final trackColor =
+        isDark ? AppColors.darkContainerBackground : AppColors.surfaceTint;
+    final trackBorder =
+        isDark ? AppColors.darkContainerBorder : AppColors.containerBorder;
+    final pillTextOn = AppColors.brandNavy; // always navy on the gold pill
+    final inactiveText =
+        isDark ? Colors.white.withValues(alpha: 0.72) : AppColors.brandNavy;
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 280, minHeight: 36),
+      child: Container(
+        height: 38,
+        decoration: BoxDecoration(
+          color: trackColor,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: trackBorder),
+        ),
+        padding: const EdgeInsets.all(3),
+        child: Row(
+          children: [
+            Expanded(
+              child: _segment(
+                label: 'Available'.tr,
+                selected: isOnline,
+                onTap: onGoOnline,
+                pillTextOn: pillTextOn,
+                inactiveText: inactiveText,
+                isDark: isDark,
+              ),
+            ),
+            Expanded(
+              child: _segment(
+                label: 'Unavailable'.tr,
+                selected: !isOnline,
+                onTap: onGoOffline,
+                pillTextOn: pillTextOn,
+                inactiveText: inactiveText,
+                isDark: isDark,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _segment({
+    required String label,
+    required bool selected,
+    required Future<void> Function() onTap,
+    required Color pillTextOn,
+    required Color inactiveText,
+    required bool isDark,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          gradient: selected ? AppColors.goldGradient : null,
+          color: selected ? null : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: AppColors.brandGold.withValues(alpha: 0.35),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (selected) ...[
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF22C55E),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+              ],
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 12.5,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                    color: selected ? pillTextOn : inactiveText,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
