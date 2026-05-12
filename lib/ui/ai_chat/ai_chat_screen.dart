@@ -362,60 +362,71 @@ class AiChatScreen extends StatelessWidget {
   }
 
   Widget _buildWelcomePlaceholder(Color onSurface, Color muted) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 96,
-              height: 96,
-              decoration: BoxDecoration(
-                gradient: AppColors.goldGradient,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.brandGold.withValues(alpha: 0.35),
-                    blurRadius: 24,
-                    offset: const Offset(0, 8),
+    // Keyboard-aware welcome screen — wraps in a scrollable so when the
+    // soft keyboard rises and shrinks available height, the content
+    // scrolls instead of overflowing the column. centred when there's
+    // enough vertical room, top-aligned otherwise.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 88,
+                  height: 88,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.goldGradient,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.brandGold.withValues(alpha: 0.35),
+                        blurRadius: 22,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: const Icon(Icons.gavel, size: 44, color: Colors.white),
+                  child: const Icon(Icons.gavel, size: 40, color: Colors.white),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'AI Legal System',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: onSurface,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Container(
+                  width: 44,
+                  height: 3,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.goldGradient,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  'Get professional legal research, document review, case-law support, drafting guidance, and admin-managed knowledge base answers in one place.\n\nAttach documents or images for deeper analysis.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    color: muted,
+                    height: 1.55,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
-            Text(
-              'AI Legal System',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: onSurface,
-                letterSpacing: 0.3,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Container(
-              width: 48,
-              height: 3,
-              decoration: BoxDecoration(
-                gradient: AppColors.goldGradient,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Get professional legal research, document review, case-law support, drafting guidance, and admin-managed knowledge base answers in one place.\n\nAttach documents or images for deeper analysis.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: muted,
-                height: 1.55,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
