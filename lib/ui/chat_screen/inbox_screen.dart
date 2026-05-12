@@ -25,9 +25,10 @@ class InboxScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
-        child: FirestorePagination(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+          child: FirestorePagination(
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, documentSnapshots, index) {
             final data =
@@ -73,6 +74,7 @@ class InboxScreen extends StatelessWidget {
           initialLoader: const Center(child: CircularProgressIndicator()),
           isLive: true,
         ),
+      ),
       ),
     );
   }

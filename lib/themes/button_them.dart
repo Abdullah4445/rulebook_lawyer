@@ -39,7 +39,17 @@ class ButtonThem {
           child: Text(
             title.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(fontSize: txtSize, fontWeight: FontWeight.w600, color: textColor),
+            // textColor falls back to a theme-aware contrasting colour so
+            // the label is never invisible (was inheriting black from
+            // DefaultTextStyle which vanished against the navy bg in
+            // light mode and against the gold bg in dark mode).
+            style: GoogleFonts.poppins(
+                fontSize: txtSize,
+                fontWeight: FontWeight.w600,
+                color: textColor ??
+                    (themeChange.getThem()
+                        ? AppColors.brandNavy
+                        : Colors.white)),
           ),
         ),
       ),
@@ -129,7 +139,12 @@ class ButtonThem {
           child: Text(
             title.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(fontSize: txtSize, fontWeight: FontWeight.w600),
+            style: GoogleFonts.poppins(
+                fontSize: txtSize,
+                fontWeight: FontWeight.w600,
+                color: themeChange.getThem()
+                    ? AppColors.brandNavy
+                    : Colors.white),
           ),
         ),
       ),

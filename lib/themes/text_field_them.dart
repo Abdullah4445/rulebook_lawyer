@@ -74,7 +74,10 @@ class TextFieldThem {
                   width: 1),
             ),
             hintText: hintText,
-            hintStyle: TextStyle(color: Colors.black)));
+            hintStyle: TextStyle(
+                color: themeChange.getThem()
+                    ? AppColors.gray400
+                    : AppColors.gray500)));
   }
 
   static buildTextFiledWithPrefixIcon(BuildContext context,

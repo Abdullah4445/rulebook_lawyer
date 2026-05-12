@@ -273,7 +273,7 @@ class VehicleInformationScreen extends StatelessWidget {
                                       controller.selectedVehicle.value = value!;
                                     },
                                     hint: Text("Select vehicle type".tr),
-                                    style: TextStyle(color: Colors.black),
+                                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                                     items: controller.vehicleList.map((item) {
                                       return DropdownMenuItem(
                                         value: item,
@@ -315,7 +315,7 @@ class VehicleInformationScreen extends StatelessWidget {
                                       controller.selectedColor.value = value!;
                                     },
                                     hint: Text("Select vehicle color".tr),
-                                    style: TextStyle(color: Colors.black),
+                                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                                     items: controller.carColorList.map((item) {
                                       return DropdownMenuItem(
                                         value: item,
@@ -357,7 +357,7 @@ class VehicleInformationScreen extends StatelessWidget {
                                       controller.seatsController.value.text = value!;
                                     },
                                     hint: Text("How Many Seats".tr),
-                                    style: TextStyle(color: Colors.black),
+                                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                                     items: controller.sheetList.map((item) {
                                       return DropdownMenuItem(
                                         value: item,

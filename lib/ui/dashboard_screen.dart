@@ -28,9 +28,6 @@ class DashBoardScreen extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              // Removed hardcoded backgroundColor / iconTheme — defer to the
-              // AppBarTheme defined in Styles.dart which is theme-aware
-              // (white surface in light mode, ink-dark in dark mode).
               backgroundColor: isDark
                   ? AppColors.brandSurfaceDark
                   : AppColors.containerBackground,
@@ -38,6 +35,7 @@ class DashBoardScreen extends StatelessWidget {
               elevation: 0,
               shadowColor: Colors.black.withValues(alpha: 0.06),
               scrolledUnderElevation: 0.5,
+              toolbarHeight: 64,
               title: controller.selectedDrawerIndex.value == 0
                   ? StreamBuilder(
                   stream: FireStoreUtils.fireStore
@@ -126,8 +124,14 @@ class DashBoardScreen extends StatelessWidget {
                     Navigator.of(context).maybePop();
                   }
                 },
-                child:
-                controller.getDrawerItemWidget(controller.selectedDrawerIndex.value)),
+                // SafeArea ensures children don't slide under the system
+                // gesture bar / navigation bar at the bottom. Top is already
+                // handled by the AppBar.
+                child: SafeArea(
+                  top: false,
+                  child: controller.getDrawerItemWidget(
+                      controller.selectedDrawerIndex.value),
+                )),
           );
         });
   }
@@ -500,15 +504,15 @@ class _AvailabilityToggle extends StatelessWidget {
         isDark ? Colors.white.withValues(alpha: 0.72) : AppColors.brandNavy;
 
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 220, minHeight: 30),
+      constraints: const BoxConstraints(maxWidth: 250, minHeight: 36),
       child: Container(
-        height: 32,
+        height: 40,
         decoration: BoxDecoration(
           color: trackColor,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(22),
           border: Border.all(color: trackBorder),
         ),
-        padding: const EdgeInsets.all(2),
+        padding: const EdgeInsets.all(3),
         child: Row(
           children: [
             Expanded(
@@ -567,21 +571,21 @@ class _AvailabilityToggle extends StatelessWidget {
               : null,
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               if (selected) ...[
                 Container(
-                  width: 5,
-                  height: 5,
+                  width: 6,
+                  height: 6,
                   decoration: const BoxDecoration(
                     color: Color(0xFF22C55E),
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 5),
               ],
               Flexible(
                 child: Text(
@@ -589,7 +593,7 @@ class _AvailabilityToggle extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                     color: selected ? pillTextOn : inactiveText,
                     letterSpacing: 0.2,

@@ -30,7 +30,8 @@ class ProfileScreen extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
-          body: controller.isLoading.value
+          body: SafeArea(
+            child: controller.isLoading.value
               ? Constant.loader(context)
               : ListView(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -163,6 +164,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+          ),
         );
       },
     );
