@@ -11,6 +11,11 @@ import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+import 'package:http_parser/http_parser.dart';
 
 class VehicleInformationController extends GetxController {
   Rx<TextEditingController> vehicleNumberController = TextEditingController().obs;
@@ -18,7 +23,115 @@ class VehicleInformationController extends GetxController {
   Rx<TextEditingController> registrationDateController = TextEditingController().obs;
   Rx<TextEditingController> driverRulesController = TextEditingController().obs;
   Rx<TextEditingController> zoneNameController = TextEditingController().obs;
+  Rx<TextEditingController> qualificationController = TextEditingController().obs;
+  Rx<TextEditingController> officeAddressController = TextEditingController().obs;
   Rx<DateTime?> selectedDate = DateTime.now().obs;
+
+  // Lawyer professional credentials
+  RxString licenseType = "".obs;
+  RxString barAssociation = "".obs;
+
+  // Certificate image for OCR auto-verification
+  Rx<File?> certificateFile = Rx<File?>(null);
+  RxBool isVerifying = false.obs;
+
+  // Snapshot of credentials at load time — used to detect changes that need re-verification
+  String _originalLicenseType = '';
+  String _originalBarCouncilId = '';
+
+  bool get credentialsChanged =>
+      licenseType.value != _originalLicenseType ||
+      vehicleNumberController.value.text != _originalBarCouncilId;
+
+  // ── Certificate image picker ──────────────────────────────────────────────
+  Future<void> pickCertificateImage() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+      maxWidth: 1800,
+    );
+    if (picked != null) {
+      certificateFile.value = File(picked.path);
+    }
+  }
+
+  Future<void> pickCertificateCamera() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 85,
+      maxWidth: 1800,
+    );
+    if (picked != null) {
+      certificateFile.value = File(picked.path);
+    }
+  }
+
+  // ── Auto-verify via Laravel OCR endpoint ─────────────────────────────────
+  /// Returns: 'verified' | 'pending' | 'rejected' | 'error'
+  Future<String> verifyCredentialsWithOcr() async {
+    final file = certificateFile.value;
+    final barId = vehicleNumberController.value.text.trim();
+    final uid   = FirebaseAuth.instance.currentUser?.uid ?? driverModel.value.id ?? '';
+    final name  = driverModel.value.fullName ?? '';
+
+    if (file == null || barId.isEmpty || uid.isEmpty) return 'error';
+
+    isVerifying.value = true;
+    try {
+      final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      if (idToken == null) return 'error';
+
+      final uri     = Uri.parse('${Constant.globalUrl}api/verify-lawyer-credentials');
+      final request = http.MultipartRequest('POST', uri)
+        ..headers['Authorization'] = 'Bearer $idToken'
+        ..fields['bar_council_id'] = barId
+        ..fields['full_name']      = name
+        ..fields['driver_uid']     = uid
+        ..files.add(await http.MultipartFile.fromPath(
+            'certificate', file.path,
+            contentType: MediaType('image', 'jpeg')));
+
+      final streamed = await request.send().timeout(const Duration(seconds: 60));
+      final response = await http.Response.fromStream(streamed);
+
+      if (response.statusCode == 200) {
+        final body   = response.body;
+        if (body.contains('"status":"verified"')) return 'verified';
+        if (body.contains('"status":"pending"'))  return 'pending';
+        return 'rejected';
+      }
+      return 'error';
+    } catch (_) {
+      return 'error';
+    } finally {
+      isVerifying.value = false;
+    }
+  }
+
+  static const List<Map<String, String>> licenseOptions = [
+    {'value': 'advocate',    'label': 'Advocate (District / Lower Courts)'},
+    {'value': 'advocate_hc', 'label': 'Advocate High Court (Province)'},
+    {'value': 'advocate_sc', 'label': 'Advocate Supreme Court (National)'},
+  ];
+
+  static const List<String> barAssociations = [
+    'Lahore Bar Association',
+    'Karachi Bar Association',
+    'Islamabad Bar Association',
+    'Peshawar Bar Association',
+    'Quetta Bar Association',
+    'Rawalpindi Bar Association',
+    'Faisalabad Bar Association',
+    'Multan Bar Association',
+    'Gujranwala Bar Association',
+    'Sialkot Bar Association',
+    'Hyderabad Bar Association',
+    'Sukkur Bar Association',
+    'Abbottabad Bar Association',
+    'Other',
+  ];
 
   RxBool isLoading = true.obs;
 
@@ -288,6 +401,23 @@ class VehicleInformationController extends GetxController {
           driverModel.value.cityIds!.isNotEmpty) {
         selectedCities.assignAll(driverModel.value.cityIds!);
       }
+
+      // Hydrate lawyer professional credentials
+      if (driverModel.value.licenseType != null) {
+        licenseType.value = driverModel.value.licenseType!;
+      }
+      if (driverModel.value.barAssociation != null) {
+        barAssociation.value = driverModel.value.barAssociation!;
+      }
+      if (driverModel.value.qualification != null) {
+        qualificationController.value.text = driverModel.value.qualification!;
+      }
+      if (driverModel.value.officeAddress != null) {
+        officeAddressController.value.text = driverModel.value.officeAddress!;
+      }
+      // Snapshot for change detection
+      _originalLicenseType = licenseType.value;
+      _originalBarCouncilId = vehicleNumberController.value.text;
     } catch (e, s) {
       // Catch-all so we still drop the loader.
       debugPrint('getVehicleTye unexpected error: $e\n$s');

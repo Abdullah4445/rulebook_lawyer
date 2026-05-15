@@ -9,7 +9,6 @@ import 'package:lawyer/model/driver_user_model.dart';
 import 'package:lawyer/themes/animations.dart';
 import 'package:lawyer/themes/app_colors.dart';
 import 'package:lawyer/themes/button_them.dart';
-import 'package:lawyer/themes/responsive.dart';
 import 'package:lawyer/ui/auth_screen/information_screen.dart';
 import 'package:lawyer/ui/dashboard_screen.dart';
 import 'package:lawyer/ui/subscription_plan_screen/subscription_list_screen.dart';
@@ -17,6 +16,7 @@ import 'package:lawyer/ui/terms_and_condition/terms_and_condition_screen.dart';
 import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:lawyer/utils/notification_service.dart';
+import 'package:lawyer/widget/social_auth_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -42,34 +42,7 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Hero header with soft gold halo
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        height: 240,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          gradient: RadialGradient(
-                            radius: 0.9,
-                            colors: [
-                              AppColors.brandGold.withOpacity(isDark ? 0.18 : 0.10),
-                              Colors.transparent,
-                            ],
-                          ),
-                        ),
-                      ),
-                      EntranceFadeSlide(
-                        duration: const Duration(milliseconds: 600),
-                        offset: const Offset(0, -16),
-                        child: Image.asset(
-                          "assets/images/login_image.png",
-                          width: Responsive.width(70, context),
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ],
-                  ),
+                  _LawyerAuthHero(isDark: isDark),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
@@ -176,12 +149,8 @@ class LoginScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Platform.isIOS?Container():ButtonThem.buildBorderButton(
-                          context,
-                          title: "Login with google".tr,
-                          iconVisibility: true,
-                          iconAssetImage: 'assets/icons/ic_google.png',
-                          onPress: () async {
+                        Platform.isIOS ? const SizedBox.shrink() : SocialAuthButton.google(
+                          onTap: () async {
                             ShowToastDialog.showLoader("Please wait".tr);
                             await controller.signInWithGoogle().then((value) {
                               ShowToastDialog.closeLoader();
@@ -251,12 +220,8 @@ class LoginScreen extends StatelessWidget {
                         const SizedBox(
                           height: 16,
                         ),
-                        ButtonThem.buildBorderButton(
-                          context,
-                          title: "Login with Facebook".tr,
-                          iconVisibility: true,
-                          iconAssetImage: 'assets/icons/ic_facebook.png',
-                          onPress: () async {
+                        SocialAuthButton.facebook(
+                          onTap: () async {
                             ShowToastDialog.showLoader("Please wait".tr);
                             await controller.signInWithFacebook().then((value) {
                               ShowToastDialog.closeLoader();
@@ -328,13 +293,8 @@ class LoginScreen extends StatelessWidget {
                         ),
                         Visibility(
                             visible: Platform.isIOS,
-                            child: ButtonThem.buildBorderButton(
-                              context,
-                              title: "Login with apple".tr,
-                              iconVisibility: true,
-                              iconAssetImage: 'assets/icons/ic_apple.png',
-                              iconColor: themeChange.getThem() ? AppColors.darkModePrimary : Colors.black,
-                              onPress: () async {
+                            child: SocialAuthButton.apple(
+                              onTap: () async {
                                 ShowToastDialog.showLoader("Please wait".tr);
                                 await controller.signInWithApple().then((value) {
                                   ShowToastDialog.closeLoader();
@@ -452,4 +412,101 @@ class LoginScreen extends StatelessWidget {
         });
   }
 
+}
+
+class _LawyerAuthHero extends StatelessWidget {
+  final bool isDark;
+  const _LawyerAuthHero({required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 260,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          radius: 0.95,
+          colors: [
+            AppColors.brandGold.withOpacity(isDark ? 0.22 : 0.14),
+            Colors.transparent,
+          ],
+        ),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            top: 36,
+            child: EntranceFadeSlide(
+              duration: const Duration(milliseconds: 600),
+              offset: const Offset(0, -14),
+              child: Container(
+                width: 124,
+                height: 124,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: AppColors.goldGradient,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.brandGold.withOpacity(0.40),
+                      blurRadius: 28,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.gavel_rounded,
+                    color: Colors.white,
+                    size: 58,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 24,
+            left: 24,
+            right: 24,
+            child: EntranceFadeSlide(
+              duration: const Duration(milliseconds: 600),
+              delay: const Duration(milliseconds: 120),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Rulebook',
+                    style: GoogleFonts.poppins(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.0,
+                      color: isDark ? Colors.white : AppColors.brandNavy,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.brandGold.withOpacity(isDark ? 0.18 : 0.14),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'For Lawyers',
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.4,
+                        color: AppColors.brandGold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

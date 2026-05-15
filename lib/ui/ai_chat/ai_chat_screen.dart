@@ -19,7 +19,7 @@ class AiChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.isRegistered<AiChatController>(tag: role)
         ? Get.find<AiChatController>(tag: role)
-        : Get.put(AiChatController(role: role), tag: role);
+        : Get.put(AiChatController(role: role), tag: role, permanent: true);
 
     if (initialCase != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -103,6 +103,8 @@ class InformationScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 24),
+
+                        // ── Basic Info ──────────────────────────────────────
                         EntranceFadeSlide(
                           duration: const Duration(milliseconds: 500),
                           delay: const Duration(milliseconds: 300),
@@ -166,7 +168,128 @@ class InformationScreen extends StatelessWidget {
                                 : true,
                           ),
                         ),
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 24),
+
+                        // ── Lawyer Professional Info Section ────────────────
+                        _sectionHeader(context, Icons.gavel, "Lawyer Information".tr, isDark),
+                        const SizedBox(height: 14),
+
+                        // License Type
+                        _dropdownField(
+                          context: context,
+                          isDark: isDark,
+                          label: "License Type".tr,
+                          hint: "Select your license level".tr,
+                          value: controller.licenseType.value.isEmpty ? null : controller.licenseType.value,
+                          items: InformationController.licenseOptions
+                              .map((o) => DropdownMenuItem<String>(
+                                    value: o['value'],
+                                    child: Text(
+                                      o['label']!,
+                                      style: GoogleFonts.poppins(fontSize: 13.5),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ))
+                              .toList(),
+                          onChanged: (val) {
+                            if (val != null) controller.licenseType.value = val;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Bar Council Enrollment Number
+                        TextFieldThem.buildTextFiled(
+                          context,
+                          hintText: 'Bar Council Enrollment No. (e.g. PBC-12345)'.tr,
+                          controller: controller.barCouncilIdController.value,
+                        ),
+                        const SizedBox(height: 6),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Text(
+                            "Unique ID on your Bar Council Enrollment Card".tr,
+                            style: GoogleFonts.poppins(
+                              fontSize: 11.5,
+                              color: theme.colorScheme.onSurface.withOpacity(0.50),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Bar Association
+                        _dropdownField(
+                          context: context,
+                          isDark: isDark,
+                          label: "Bar Association".tr,
+                          hint: "Select your Bar Association".tr,
+                          value: controller.barAssociation.value.isEmpty ? null : controller.barAssociation.value,
+                          items: InformationController.barAssociations
+                              .map((b) => DropdownMenuItem<String>(
+                                    value: b,
+                                    child: Text(b, style: GoogleFonts.poppins(fontSize: 13.5)),
+                                  ))
+                              .toList(),
+                          onChanged: (val) {
+                            if (val != null) controller.barAssociation.value = val;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Province
+                        _dropdownField(
+                          context: context,
+                          isDark: isDark,
+                          label: "Province / Territory".tr,
+                          hint: "Select province".tr,
+                          value: controller.province.value.isEmpty ? null : controller.province.value,
+                          items: InformationController.provinces
+                              .map((p) => DropdownMenuItem<String>(
+                                    value: p,
+                                    child: Text(p, style: GoogleFonts.poppins(fontSize: 13.5)),
+                                  ))
+                              .toList(),
+                          onChanged: (val) {
+                            if (val != null) controller.province.value = val;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Practice City
+                        TextFieldThem.buildTextFiled(
+                          context,
+                          hintText: 'Practice City (e.g. Lahore)'.tr,
+                          controller: controller.practiceCityController.value,
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Qualification
+                        TextFieldThem.buildTextFiled(
+                          context,
+                          hintText: 'Qualification (e.g. LLB, LLM)'.tr,
+                          controller: controller.qualificationController.value,
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Office Address
+                        TextFieldThem.buildTextFiled(
+                          context,
+                          hintText: 'Office / Chamber Address'.tr,
+                          controller: controller.officeAddressController.value,
+                        ),
+                        const SizedBox(height: 6),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4, bottom: 8),
+                          child: Text(
+                            "Your Bar Association membership card confirms your base city. Documents will be verified by admin.".tr,
+                            style: GoogleFonts.poppins(
+                              fontSize: 11.5,
+                              color: theme.colorScheme.onSurface.withOpacity(0.50),
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 30),
                         EntranceFadeSlide(
                           duration: const Duration(milliseconds: 500),
                           delay: const Duration(milliseconds: 600),
@@ -179,6 +302,12 @@ class InformationScreen extends StatelessWidget {
                             ShowToastDialog.showToast("Please enter phone number".tr);
                           } else if (Constant.validateEmail(controller.emailController.value.text) == false) {
                             ShowToastDialog.showToast("Please enter valid email".tr);
+                          } else if (controller.licenseType.value.isEmpty) {
+                            ShowToastDialog.showToast("Please select your license type".tr);
+                          } else if (controller.barCouncilIdController.value.text.isEmpty) {
+                            ShowToastDialog.showToast("Please enter Bar Council Enrollment No.".tr);
+                          } else if (controller.province.value.isEmpty) {
+                            ShowToastDialog.showToast("Please select your province".tr);
                           } else {
                             ShowToastDialog.showLoader("Please wait".tr);
                             DriverUserModel userModel = controller.userModel.value;
@@ -189,6 +318,18 @@ class InformationScreen extends StatelessWidget {
                             userModel.documentVerification = false;
                             userModel.isOnline = false;
                             userModel.createdAt = Timestamp.now();
+                            // Lawyer fields
+                            userModel.licenseType    = controller.licenseType.value;
+                            userModel.barCouncilId   = controller.barCouncilIdController.value.text.trim();
+                            userModel.barAssociation = controller.barAssociation.value.isEmpty ? null : controller.barAssociation.value;
+                            userModel.province       = controller.province.value;
+                            userModel.qualification  = controller.qualificationController.value.text.trim().isEmpty ? null : controller.qualificationController.value.text.trim();
+                            userModel.officeAddress  = controller.officeAddressController.value.text.trim().isEmpty ? null : controller.officeAddressController.value.text.trim();
+                            // cityIds: province-level for HC/SC, city only for Advocate
+                            final city = controller.practiceCityController.value.text.trim();
+                            if (city.isNotEmpty) {
+                              userModel.cityIds = [city];
+                            }
                             String token = await NotificationService.getToken();
                             userModel.fcmToken = token;
 
@@ -217,7 +358,7 @@ class InformationScreen extends StatelessWidget {
                                   } else {
                                     Get.offAll(const SubscriptionListScreen(), arguments: {"isShow": true});
                                   }
-                                }else{
+                                } else {
                                   Get.offAll(const DashBoardScreen());
                                 }
                               }
@@ -225,6 +366,7 @@ class InformationScreen extends StatelessWidget {
                           }
                         }),
                         ),
+                        const SizedBox(height: 30),
                       ],
                     ),
                   )
@@ -233,5 +375,81 @@ class InformationScreen extends StatelessWidget {
             ),
           );
         });
+  }
+
+  Widget _sectionHeader(BuildContext context, IconData icon, String title, bool isDark) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(7),
+          decoration: BoxDecoration(
+            gradient: AppColors.goldGradient,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: Colors.white, size: 16),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          title,
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+            color: isDark ? Colors.white : const Color(0xFF0F172A),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Container(
+            height: 1,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.brandGold.withOpacity(0.5), Colors.transparent],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _dropdownField({
+    required BuildContext context,
+    required bool isDark,
+    required String label,
+    required String hint,
+    required String? value,
+    required List<DropdownMenuItem<String>> items,
+    required void Function(String?) onChanged,
+  }) {
+    final theme = Theme.of(context);
+    return DropdownButtonFormField<String>(
+      value: value,
+      isExpanded: true,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: GoogleFonts.poppins(fontSize: 13, color: theme.colorScheme.onSurface.withOpacity(0.65)),
+        hintText: hint,
+        hintStyle: GoogleFonts.poppins(fontSize: 13, color: theme.colorScheme.onSurface.withOpacity(0.45)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        filled: true,
+        fillColor: isDark ? AppColors.darkContainerBackground : AppColors.containerBackground,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.brandGold, width: 1.5),
+        ),
+      ),
+      dropdownColor: isDark ? AppColors.darkContainerBackground : Colors.white,
+      style: GoogleFonts.poppins(fontSize: 13.5, color: theme.colorScheme.onSurface),
+      items: items,
+      onChanged: onChanged,
+    );
   }
 }

@@ -144,7 +144,8 @@ class TextFieldThem {
                 width: 1),
           ),
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.black87),
+          hintStyle: TextStyle(
+              color: themeChange.getThem() ? Colors.white54 : Colors.black87),
         ));
   }
 
@@ -212,7 +213,8 @@ class TextFieldThem {
                 width: 1),
           ),
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.black87),
+          hintStyle: TextStyle(
+              color: themeChange.getThem() ? Colors.white54 : Colors.black87),
         ));
   }
 }

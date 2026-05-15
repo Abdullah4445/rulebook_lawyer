@@ -59,6 +59,7 @@ class OrderModel {
   AdminCommission? adminCommission;
   ZoneModel? zone;
   String? zoneId;
+  String? cityName;
   String? description;
   // new fields
   String? courtName;
@@ -103,9 +104,8 @@ class OrderModel {
     this.adminCommission,
     this.zone,
     this.zoneId,
+    this.cityName,
     this.driverLocation,
-    this.customerIsWatchingLiveTracking,
-    this.notifyUserIfDriverIsNotMovingEvenRideActive,
     this.description,
     this.caseNumber,
     this.courtName,
@@ -183,8 +183,9 @@ class OrderModel {
         : null;
     zone = json['zone'] != null ? ZoneModel.fromJson(json['zone']) : null;
     zoneId = json['zoneId'];
+    cityName = json['cityName'];
 
-    // ðŸ”¥ New fields
+    //ðŸ”¥ New fields
     final dLoc = json['driverLocation'];
     if (dLoc is GeoPoint) {
       driverLocation = dLoc;
@@ -240,6 +241,7 @@ class OrderModel {
       data['zone'] = zone!.toJson();
     }
     data['zoneId'] = zoneId;
+    data['cityName'] = cityName;
     data['id'] = id;
     data['userId'] = userId;
     data['description'] = description;

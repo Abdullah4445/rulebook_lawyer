@@ -512,12 +512,26 @@ class FireStoreUtils {
     // âœ… Simple Firestore stream use kar rahe hain
     Stream<QuerySnapshot<Map<String, dynamic>>> stream = query.snapshots();
 
+    final List<String> lawyerCities =
+        driverUserModel.cityIds != null && driverUserModel.cityIds!.isNotEmpty
+            ? List<String>.from(driverUserModel.cityIds!)
+            : <String>[];
+
     stream.listen((snapshot) {
       print("My doc list length: ${snapshot.docs.length}");
       ordersList.clear();
       for (var document in snapshot.docs) {
         final data = document.data();
         OrderModel orderModel = OrderModel.fromJson(data);
+
+        // City filter: agar lawyer ne cities select ki hain aur order ka cityName
+        // set hai, to sirf matching city ke orders dikhao.
+        if (lawyerCities.isNotEmpty && orderModel.cityName != null && orderModel.cityName!.isNotEmpty) {
+          if (!lawyerCities.contains(orderModel.cityName)) {
+            continue;
+          }
+        }
+
         if (orderModel.acceptedDriverId != null &&
             orderModel.acceptedDriverId!.isNotEmpty) {
           if (!orderModel.acceptedDriverId!

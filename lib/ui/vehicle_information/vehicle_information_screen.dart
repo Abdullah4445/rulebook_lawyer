@@ -628,6 +628,155 @@ class VehicleInformationScreen extends StatelessWidget {
                                   );
                                 }),
                                 const SizedBox(height: 18),
+                                // ─── Professional Credentials ───
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Professional Credentials'.tr,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700,
+                                          color: themeChange.getThem() ? Colors.white : AppColors.brandNavy,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      // Verification status badge
+                                      if (controller.driverModel.value.documentVerification == true)
+                                        _verificationBadge('Verified', AppColors.brandGold, Icons.verified_rounded)
+                                      else if (controller.driverModel.value.licenseType != null &&
+                                          controller.driverModel.value.licenseType!.isNotEmpty)
+                                        _verificationBadge('Pending\n Review', Colors.orange, Icons.hourglass_top_rounded)
+                                      else
+                                        _verificationBadge('Not Verified', Colors.red.shade400, Icons.cancel_rounded),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                // License Type dropdown
+                                Obx(() => DropdownButtonFormField<String>(
+                                  decoration: _jurisdictionInputDecoration(themeChange.getThem()),
+                                  isExpanded: true,
+                                  value: controller.licenseType.value.isEmpty ? null : controller.licenseType.value,
+                                  hint: Text('Select License Type'.tr),
+                                  style: GoogleFonts.poppins(
+                                    color: themeChange.getThem() ? Colors.white : AppColors.brandNavy,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  items: VehicleInformationController.licenseOptions.map((opt) => DropdownMenuItem(
+                                    value: opt['value'],
+                                    child: Text(opt['label']!),
+                                  )).toList(),
+                                  onChanged: (value) {
+                                    if (value != null) controller.licenseType.value = value;
+                                  },
+                                )),
+                                const SizedBox(height: 10),
+                                // Bar Association dropdown
+                                Obx(() => DropdownButtonFormField<String>(
+                                  decoration: _jurisdictionInputDecoration(themeChange.getThem()),
+                                  isExpanded: true,
+                                  value: controller.barAssociation.value.isEmpty ? null : controller.barAssociation.value,
+                                  hint: Text('Select Bar Association'.tr),
+                                  style: GoogleFonts.poppins(
+                                    color: themeChange.getThem() ? Colors.white : AppColors.brandNavy,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  items: VehicleInformationController.barAssociations.map((name) => DropdownMenuItem(
+                                    value: name,
+                                    child: Text(name),
+                                  )).toList(),
+                                  onChanged: (value) {
+                                    if (value != null) controller.barAssociation.value = value;
+                                  },
+                                )),
+                                const SizedBox(height: 10),
+                                TextFieldThem.buildTextFiled(context,
+                                    hintText: 'Qualification (e.g. LLB, LLM)'.tr,
+                                    controller: controller.qualificationController.value),
+                                const SizedBox(height: 10),
+                                TextFieldThem.buildTextFiled(context,
+                                    hintText: 'Office / Chamber Address'.tr,
+                                    controller: controller.officeAddressController.value),
+                                const SizedBox(height: 16),
+
+                                // ─── Enrollment Certificate Upload ───
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Bar Council Enrollment Certificate'.tr,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: themeChange.getThem() ? Colors.white70 : AppColors.brandNavy,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        'Upload a clear photo/scan. Our system will auto-verify your ID.'.tr,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 11,
+                                          color: (themeChange.getThem() ? Colors.white : AppColors.brandNavy).withOpacity(0.5),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Obx(() => controller.certificateFile.value != null
+                                          ? Stack(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  child: Image.file(
+                                                    controller.certificateFile.value!,
+                                                    height: 160,
+                                                    width: double.infinity,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  top: 6, right: 6,
+                                                  child: GestureDetector(
+                                                    onTap: () => controller.certificateFile.value = null,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.black54,
+                                                        borderRadius: BorderRadius.circular(20),
+                                                      ),
+                                                      padding: const EdgeInsets.all(4),
+                                                      child: const Icon(Icons.close, color: Colors.white, size: 16),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          : Row(
+                                              children: [
+                                                Expanded(
+                                                  child: _certUploadBtn(
+                                                    icon: Icons.photo_library_outlined,
+                                                    label: 'Gallery'.tr,
+                                                    dark: themeChange.getThem(),
+                                                    onTap: controller.pickCertificateImage,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                Expanded(
+                                                  child: _certUploadBtn(
+                                                    icon: Icons.camera_alt_outlined,
+                                                    label: 'Camera'.tr,
+                                                    dark: themeChange.getThem(),
+                                                    onTap: controller.pickCertificateCamera,
+                                                  ),
+                                                ),
+                                              ],
+                                            )),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 18),
                                 Text("Select Your Rules".tr, style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 16)),
                                 ListBody(
                                   children: controller.driverRulesList
@@ -654,8 +803,6 @@ class VehicleInformationScreen extends StatelessWidget {
                                     context,
                                     title: "Save".tr,
                                     onPress: () async {
-                                      ShowToastDialog.showLoader("Please wait".tr);
-
                                       if (controller.selectedServiceIds.isEmpty) {
                                         ShowToastDialog.showToast(
                                             "Please select at least one specialty".tr);
@@ -678,6 +825,15 @@ class VehicleInformationScreen extends StatelessWidget {
                                       } else if (controller.selectedCities.isEmpty) {
                                         ShowToastDialog.showToast("Please select at least one city".tr);
                                       } else {
+                                        // Bar Council ID format check (alphanumeric + dash/slash, 4–25 chars)
+                                        final barId = controller.vehicleNumberController.value.text.trim();
+                                        final barIdRegex = RegExp(r'^[A-Za-z0-9\-\/]{4,25}$');
+                                        if (barId.isNotEmpty && !barIdRegex.hasMatch(barId)) {
+                                          ShowToastDialog.showToast(
+                                              "Bar Council ID format invalid. Use alphanumeric characters and dashes only (4–25 chars).".tr);
+                                          return;
+                                        }
+                                        ShowToastDialog.showLoader("Please wait".tr);
                                         // Lawyers can update their specialties at any time.
                                         controller.driverModel.value.serviceIds =
                                             controller.selectedServiceIds.toList();
@@ -695,6 +851,23 @@ class VehicleInformationScreen extends StatelessWidget {
                                         controller.driverModel.value.zoneIds =
                                             controller.selectedCities.toList();
 
+                                        // Professional credentials
+                                        if (controller.licenseType.value.isNotEmpty) {
+                                          controller.driverModel.value.licenseType = controller.licenseType.value;
+                                        }
+                                        if (controller.barAssociation.value.isNotEmpty) {
+                                          controller.driverModel.value.barAssociation = controller.barAssociation.value;
+                                        }
+                                        final qual = controller.qualificationController.value.text.trim();
+                                        if (qual.isNotEmpty) controller.driverModel.value.qualification = qual;
+                                        final addr = controller.officeAddressController.value.text.trim();
+                                        if (addr.isNotEmpty) controller.driverModel.value.officeAddress = addr;
+
+                                        // If key credentials changed, mark as pending re-verification
+                                        if (controller.credentialsChanged) {
+                                          controller.driverModel.value.documentVerification = false;
+                                        }
+
                                         controller.driverModel.value.vehicleInformation = VehicleInformation(
                                             registrationDate: Timestamp.fromDate(controller.selectedDate.value!),
                                             vehicleColor: controller.selectedColor.value,
@@ -704,10 +877,32 @@ class VehicleInformationScreen extends StatelessWidget {
                                             seats: controller.seatsController.value.text,
                                             driverRules: controller.selectedDriverRulesList);
 
-                                        await FireStoreUtils.updateDriverUser(controller.driverModel.value).then((value) {
-                                          ShowToastDialog.closeLoader();
+                                        await FireStoreUtils.updateDriverUser(controller.driverModel.value).then((value) async {
                                           if (value == true) {
-                                            ShowToastDialog.showToast("Information update successfully".tr);
+                                            // If a certificate was uploaded, trigger OCR auto-verification
+                                            if (controller.certificateFile.value != null) {
+                                              ShowToastDialog.showLoader("Verifying credentials...".tr);
+                                              final result = await controller.verifyCredentialsWithOcr();
+                                              ShowToastDialog.closeLoader();
+                                              switch (result) {
+                                                case 'verified':
+                                                  ShowToastDialog.showToast("Credentials verified successfully!".tr);
+                                                  break;
+                                                case 'pending':
+                                                  ShowToastDialog.showToast("Your certificate has been sent to admin for review.".tr);
+                                                  break;
+                                                case 'rejected':
+                                                  ShowToastDialog.showToast("Could not verify credentials from the uploaded image. Please upload a clearer photo.".tr);
+                                                  break;
+                                                default:
+                                                  ShowToastDialog.showToast("Information saved. Verification pending.".tr);
+                                              }
+                                            } else {
+                                              ShowToastDialog.closeLoader();
+                                              ShowToastDialog.showToast("Information update successfully".tr);
+                                            }
+                                          } else {
+                                            ShowToastDialog.closeLoader();
                                           }
                                         });
                                       }
@@ -743,6 +938,33 @@ class VehicleInformationScreen extends StatelessWidget {
     );
   }
 
+  /// Small badge chip for verification status.
+  Widget _verificationBadge(String label, Color color, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.5)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label.tr,
+            style: GoogleFonts.poppins(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Shared decoration for the jurisdiction dropdowns to avoid repetition.
   InputDecoration _jurisdictionInputDecoration(bool isDark) {
     return InputDecoration(
@@ -768,6 +990,42 @@ class VehicleInformationScreen extends StatelessWidget {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(color: AppColors.brandGold, width: 1.6),
+      ),
+    );
+  }
+
+  Widget _certUploadBtn({
+    required IconData icon,
+    required String label,
+    required bool dark,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: dark ? AppColors.darkTextField : AppColors.textField,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: dark ? AppColors.darkTextFieldBorder : AppColors.textFieldBorder,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: AppColors.brandGold, size: 28),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: dark ? Colors.white70 : AppColors.brandNavy,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -47,6 +47,11 @@ class DriverUserModel {
   List<String>? cityIds;
 
   // ─── Lawyer professional credentials (Phase 6 — additive, all nullable) ───
+  /// License level: 'advocate' | 'advocate_hc' | 'advocate_sc'
+  /// Determines jurisdiction zone automatically.
+  String? licenseType;
+  /// Local Bar Association name (e.g. "Lahore Bar Association")
+  String? barAssociation;
   /// Bar Council registration number (e.g. PBC-12345)
   String? barCouncilId;
   /// Date the lawyer was admitted to the bar
@@ -77,6 +82,8 @@ class DriverUserModel {
       this.countryIso,
       this.province,
       this.cityIds,
+      this.licenseType,
+      this.barAssociation,
       this.barCouncilId,
       this.barRegistrationDate,
       this.practiceYears,
@@ -150,6 +157,8 @@ class DriverUserModel {
     }
 
     // Lawyer credentials (all nullable — older docs simply won't have these)
+    licenseType = json['licenseType'] as String?;
+    barAssociation = json['barAssociation'] as String?;
     barCouncilId = json['barCouncilId'] as String?;
     barRegistrationDate = json['barRegistrationDate'] as Timestamp?;
     practiceYears = (json['practiceYears'] is int)
@@ -211,6 +220,8 @@ class DriverUserModel {
     if (cityIds != null) data['cityIds'] = cityIds;
 
     // Lawyer credentials — only persist non-null values to keep docs lean.
+    if (licenseType != null) data['licenseType'] = licenseType;
+    if (barAssociation != null) data['barAssociation'] = barAssociation;
     if (barCouncilId != null) data['barCouncilId'] = barCouncilId;
     if (barRegistrationDate != null) data['barRegistrationDate'] = barRegistrationDate;
     if (practiceYears != null) data['practiceYears'] = practiceYears;
