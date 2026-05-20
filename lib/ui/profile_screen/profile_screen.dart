@@ -15,6 +15,7 @@ import 'package:lawyer/themes/animations.dart';
 import 'package:lawyer/themes/app_colors.dart';
 import 'package:lawyer/themes/button_them.dart';
 import 'package:lawyer/themes/text_field_them.dart';
+import 'package:lawyer/ui/vehicle_information/vehicle_information_screen.dart';
 import 'package:lawyer/utils/fire_store_utils.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -119,6 +120,77 @@ class ProfileScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 22),
+
+                    // ─── About me (bio) ───
+                    EntranceFadeSlide(
+                      duration: const Duration(milliseconds: 450),
+                      delay: const Duration(milliseconds: 290),
+                      child: _sectionLabel('About me'.tr),
+                    ),
+                    _formCard(
+                      context: context,
+                      isDark: isDark,
+                      children: [
+                        _labelledField(
+                          context: context,
+                          label: 'Bio'.tr,
+                          hint: 'A short pitch shown to potential clients...'.tr,
+                          delayMs: 310,
+                          isLast: true,
+                          child: TextField(
+                            controller: controller.bioController.value,
+                            maxLines: 4,
+                            minLines: 3,
+                            maxLength: 400,
+                            style: GoogleFonts.poppins(
+                                color: theme.colorScheme.onSurface,
+                                fontSize: 13.5),
+                            decoration: InputDecoration(
+                              hintText:
+                                  'A short pitch shown to potential clients...'.tr,
+                              hintStyle: GoogleFonts.poppins(
+                                fontSize: 13,
+                                color: theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.45),
+                              ),
+                              filled: true,
+                              fillColor: isDark
+                                  ? AppColors.darkContainerBackground
+                                  : AppColors.containerBackground,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 12),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                    color: theme.dividerColor
+                                        .withValues(alpha: 0.3)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                    color: AppColors.brandGold, width: 1.4),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 22),
+
+                    // ─── Lawyer credentials summary (read-only here) ───
+                    EntranceFadeSlide(
+                      duration: const Duration(milliseconds: 450),
+                      delay: const Duration(milliseconds: 320),
+                      child: _sectionLabel('Lawyer Credentials'.tr),
+                    ),
+                    _credentialsCard(context, controller, isDark),
+
+                    const SizedBox(height: 22),
                     EntranceFadeSlide(
                       duration: const Duration(milliseconds: 500),
                       delay: const Duration(milliseconds: 340),
@@ -152,6 +224,10 @@ class ProfileScreen extends StatelessWidget {
                               controller.fullNameController.value.text;
                           driverUserModel.profilePic =
                               controller.profileImage.value;
+                          final bioText =
+                              controller.bioController.value.text.trim();
+                          driverUserModel.bio =
+                              bioText.isEmpty ? null : bioText;
                           await FireStoreUtils.updateDriverUser(driverUserModel)
                               .then((_) {
                             ShowToastDialog.closeLoader();
@@ -358,6 +434,117 @@ class ProfileScreen extends StatelessWidget {
             child,
           ],
         ),
+      ),
+    );
+  }
+
+  /// Read-only summary of the lawyer's credentials with a deep-link to the
+  /// "Lawyer Information" screen for editing. Keeps the profile screen as
+  /// the single landing page while avoiding duplicate forms.
+  Widget _credentialsCard(
+      BuildContext context, ProfileController controller, bool isDark) {
+    final theme = Theme.of(context);
+    final m = controller.driverModel.value;
+    String licenseLabel(String? type) {
+      switch (type) {
+        case 'advocate':
+          return 'Lower Court';
+        case 'advocate_hc':
+          return 'High Court';
+        case 'advocate_sc':
+          return 'Supreme Court';
+        default:
+          return '—';
+      }
+    }
+
+    final rows = <List<String>>[
+      ['License Type'.tr, licenseLabel(m.licenseType)],
+      ['Bar Council ID'.tr, (m.barCouncilId ?? '').isNotEmpty ? m.barCouncilId! : '—'],
+      ['Bar Association'.tr, (m.barAssociation ?? '').isNotEmpty ? m.barAssociation! : '—'],
+      ['Qualification'.tr, (m.qualification ?? '').isNotEmpty ? m.qualification! : '—'],
+      ['Office'.tr, (m.officeAddress ?? '').isNotEmpty ? m.officeAddress! : '—'],
+      ['Province'.tr, (m.province ?? '').isNotEmpty ? m.province! : '—'],
+      [
+        'Cities'.tr,
+        (m.cityIds != null && m.cityIds!.isNotEmpty) ? m.cityIds!.join(', ') : '—'
+      ],
+    ];
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppColors.darkContainerBackground
+            : AppColors.containerBackground,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: AppColors.brandGold.withValues(alpha: 0.40),
+          width: 1.2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...rows.map((r) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 110,
+                      child: Text(
+                        r[0],
+                        style: GoogleFonts.poppins(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w500,
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.60),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        r[1],
+                        style: GoogleFonts.poppins(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+          const SizedBox(height: 8),
+          InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: () => Get.to(() => const VehicleInformationScreen()),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              decoration: BoxDecoration(
+                gradient: AppColors.goldGradient,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.edit_outlined,
+                      color: Colors.white, size: 16),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Edit Lawyer Information'.tr,
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

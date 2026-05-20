@@ -62,6 +62,8 @@ class DriverUserModel {
   String? qualification;
   /// Office / chamber address
   String? officeAddress;
+  /// Short bio / about-me — pitched to clients on the lawyer profile.
+  String? bio;
   /// Per-consultation flat fee (in the platform currency)
   double? consultationFee;
   /// Hourly billing rate (in the platform currency)
@@ -105,6 +107,7 @@ class DriverUserModel {
       this.practiceYears,
       this.qualification,
       this.officeAddress,
+      this.bio,
       this.consultationFee,
       this.hourlyRate,
       this.feePackages,
@@ -193,6 +196,7 @@ class DriverUserModel {
             : null);
     qualification = json['qualification'] as String?;
     officeAddress = json['officeAddress'] as String?;
+    bio = json['bio'] as String?;
     consultationFee = (json['consultationFee'] != null)
         ? double.tryParse(json['consultationFee'].toString())
         : null;
@@ -268,6 +272,7 @@ class DriverUserModel {
     if (practiceYears != null) data['practiceYears'] = practiceYears;
     if (qualification != null) data['qualification'] = qualification;
     if (officeAddress != null) data['officeAddress'] = officeAddress;
+    if (bio != null) data['bio'] = bio;
     if (consultationFee != null) data['consultationFee'] = consultationFee;
     if (hourlyRate != null) data['hourlyRate'] = hourlyRate;
     if (feePackages != null) {

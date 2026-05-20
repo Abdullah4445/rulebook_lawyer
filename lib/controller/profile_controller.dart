@@ -13,6 +13,7 @@ class ProfileController extends GetxController {
   Rx<TextEditingController> fullNameController = TextEditingController().obs;
   Rx<TextEditingController> emailController = TextEditingController().obs;
   Rx<TextEditingController> phoneNumberController = TextEditingController().obs;
+  Rx<TextEditingController> bioController = TextEditingController().obs;
   RxString countryCode = "+1".obs;
 
   @override
@@ -31,6 +32,7 @@ class ProfileController extends GetxController {
         countryCode.value = driverModel.value.countryCode.toString();
         emailController.value.text = driverModel.value.email.toString();
         fullNameController.value.text = driverModel.value.fullName.toString();
+        bioController.value.text = driverModel.value.bio ?? '';
         profileImage.value = driverModel.value.profilePic?? '';
         isLoading.value = false;
       }
