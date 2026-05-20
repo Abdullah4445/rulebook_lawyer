@@ -72,6 +72,12 @@ class OrderModel {
   String? lastHearingDate;
   String? nextHearingDate;
 
+  /// ─── Per-case workspace (Phase 1.5) ───
+  /// Lawyer-only private notes about the case. NEVER shown to the customer.
+  String? lawyerPrivateNotes;
+  /// Shared document attachments — visible to both parties.
+  List<CaseDocument>? caseDocuments;
+
   /// ðŸ†• List of titles (like en, ar, fr)
   // List<TitleItem>? titleList;
 
@@ -210,6 +216,14 @@ class OrderModel {
       });
     }
 
+    lawyerPrivateNotes = json['lawyerPrivateNotes'] as String?;
+    if (json['caseDocuments'] is List) {
+      caseDocuments = (json['caseDocuments'] as List)
+          .whereType<Map>()
+          .map((m) => CaseDocument.fromJson(Map<String, dynamic>.from(m)))
+          .toList();
+    }
+
     // /// ðŸ†• Title list parse karo
     // if (json['title'] != null) {
     //   titleList = (json['title'] as List)
@@ -288,6 +302,13 @@ class OrderModel {
     data['notifyUserIfDriverIsNotMovingEvenRideActive'] =
         notifyUserIfDriverIsNotMovingEvenRideActive;
 
+    if (lawyerPrivateNotes != null) {
+      data['lawyerPrivateNotes'] = lawyerPrivateNotes;
+    }
+    if (caseDocuments != null) {
+      data['caseDocuments'] = caseDocuments!.map((d) => d.toJson()).toList();
+    }
+
     // /// ðŸ†• Title list ko JSON me convert karo
     // if (titleList != null) {
     //   data['title'] = titleList!.map((e) => e.toJson()).toList();
@@ -295,6 +316,46 @@ class OrderModel {
 
     return data;
   }
+}
+
+/// A document attached to a case (shared between lawyer and customer).
+/// Stored in Firebase Storage; this class holds the metadata persisted on the
+/// order Firestore doc under `caseDocuments`.
+class CaseDocument {
+  String? id;
+  String? name;
+  String? url;
+  String? mimeType;
+  /// 'lawyer' or 'customer' — who uploaded it.
+  String? uploadedBy;
+  Timestamp? uploadedAt;
+
+  CaseDocument({
+    this.id,
+    this.name,
+    this.url,
+    this.mimeType,
+    this.uploadedBy,
+    this.uploadedAt,
+  });
+
+  CaseDocument.fromJson(Map<String, dynamic> json) {
+    id = json['id'] as String?;
+    name = json['name'] as String?;
+    url = json['url'] as String?;
+    mimeType = json['mimeType'] as String?;
+    uploadedBy = json['uploadedBy'] as String?;
+    uploadedAt = json['uploadedAt'] as Timestamp?;
+  }
+
+  Map<String, dynamic> toJson() => {
+        if (id != null) 'id': id,
+        if (name != null) 'name': name,
+        if (url != null) 'url': url,
+        if (mimeType != null) 'mimeType': mimeType,
+        if (uploadedBy != null) 'uploadedBy': uploadedBy,
+        if (uploadedAt != null) 'uploadedAt': uploadedAt,
+      };
 }
 
 

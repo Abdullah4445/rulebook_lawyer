@@ -7,6 +7,7 @@ import 'package:lawyer/themes/app_colors.dart';
 import 'package:lawyer/themes/responsive.dart';
 import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:lawyer/utils/case_duration_utils.dart';
+import 'package:lawyer/widget/case_workspace_widget.dart';
 import 'package:lawyer/widget/location_view.dart';
 import 'package:lawyer/widget/user_order_view.dart';
 import 'package:flutter/material.dart';
@@ -1127,6 +1128,12 @@ class CompleteOrderScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 20),
+                                // ── Per-case workspace (Phase 1.5) ──
+                                if ((controller.orderModel.value.id ?? '').isNotEmpty)
+                                  LawyerCaseWorkspace(
+                                    orderId: controller.orderModel.value.id!,
+                                  ),
+                                const SizedBox(height: 24),
                               ],
                             ),
                           ),
