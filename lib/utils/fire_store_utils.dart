@@ -509,12 +509,23 @@ class FireStoreUtils {
   print("My Stream: ${stream.toString()}");
   */
 
-    // âœ… Simple Firestore stream use kar rahe hain
     Stream<QuerySnapshot<Map<String, dynamic>>> stream = query.snapshots();
 
+    // ─── Zone filter (informational only) ───
+    // Server-side strict serviceId match already filters by lawyer's selected
+    // categories. The location/zone vocabulary mismatch between legacy zone
+    // polygons (case.cityName = "Pakistan", case.zoneId = polygon UUID) and
+    // the new city picker (lawyer.cityIds = ["Vehari"]) means a hard zone
+    // filter excluded every test case. For now we log the mismatch but DO NOT
+    // block — once new cases all carry reverse-geocoded `cityName` + `province`,
+    // we can re-tighten this safely.
     final List<String> lawyerCities =
         driverUserModel.cityIds != null && driverUserModel.cityIds!.isNotEmpty
             ? List<String>.from(driverUserModel.cityIds!)
+            : <String>[];
+    final List<String> lawyerZones =
+        driverUserModel.zoneIds != null && driverUserModel.zoneIds!.isNotEmpty
+            ? driverUserModel.zoneIds!.map((e) => e.toString()).toList()
             : <String>[];
 
     stream.listen((snapshot) {
@@ -524,11 +535,19 @@ class FireStoreUtils {
         final data = document.data();
         OrderModel orderModel = OrderModel.fromJson(data);
 
-        // City filter: agar lawyer ne cities select ki hain aur order ka cityName
-        // set hai, to sirf matching city ke orders dikhao.
-        if (lawyerCities.isNotEmpty && orderModel.cityName != null && orderModel.cityName!.isNotEmpty) {
-          if (!lawyerCities.contains(orderModel.cityName)) {
-            continue;
+        // Soft zone log — helps surface mismatches in logcat without blocking.
+        final caseCity = orderModel.cityName ?? '';
+        final caseZone = orderModel.zoneId ?? '';
+        final caseProv = orderModel.province ?? '';
+        if ((lawyerCities.isNotEmpty || lawyerZones.isNotEmpty) &&
+            (caseCity.isNotEmpty || caseZone.isNotEmpty || caseProv.isNotEmpty)) {
+          final matchCity = lawyerCities.contains(caseCity);
+          final matchZone = lawyerZones.contains(caseZone);
+          final matchProv = caseProv.isNotEmpty &&
+              (driverUserModel.province ?? '') == caseProv;
+          if (!matchCity && !matchZone && !matchProv) {
+            print(
+                "ℹ️ Soft zone mismatch (not blocking): case city=$caseCity zone=$caseZone province=$caseProv vs lawyer cities=$lawyerCities zones=$lawyerZones province=${driverUserModel.province}");
           }
         }
 

@@ -3,8 +3,8 @@ import 'package:lawyer/constant/show_toast_dialog.dart';
 import 'package:lawyer/ui/auth_screen/login_screen.dart';
 import 'package:lawyer/ui/bank_details/bank_details_screen.dart';
 import 'package:lawyer/ui/chat_screen/inbox_screen.dart';
+import 'package:lawyer/ui/fee_management/fee_management_screen.dart';
 import 'package:lawyer/ui/home_screens/home_screen.dart';
-import 'package:lawyer/ui/online_registration/online_registartion_screen.dart';
 import 'package:lawyer/ui/profile_screen/profile_screen.dart';
 import 'package:lawyer/ui/settings_screen/setting_screen.dart';
 import 'package:lawyer/ui/subscription_plan_screen/subscription_history.dart';
@@ -60,9 +60,9 @@ class DashBoardController extends GetxController {
         case 4:
           return const ProfileScreen();
         case 5:
-          return const OnlineRegistrationScreen();
-        case 6:
           return const VehicleInformationScreen();
+        case 6:
+          return const FeeManagementScreen();
         case 7:
           return const SettingScreen();
         case 8:
@@ -95,9 +95,9 @@ class DashBoardController extends GetxController {
         case 4:
           return const ProfileScreen();
         case 5:
-          return const OnlineRegistrationScreen();
-        case 6:
           return const VehicleInformationScreen();
+        case 6:
+          return const FeeManagementScreen();
         case 7:
           return const SettingScreen();
         case 8:
@@ -195,14 +195,14 @@ class DashBoardController extends GetxController {
           subtitle: 'Update your professional details',
         ),
         const DrawerItem(
-          'Online Registration',
-          "assets/icons/ic_document.svg",
-          subtitle: 'Upload and manage your verification documents',
-        ),
-        const DrawerItem(
           'Lawyer Information',
           "assets/icons/lawyer.svg",
           subtitle: 'Maintain your practice and service details',
+        ),
+        const DrawerItem(
+          'Fee Management',
+          "assets/icons/ic_wallet.svg",
+          subtitle: 'Set consultation fee, hourly rate and packages',
         ),
         const DrawerItem(
           'Settings',
@@ -269,14 +269,14 @@ class DashBoardController extends GetxController {
           subtitle: 'Update your professional details',
         ),
         const DrawerItem(
-          'Online Registration',
-          "assets/icons/ic_document.svg",
-          subtitle: 'Upload and manage your verification documents',
-        ),
-        const DrawerItem(
           'Lawyer Information',
           "assets/icons/lawyer.svg",
           subtitle: 'Maintain your practice and service details',
+        ),
+        const DrawerItem(
+          'Fee Management',
+          "assets/icons/ic_wallet.svg",
+          subtitle: 'Set consultation fee, hourly rate and packages',
         ),
         const DrawerItem(
           'Settings',

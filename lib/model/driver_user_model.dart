@@ -66,6 +66,22 @@ class DriverUserModel {
   double? consultationFee;
   /// Hourly billing rate (in the platform currency)
   double? hourlyRate;
+  /// Pre-set service packages (e.g. "Divorce Khula — Rs 50,000")
+  List<FeePackage>? feePackages;
+
+  // ─── Identity verification documents (Firebase Storage URLs) ───
+  String? cnicFrontUrl;
+  String? cnicBackUrl;
+  String? barCardFrontUrl;
+  String? barCardBackUrl;
+  /// Lawyer holding the Bar Council Card next to their face — anti-fraud
+  String? selfieWithCardUrl;
+  /// 'pending' | 'approved' | 'rejected' — null means never submitted
+  String? verificationStatus;
+  /// Admin-supplied reason when [verificationStatus] == 'rejected'
+  String? rejectionReason;
+  /// When the lawyer last submitted (or resubmitted) their documents
+  Timestamp? documentsSubmittedAt;
 
 
   DriverUserModel(
@@ -91,6 +107,15 @@ class DriverUserModel {
       this.officeAddress,
       this.consultationFee,
       this.hourlyRate,
+      this.feePackages,
+      this.cnicFrontUrl,
+      this.cnicBackUrl,
+      this.barCardFrontUrl,
+      this.barCardBackUrl,
+      this.selfieWithCardUrl,
+      this.verificationStatus,
+      this.rejectionReason,
+      this.documentsSubmittedAt,
       this.fcmToken,
       this.email,
       this.location,
@@ -174,6 +199,22 @@ class DriverUserModel {
     hourlyRate = (json['hourlyRate'] != null)
         ? double.tryParse(json['hourlyRate'].toString())
         : null;
+    if (json['feePackages'] is List) {
+      feePackages = (json['feePackages'] as List)
+          .whereType<Map>()
+          .map((m) => FeePackage.fromJson(Map<String, dynamic>.from(m)))
+          .toList();
+    }
+
+    // Identity documents
+    cnicFrontUrl = json['cnicFrontUrl'] as String?;
+    cnicBackUrl = json['cnicBackUrl'] as String?;
+    barCardFrontUrl = json['barCardFrontUrl'] as String?;
+    barCardBackUrl = json['barCardBackUrl'] as String?;
+    selfieWithCardUrl = json['selfieWithCardUrl'] as String?;
+    verificationStatus = json['verificationStatus'] as String?;
+    rejectionReason = json['rejectionReason'] as String?;
+    documentsSubmittedAt = json['documentsSubmittedAt'] as Timestamp?;
   }
 
   Map<String, dynamic> toJson() {
@@ -229,8 +270,42 @@ class DriverUserModel {
     if (officeAddress != null) data['officeAddress'] = officeAddress;
     if (consultationFee != null) data['consultationFee'] = consultationFee;
     if (hourlyRate != null) data['hourlyRate'] = hourlyRate;
+    if (feePackages != null) {
+      data['feePackages'] = feePackages!.map((p) => p.toJson()).toList();
+    }
+
+    // Identity documents
+    if (cnicFrontUrl != null) data['cnicFrontUrl'] = cnicFrontUrl;
+    if (cnicBackUrl != null) data['cnicBackUrl'] = cnicBackUrl;
+    if (barCardFrontUrl != null) data['barCardFrontUrl'] = barCardFrontUrl;
+    if (barCardBackUrl != null) data['barCardBackUrl'] = barCardBackUrl;
+    if (selfieWithCardUrl != null) data['selfieWithCardUrl'] = selfieWithCardUrl;
+    if (verificationStatus != null) data['verificationStatus'] = verificationStatus;
+    if (rejectionReason != null) data['rejectionReason'] = rejectionReason;
+    if (documentsSubmittedAt != null) data['documentsSubmittedAt'] = documentsSubmittedAt;
     return data;
   }
+}
+
+/// Pre-set service package a lawyer offers (e.g. "Divorce Khula — Rs 50,000").
+class FeePackage {
+  String? name;
+  String? description;
+  double? fee;
+
+  FeePackage({this.name, this.description, this.fee});
+
+  FeePackage.fromJson(Map<String, dynamic> json) {
+    name = json['name'] as String?;
+    description = json['description'] as String?;
+    fee = json['fee'] != null ? double.tryParse(json['fee'].toString()) : null;
+  }
+
+  Map<String, dynamic> toJson() => {
+        if (name != null) 'name': name,
+        if (description != null) 'description': description,
+        if (fee != null) 'fee': fee,
+      };
 }
 
 class VehicleInformation {

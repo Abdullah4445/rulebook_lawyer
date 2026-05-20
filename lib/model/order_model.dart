@@ -60,6 +60,9 @@ class OrderModel {
   ZoneModel? zone;
   String? zoneId;
   String? cityName;
+  /// Reverse-geocoded province from customer-side write — used as a fallback
+  /// match when cityName doesn't exactly match the lawyer's cityIds.
+  String? province;
   String? description;
   // new fields
   String? courtName;
@@ -184,6 +187,7 @@ class OrderModel {
     zone = json['zone'] != null ? ZoneModel.fromJson(json['zone']) : null;
     zoneId = json['zoneId'];
     cityName = json['cityName'];
+    province = json['province'] as String?;
 
     //ðŸ”¥ New fields
     final dLoc = json['driverLocation'];

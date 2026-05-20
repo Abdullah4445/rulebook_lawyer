@@ -1,5 +1,6 @@
 ﻿import 'package:lawyer/constant/constant.dart';
 import 'package:lawyer/controller/home_controller.dart';
+import 'package:lawyer/model/driver_user_model.dart';
 import 'package:lawyer/model/order_model.dart';
 import 'package:lawyer/themes/app_colors.dart';
 import 'package:lawyer/ui/home_screens/order_map_screen.dart';
@@ -71,55 +72,66 @@ class NewOrderScreen extends StatelessWidget {
   }
 }
 
-/// 🔴 Offline state widget
+/// 🔴 Offline state widget — also shows a diagnostic panel so the lawyer
+/// can self-diagnose what's blocking them from going online.
 class _OfflineView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.0, end: 1.0),
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOutCubic,
-        builder: (context, value, child) => Opacity(
-          opacity: value,
-          child: Transform.translate(
-            offset: Offset(0, 20 * (1 - value)),
-            child: child,
+    final themeChange = Provider.of<DarkThemeProvider>(context);
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _DiagnosticPanel(themeChange: themeChange),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 40),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, child) => Opacity(
+                opacity: value,
+                child: Transform.translate(
+                  offset: Offset(0, 20 * (1 - value)),
+                  child: child,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.wifi_off_rounded,
+                      color: Colors.redAccent,
+                      size: 52,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    "You are offline",
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Tap the gold toggle in the top bar to go online",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      color: AppColors.subTitleColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.wifi_off_rounded,
-                color: Colors.redAccent,
-                size: 52,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              "You are offline",
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Go online to receive new cases",
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: AppColors.subTitleColor,
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -242,6 +254,20 @@ class _EmptyViewState extends State<_EmptyView>
 
   @override
   Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _DiagnosticPanel(themeChange: widget.themeChange),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: _buildEmptyContent(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyContent(BuildContext context) {
     return Center(
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
@@ -425,6 +451,325 @@ class _EmptyViewState extends State<_EmptyView>
       ),
     );
   }
+}
+
+/// 🔬 Diagnostic panel: shows why no cases are appearing so the lawyer
+/// can self-diagnose (online, has specialties, has cities, cases in DB, etc.).
+class _DiagnosticPanel extends StatelessWidget {
+  final DarkThemeProvider themeChange;
+  const _DiagnosticPanel({required this.themeChange});
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = Get.find<HomeController>();
+    return Obx(() {
+      final m = ctrl.driverModel.value;
+      final isOnline = m.isOnline == true;
+      final hasSpecialty = (m.serviceIds != null && m.serviceIds!.isNotEmpty) ||
+          (m.serviceId != null && m.serviceId!.isNotEmpty);
+      final specialtyCount = m.serviceIds?.length ?? 0;
+      final cityCount = m.cityIds?.length ?? 0;
+      final zoneCount = m.zoneIds?.length ?? 0;
+      final cityLabel = (m.cityIds != null && m.cityIds!.isNotEmpty)
+          ? m.cityIds!.join(', ')
+          : 'Any';
+      final totalAvailable = ctrl.availableRides.length;
+      final verified = m.documentVerification == true;
+      final verifStatus = m.verificationStatus ?? '';
+
+      // Build the list of action hints to show.
+      final hints = <String>[];
+      if (!isOnline) hints.add('Go online (toggle in the top bar)');
+      if (!hasSpecialty) hints.add('Pick at least 1 case category in Lawyer Information');
+      if (!verified && verifStatus.isEmpty) {
+        hints.add('Submit identity documents from the signup screen');
+      } else if (verifStatus == 'pending') {
+        hints.add('Documents under admin review');
+      } else if (verifStatus == 'rejected') {
+        hints.add('Documents rejected — resubmit them');
+      }
+      if (totalAvailable == 0) {
+        hints.add('No new cases in system yet — wait for a customer to post one');
+      } else if (totalAvailable > 0 && hasSpecialty) {
+        hints.add('$totalAvailable case(s) in system — check if any match your specialties');
+      }
+
+      return Container(
+        margin: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+        decoration: BoxDecoration(
+          color: themeChange.getThem()
+              ? AppColors.darkContainerBackground
+              : AppColors.containerBackground,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: AppColors.brandGold.withValues(alpha: 0.30),
+            width: 1.2,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.troubleshoot_rounded,
+                    size: 18, color: AppColors.brandGold),
+                const SizedBox(width: 6),
+                Text(
+                  'Why no cases?',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            _row(context, 'Online', isOnline ? 'Yes' : 'No', isOnline),
+            _row(context, 'Categories', '$specialtyCount selected', hasSpecialty),
+            _row(context, 'Cities', cityLabel, cityCount > 0),
+            _row(context, 'Zones', '$zoneCount selected', zoneCount > 0),
+            _row(
+              context,
+              'Verification',
+              verifStatus.isEmpty
+                  ? (verified ? 'Verified' : 'Not submitted')
+                  : verifStatus,
+              verified,
+            ),
+            _row(context, 'Cases in system', '$totalAvailable available',
+                totalAvailable > 0),
+            if (hints.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Container(height: 1, color: Theme.of(context).dividerColor.withValues(alpha: 0.3)),
+              const SizedBox(height: 8),
+              ...hints.map((h) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 3),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.arrow_right_rounded,
+                            size: 16, color: AppColors.brandGold),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            h,
+                            style: GoogleFonts.poppins(
+                              fontSize: 11.5,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.70),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+            ],
+            // Per-case match analysis — shows EACH case in the system and
+            // exactly why it was accepted or rejected by the filters.
+            if (totalAvailable > 0) ...[
+              const SizedBox(height: 10),
+              Container(height: 1, color: Theme.of(context).dividerColor.withValues(alpha: 0.3)),
+              const SizedBox(height: 8),
+              Text(
+                'Per-case match analysis',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 6),
+              ..._analyzeCases(ctrl, m).map(
+                  (info) => _caseRow(context, info)),
+            ],
+          ],
+        ),
+      );
+    });
+  }
+
+  /// For each case in `availableRides`, compute why it would or wouldn't
+  /// reach this lawyer through the filter chain.
+  List<_CaseMatchInfo> _analyzeCases(
+      HomeController ctrl, DriverUserModel m) {
+    final lawyerServiceIds = <String>{
+      ...?m.serviceIds,
+      if ((m.serviceId ?? '').isNotEmpty) m.serviceId!,
+    };
+    final lawyerCities = m.cityIds ?? const <String>[];
+    final lawyerZones =
+        (m.zoneIds ?? const []).map((e) => e.toString()).toList();
+    final hasZoneFilter = lawyerCities.isNotEmpty || lawyerZones.isNotEmpty;
+
+    final out = <_CaseMatchInfo>[];
+    for (final c in ctrl.availableRides) {
+      final reasons = <String>[];
+      bool wouldShow = true;
+
+      // Category check
+      if (lawyerServiceIds.isEmpty) {
+        reasons.add('You have 0 categories — no cases match');
+        wouldShow = false;
+      } else if (c.serviceId == null || c.serviceId!.isEmpty) {
+        reasons.add('Case has no serviceId');
+        wouldShow = false;
+      } else if (!lawyerServiceIds.contains(c.serviceId)) {
+        reasons.add('Category "${c.serviceId}" not in your list');
+        wouldShow = false;
+      }
+
+      // Zone is now informational only — does NOT block.
+      // Annotates the case but doesn't change `wouldShow`.
+      if (hasZoneFilter) {
+        final hasCity = (c.cityName ?? '').isNotEmpty;
+        final hasZone = (c.zoneId ?? '').isNotEmpty;
+        final hasProv = (c.province ?? '').isNotEmpty;
+        if (hasCity || hasZone || hasProv) {
+          final matchCity = hasCity && lawyerCities.contains(c.cityName);
+          final matchZone = hasZone && lawyerZones.contains(c.zoneId);
+          final matchProv = hasProv &&
+              (m.province ?? '').isNotEmpty &&
+              c.province == m.province;
+          if (!matchCity && !matchZone && !matchProv) {
+            reasons.add(
+                'Zone soft-mismatch (not blocking): city "${c.cityName ?? "-"}"/province "${c.province ?? "-"}"');
+            // wouldShow stays true — only categories block.
+          }
+        }
+      }
+
+      if (reasons.isEmpty) reasons.add('Matches all your filters');
+      out.add(_CaseMatchInfo(
+        caseId: c.id ?? '?',
+        serviceId: c.serviceId ?? '-',
+        cityName: c.cityName ?? '-',
+        zoneId: c.zoneId ?? '-',
+        wouldShow: wouldShow,
+        reasons: reasons,
+      ));
+    }
+    return out;
+  }
+
+  Widget _caseRow(BuildContext context, _CaseMatchInfo info) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final color = info.wouldShow ? const Color(0xFF1D7A3A) : const Color(0xFFB02828);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.30), width: 0.8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(info.wouldShow ? Icons.check_rounded : Icons.block_rounded,
+                  size: 14, color: color),
+              const SizedBox(width: 5),
+              Expanded(
+                child: Text(
+                  'Case ${info.caseId.length > 10 ? info.caseId.substring(0, 10) : info.caseId}',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                    color: color,
+                  ),
+                ),
+              ),
+              Text(
+                info.wouldShow ? 'MATCH' : 'BLOCKED',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 9.5,
+                  color: color,
+                  letterSpacing: 0.4,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'svc: ${info.serviceId.length > 18 ? "${info.serviceId.substring(0, 18)}…" : info.serviceId}   city: ${info.cityName}',
+            style: GoogleFonts.poppins(
+              fontSize: 10,
+              color: onSurface.withValues(alpha: 0.55),
+            ),
+          ),
+          ...info.reasons.map((r) => Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  '• $r',
+                  style: GoogleFonts.poppins(
+                    fontSize: 10,
+                    color: onSurface.withValues(alpha: 0.75),
+                  ),
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(BuildContext context, String label, String value, bool ok) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.5),
+      child: Row(
+        children: [
+          Icon(
+            ok ? Icons.check_circle_rounded : Icons.cancel_rounded,
+            size: 14,
+            color: ok ? const Color(0xFF1D7A3A) : const Color(0xFFB02828),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 11.5,
+              color: onSurface.withValues(alpha: 0.65),
+            ),
+          ),
+          const Spacer(),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.poppins(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: onSurface,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Per-case match analysis result for the diagnostic panel.
+class _CaseMatchInfo {
+  final String caseId;
+  final String serviceId;
+  final String cityName;
+  final String zoneId;
+  final bool wouldShow;
+  final List<String> reasons;
+  _CaseMatchInfo({
+    required this.caseId,
+    required this.serviceId,
+    required this.cityName,
+    required this.zoneId,
+    required this.wouldShow,
+    required this.reasons,
+  });
 }
 
 /// ⚡ Animated New Case Card with "NEW" badge and entrance animation

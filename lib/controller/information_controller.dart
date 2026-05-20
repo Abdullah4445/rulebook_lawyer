@@ -1,9 +1,22 @@
-﻿import 'dart:developer';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:lawyer/constant/constant.dart';
+import 'package:lawyer/constant/show_toast_dialog.dart';
 import 'package:lawyer/model/driver_user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+
+/// Document slot keys used by the upload tiles in the signup screen.
+enum DocumentSlot {
+  profilePhoto,
+  cnicFront,
+  cnicBack,
+  barCardFront,
+  barCardBack,
+  selfieWithCard,
+}
 
 class InformationController extends GetxController {
   Rx<TextEditingController> fullNameController = TextEditingController().obs;
@@ -12,7 +25,6 @@ class InformationController extends GetxController {
   Rx<TextEditingController> barCouncilIdController = TextEditingController().obs;
   Rx<TextEditingController> qualificationController = TextEditingController().obs;
   Rx<TextEditingController> officeAddressController = TextEditingController().obs;
-  Rx<TextEditingController> practiceCityController = TextEditingController().obs;
 
   RxString countryCode = "+92".obs;
   RxString loginType = "".obs;
@@ -21,6 +33,15 @@ class InformationController extends GetxController {
   RxString licenseType = "".obs;      // 'advocate' | 'advocate_hc' | 'advocate_sc'
   RxString barAssociation = "".obs;
   RxString province = "".obs;
+
+  // ─── Identity verification ────────────────────────────────────────
+  /// Picked local files awaiting upload, keyed by slot.
+  final RxMap<DocumentSlot, File> pickedFiles = <DocumentSlot, File>{}.obs;
+  /// Already-uploaded URLs (hydrated from existing profile on resubmission).
+  final RxMap<DocumentSlot, String> uploadedUrls = <DocumentSlot, String>{}.obs;
+  /// 'pending' | 'approved' | 'rejected' | '' (never submitted)
+  final RxString verificationStatus = "".obs;
+  final RxString rejectionReason = "".obs;
 
   static const List<Map<String, String>> licenseOptions = [
     {'value': 'advocate',    'label': 'Advocate (District / Lower Courts)'},
@@ -85,9 +106,6 @@ class InformationController extends GetxController {
       if (userModel.value.officeAddress != null) {
         officeAddressController.value.text = userModel.value.officeAddress!;
       }
-      if (userModel.value.cityIds != null && userModel.value.cityIds!.isNotEmpty) {
-        practiceCityController.value.text = userModel.value.cityIds!.first;
-      }
       if (userModel.value.licenseType != null) {
         licenseType.value = userModel.value.licenseType!;
       }
@@ -97,8 +115,110 @@ class InformationController extends GetxController {
       if (userModel.value.province != null) {
         province.value = userModel.value.province!;
       }
-      log("------->${loginType.value}");
+
+      // Hydrate verification state + existing document URLs (for resubmission UI)
+      verificationStatus.value = userModel.value.verificationStatus ?? "";
+      rejectionReason.value = userModel.value.rejectionReason ?? "";
+      if (userModel.value.profilePic != null && userModel.value.profilePic!.isNotEmpty) {
+        uploadedUrls[DocumentSlot.profilePhoto] = userModel.value.profilePic!;
+      }
+      if (userModel.value.cnicFrontUrl != null) {
+        uploadedUrls[DocumentSlot.cnicFront] = userModel.value.cnicFrontUrl!;
+      }
+      if (userModel.value.cnicBackUrl != null) {
+        uploadedUrls[DocumentSlot.cnicBack] = userModel.value.cnicBackUrl!;
+      }
+      if (userModel.value.barCardFrontUrl != null) {
+        uploadedUrls[DocumentSlot.barCardFront] = userModel.value.barCardFrontUrl!;
+      }
+      if (userModel.value.barCardBackUrl != null) {
+        uploadedUrls[DocumentSlot.barCardBack] = userModel.value.barCardBackUrl!;
+      }
+      if (userModel.value.selfieWithCardUrl != null) {
+        uploadedUrls[DocumentSlot.selfieWithCard] = userModel.value.selfieWithCardUrl!;
+      }
+
+      log("------->${loginType.value} status=${verificationStatus.value}");
     }
     update();
+  }
+
+  /// Whether the documents section should be editable.
+  /// While pending or approved, the lawyer cannot change documents.
+  bool get isEditable =>
+      verificationStatus.value.isEmpty || verificationStatus.value == 'rejected';
+
+  bool get isResubmission => verificationStatus.value == 'rejected';
+
+  /// Pick from camera for selfie, gallery for everything else.
+  Future<void> pickDocument(DocumentSlot slot) async {
+    if (!isEditable) {
+      ShowToastDialog.showToast(
+          "Documents are locked while under review.".tr);
+      return;
+    }
+    final picker = ImagePicker();
+    final source = slot == DocumentSlot.selfieWithCard
+        ? ImageSource.camera
+        : ImageSource.gallery;
+    final picked = await picker.pickImage(
+      source: source,
+      imageQuality: 80,
+      maxWidth: 1600,
+    );
+    if (picked == null) return;
+    pickedFiles[slot] = File(picked.path);
+  }
+
+  String _slotPath(DocumentSlot slot) {
+    switch (slot) {
+      case DocumentSlot.profilePhoto:
+        return 'profilePhoto';
+      case DocumentSlot.cnicFront:
+        return 'cnicFront';
+      case DocumentSlot.cnicBack:
+        return 'cnicBack';
+      case DocumentSlot.barCardFront:
+        return 'barCardFront';
+      case DocumentSlot.barCardBack:
+        return 'barCardBack';
+      case DocumentSlot.selfieWithCard:
+        return 'selfieWithCard';
+    }
+  }
+
+  /// Upload every newly-picked file to Firebase Storage and merge the
+  /// resulting URLs into [uploadedUrls]. Returns false if any upload fails.
+  Future<bool> uploadPendingDocuments(String userId) async {
+    for (final entry in pickedFiles.entries) {
+      final slot = entry.key;
+      final file = entry.value;
+      try {
+        final url = await Constant.uploadUserImageToFireStorage(
+          file,
+          'lawyer_documents/$userId',
+          '${_slotPath(slot)}_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
+        uploadedUrls[slot] = url;
+      } catch (e) {
+        log("Upload failed for ${_slotPath(slot)}: $e");
+        return false;
+      }
+    }
+    pickedFiles.clear();
+    return true;
+  }
+
+  /// True when every required document slot has either a picked file or an
+  /// already-uploaded URL.
+  bool get hasAllDocuments {
+    bool _hasSlot(DocumentSlot slot) =>
+        pickedFiles.containsKey(slot) || uploadedUrls.containsKey(slot);
+    return _hasSlot(DocumentSlot.profilePhoto) &&
+        _hasSlot(DocumentSlot.cnicFront) &&
+        _hasSlot(DocumentSlot.cnicBack) &&
+        _hasSlot(DocumentSlot.barCardFront) &&
+        _hasSlot(DocumentSlot.barCardBack) &&
+        _hasSlot(DocumentSlot.selfieWithCard);
   }
 }

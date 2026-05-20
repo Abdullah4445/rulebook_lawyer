@@ -294,6 +294,10 @@ class AiChatController extends GetxController {
       final uri = Uri.parse('${Constant.globalUrl}api/ai-chat');
       final request = http.MultipartRequest('POST', uri);
       request.headers['Authorization'] = 'Bearer $idToken';
+      // Bypass ngrok-free's browser warning interstitial. Without this,
+      // ngrok serves an HTML "Visit Site" page instead of forwarding the
+      // request, which crashes jsonDecode → "Something went wrong".
+      request.headers['ngrok-skip-browser-warning'] = 'true';
       request.fields['role']    = role;
       request.fields['message'] = text;
       request.fields['history'] = jsonEncode(history);
@@ -310,6 +314,22 @@ class AiChatController extends GetxController {
 
       final streamedResponse = await request.send().timeout(const Duration(seconds: 90));
       final responseBody     = await http.Response.fromStream(streamedResponse);
+
+      // Guard: detect non-JSON / HTML response (ngrok interstitial, Laravel
+      // exception page, etc.) before attempting jsonDecode.
+      final contentType = responseBody.headers['content-type'] ?? '';
+      if (!contentType.contains('json') &&
+          responseBody.body.trimLeft().startsWith('<')) {
+        ShowToastDialog.showToast(
+            'Backend returned HTML — check ngrok tunnel & backend logs.');
+        final preview = responseBody.body
+            .substring(0, responseBody.body.length.clamp(0, 300));
+        messages.add(ChatMessage(
+            role: 'model',
+            text:
+                'Got HTML response (likely ngrok interstitial). First 300 chars:\n$preview'));
+        return;
+      }
 
       if (responseBody.statusCode == 200) {
         final data    = _decodeBody(responseBody.body);

@@ -1,6 +1,7 @@
 ﻿import 'package:lawyer/lang/app_ar.dart';
 import 'package:lawyer/lang/app_en.dart';
 import 'package:lawyer/lang/app_fr.dart';
+import 'package:lawyer/lang/app_ur.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,6 +16,7 @@ class LocalizationService extends Translations {
     const Locale('ar'),
     const Locale('fr'),
     const Locale('es'),
+    const Locale('ur'), // Urdu (Pakistan) — RTL handled automatically by Flutter
   ];
 
   // Keys and their translations
@@ -25,6 +27,7 @@ class LocalizationService extends Translations {
         'ar': arAR,
         'fr': trFr,
         'es': esES,
+        'ur': urPK,
   };
 
   // Gets locale from language, and updates the locale

@@ -99,7 +99,7 @@ class VehicleInformationScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 10),
                                 SizedBox(
-                                  height: Responsive.height(18, context),
+                                  height: Responsive.height(22, context),
                                   child: ListView.builder(
                                     itemCount: controller.serviceList.length,
                                     scrollDirection: Axis.horizontal,
