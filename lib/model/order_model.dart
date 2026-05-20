@@ -78,6 +78,9 @@ class OrderModel {
   /// Shared document attachments — visible to both parties.
   List<CaseDocument>? caseDocuments;
 
+  /// ─── Wakalatnama digital signing (Phase 1.6) ───
+  Wakalatnama? wakalatnama;
+
   /// ðŸ†• List of titles (like en, ar, fr)
   // List<TitleItem>? titleList;
 
@@ -223,6 +226,10 @@ class OrderModel {
           .map((m) => CaseDocument.fromJson(Map<String, dynamic>.from(m)))
           .toList();
     }
+    if (json['wakalatnama'] is Map) {
+      wakalatnama = Wakalatnama.fromJson(
+          Map<String, dynamic>.from(json['wakalatnama'] as Map));
+    }
 
     // /// ðŸ†• Title list parse karo
     // if (json['title'] != null) {
@@ -308,6 +315,7 @@ class OrderModel {
     if (caseDocuments != null) {
       data['caseDocuments'] = caseDocuments!.map((d) => d.toJson()).toList();
     }
+    if (wakalatnama != null) data['wakalatnama'] = wakalatnama!.toJson();
 
     // /// ðŸ†• Title list ko JSON me convert karo
     // if (titleList != null) {
@@ -355,6 +363,60 @@ class CaseDocument {
         if (mimeType != null) 'mimeType': mimeType,
         if (uploadedBy != null) 'uploadedBy': uploadedBy,
         if (uploadedAt != null) 'uploadedAt': uploadedAt,
+      };
+}
+
+/// Wakalatnama (legal Power of Attorney) — engagement contract between
+/// the lawyer and client. The lawyer sends a template; the client reviews
+/// and signs; the signed PNG lives in Firebase Storage and the URL plus
+/// timestamps are persisted on the order doc.
+class Wakalatnama {
+  /// 'not_sent' | 'sent' | 'signed'
+  String? status;
+  String? lawyerNameOnDoc;
+  String? barCouncilId;
+  String? clientNameOnDoc;
+  String? courtName;
+  /// The body text of the wakalatnama as the lawyer composed it.
+  String? body;
+  Timestamp? sentAt;
+  String? signatureUrl;
+  Timestamp? signedAt;
+
+  Wakalatnama({
+    this.status,
+    this.lawyerNameOnDoc,
+    this.barCouncilId,
+    this.clientNameOnDoc,
+    this.courtName,
+    this.body,
+    this.sentAt,
+    this.signatureUrl,
+    this.signedAt,
+  });
+
+  Wakalatnama.fromJson(Map<String, dynamic> json) {
+    status = json['status'] as String?;
+    lawyerNameOnDoc = json['lawyerNameOnDoc'] as String?;
+    barCouncilId = json['barCouncilId'] as String?;
+    clientNameOnDoc = json['clientNameOnDoc'] as String?;
+    courtName = json['courtName'] as String?;
+    body = json['body'] as String?;
+    sentAt = json['sentAt'] as Timestamp?;
+    signatureUrl = json['signatureUrl'] as String?;
+    signedAt = json['signedAt'] as Timestamp?;
+  }
+
+  Map<String, dynamic> toJson() => {
+        if (status != null) 'status': status,
+        if (lawyerNameOnDoc != null) 'lawyerNameOnDoc': lawyerNameOnDoc,
+        if (barCouncilId != null) 'barCouncilId': barCouncilId,
+        if (clientNameOnDoc != null) 'clientNameOnDoc': clientNameOnDoc,
+        if (courtName != null) 'courtName': courtName,
+        if (body != null) 'body': body,
+        if (sentAt != null) 'sentAt': sentAt,
+        if (signatureUrl != null) 'signatureUrl': signatureUrl,
+        if (signedAt != null) 'signedAt': signedAt,
       };
 }
 

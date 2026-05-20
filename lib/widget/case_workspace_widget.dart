@@ -7,6 +7,7 @@ import 'package:lawyer/model/order_model.dart';
 import 'package:lawyer/themes/app_colors.dart';
 import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:lawyer/utils/fire_store_utils.dart';
+import 'package:lawyer/widget/wakalatnama_send_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,6 +35,7 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
   bool _uploading = false;
   List<CaseDocument> _documents = const [];
   String? _hydratedNotes;
+  Wakalatnama? _wakalatnama;
 
   DocumentReference<Map<String, dynamic>> get _orderDoc => FirebaseFirestore
       .instance
@@ -57,6 +59,7 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
       _hydratedNotes = model.lawyerPrivateNotes ?? '';
       _notesController.text = _hydratedNotes!;
       _documents = model.caseDocuments ?? const [];
+      _wakalatnama = model.wakalatnama;
     } catch (_) {
       // Non-fatal — render with whatever we have.
     } finally {
@@ -239,6 +242,8 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _wakalatnamaSection(theme, isDark),
+        const SizedBox(height: 20),
         _sectionHeader(theme, isDark, Icons.edit_note_rounded,
             'Private Notes'.tr, 'Visible only to you'.tr),
         const SizedBox(height: 8),
@@ -445,6 +450,122 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
               color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _wakalatnamaSection(ThemeData theme, bool isDark) {
+    final w = _wakalatnama;
+    final status = w?.status ?? 'not_sent';
+
+    Color color;
+    IconData icon;
+    String title;
+    String subtitle;
+    switch (status) {
+      case 'signed':
+        color = const Color(0xFF1D7A3A);
+        icon = Icons.verified_rounded;
+        title = 'Wakalatnama signed'.tr;
+        final signedAt = w?.signedAt?.toDate();
+        subtitle = signedAt != null
+            ? 'Client signed on ${signedAt.day}/${signedAt.month}/${signedAt.year}'
+                .tr
+            : 'Client has signed the wakalatnama'.tr;
+        break;
+      case 'sent':
+        color = const Color(0xFFB07F00);
+        icon = Icons.hourglass_top_rounded;
+        title = 'Awaiting client signature'.tr;
+        subtitle = 'Sent — client will review and sign.'.tr;
+        break;
+      default:
+        color = AppColors.brandGoldDeep;
+        icon = Icons.gavel_rounded;
+        title = 'Wakalatnama'.tr;
+        subtitle = 'Send the Power of Attorney to your client.'.tr;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppColors.darkContainerBackground
+            : AppColors.containerBackground,
+        borderRadius: BorderRadius.circular(12),
+        border:
+            Border.all(color: color.withValues(alpha: 0.40), width: 1.1),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(9),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 18),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: GoogleFonts.poppins(
+                    fontSize: 11,
+                    color: theme.colorScheme.onSurface
+                        .withValues(alpha: 0.60),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (status == 'not_sent')
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.brandGold,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 8),
+                minimumSize: const Size(0, 34),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () async {
+                final ok = await showSendWakalatnamaDialog(
+                    context, widget.orderId);
+                if (ok) await _hydrate();
+              },
+              icon: const Icon(Icons.send_rounded, size: 14),
+              label: Text(
+                'Send'.tr,
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600, fontSize: 12),
+              ),
+            ),
+          if (status == 'signed' && (w?.signatureUrl ?? '').isNotEmpty)
+            IconButton(
+              icon: Icon(Icons.image_outlined,
+                  color: AppColors.brandGoldDeep, size: 20),
+              tooltip: 'View signature'.tr,
+              onPressed: () => _openDocument(CaseDocument(
+                name: 'Client signature',
+                url: w!.signatureUrl,
+                mimeType: 'image/png',
+              )),
+            ),
         ],
       ),
     );
