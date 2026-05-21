@@ -39,6 +39,7 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
   String? _hydratedNotes;
   Wakalatnama? _wakalatnama;
   Consultation? _consultation;
+  Dispute? _dispute;
 
   DocumentReference<Map<String, dynamic>> get _orderDoc => FirebaseFirestore
       .instance
@@ -64,6 +65,7 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
       _documents = model.caseDocuments ?? const [];
       _wakalatnama = model.wakalatnama;
       _consultation = model.consultation;
+      _dispute = model.dispute;
     } catch (_) {
       // Non-fatal — render with whatever we have.
     } finally {
@@ -246,6 +248,10 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (_dispute != null) ...[
+          _disputeBanner(theme, isDark),
+          const SizedBox(height: 14),
+        ],
         _consultationSection(theme, isDark),
         const SizedBox(height: 14),
         _wakalatnamaSection(theme, isDark),
@@ -459,6 +465,205 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
         ],
       ),
     );
+  }
+
+  Widget _disputeBanner(ThemeData theme, bool isDark) {
+    final d = _dispute!;
+    final status = d.status ?? 'submitted';
+    final hasResponded = (d.lawyerResponse ?? '').isNotEmpty;
+    Color color;
+    IconData icon;
+    String title;
+    switch (status) {
+      case 'approved':
+        color = const Color(0xFF1D7A3A);
+        icon = Icons.check_circle_outline_rounded;
+        title = 'Dispute approved by admin'.tr;
+        break;
+      case 'rejected':
+        color = Colors.redAccent;
+        icon = Icons.cancel_outlined;
+        title = 'Dispute rejected by admin'.tr;
+        break;
+      case 'under_review':
+        color = const Color(0xFFB07F00);
+        icon = Icons.search_rounded;
+        title = 'Dispute under review'.tr;
+        break;
+      default:
+        color = Colors.redAccent;
+        icon = Icons.flag_rounded;
+        title = 'Client opened a dispute'.tr;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border:
+            Border.all(color: color.withValues(alpha: 0.45), width: 1.2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 18),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                            color: color)),
+                    if (d.amount != null)
+                      Text(
+                        'Refund requested: ${d.amount!.toStringAsFixed(0)}'.tr,
+                        style: GoogleFonts.poppins(
+                            fontSize: 11.5,
+                            color: color.withValues(alpha: 0.85)),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if ((d.reason ?? '').isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(8),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Client says: ${d.reason}'.tr,
+                style: GoogleFonts.poppins(
+                  fontSize: 11.5,
+                  height: 1.4,
+                  color:
+                      theme.colorScheme.onSurface.withValues(alpha: 0.80),
+                ),
+              ),
+            ),
+          ],
+          if (!hasResponded && status != 'approved' && status != 'rejected')
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => _showLawyerResponseDialog(d),
+                  icon: const Icon(Icons.reply_rounded, size: 14),
+                  label: Text('Respond to dispute'.tr,
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600, fontSize: 12)),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: color,
+                    side: BorderSide(color: color.withValues(alpha: 0.6)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+              ),
+            ),
+          if (hasResponded) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(8),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Your response: ${d.lawyerResponse}'.tr,
+                style: GoogleFonts.poppins(
+                    fontSize: 11.5,
+                    color: theme.colorScheme.onSurface
+                        .withValues(alpha: 0.85)),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showLawyerResponseDialog(Dispute d) async {
+    final ctrl = TextEditingController();
+    final theme = Theme.of(context);
+    final response = await showDialog<String>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14)),
+          title: Text('Respond to dispute'.tr,
+              style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w700, fontSize: 15)),
+          content: SingleChildScrollView(
+            child: TextField(
+              controller: ctrl,
+              maxLines: 5,
+              decoration: InputDecoration(
+                hintText:
+                    'Explain your side of the story to the admin...'.tr,
+                hintStyle: GoogleFonts.poppins(fontSize: 12.5),
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text('Cancel'.tr)),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, ctrl.text.trim()),
+              style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.brandGold),
+              child: Text('Send'.tr),
+            ),
+          ],
+        );
+      },
+    );
+    if (response == null || response.isEmpty) return;
+
+    ShowToastDialog.showLoader('Sending...'.tr);
+    try {
+      final updated = Dispute(
+        status: d.status,
+        reason: d.reason,
+        amount: d.amount,
+        customerEvidenceUrls: d.customerEvidenceUrls,
+        lawyerResponse: response,
+        lawyerResponseAt: Timestamp.now(),
+        adminNote: d.adminNote,
+        createdAt: d.createdAt,
+        resolvedAt: d.resolvedAt,
+      );
+      await _orderDoc.set({'dispute': updated.toJson()},
+          SetOptions(merge: true));
+      ShowToastDialog.closeLoader();
+      ShowToastDialog.showToast('Response sent.'.tr);
+      await _hydrate();
+    } catch (_) {
+      ShowToastDialog.closeLoader();
+      ShowToastDialog.showToast('Could not send response.'.tr);
+    }
   }
 
   Widget _consultationSection(ThemeData theme, bool isDark) {

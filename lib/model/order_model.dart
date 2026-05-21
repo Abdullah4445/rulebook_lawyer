@@ -84,6 +84,9 @@ class OrderModel {
   /// ─── Consultation booking (Phase 1.7) ───
   Consultation? consultation;
 
+  /// ─── Refund / Dispute (Phase 1.10) ───
+  Dispute? dispute;
+
   /// ðŸ†• List of titles (like en, ar, fr)
   // List<TitleItem>? titleList;
 
@@ -237,6 +240,10 @@ class OrderModel {
       consultation = Consultation.fromJson(
           Map<String, dynamic>.from(json['consultation'] as Map));
     }
+    if (json['dispute'] is Map) {
+      dispute =
+          Dispute.fromJson(Map<String, dynamic>.from(json['dispute'] as Map));
+    }
 
     // /// ðŸ†• Title list parse karo
     // if (json['title'] != null) {
@@ -324,6 +331,7 @@ class OrderModel {
     }
     if (wakalatnama != null) data['wakalatnama'] = wakalatnama!.toJson();
     if (consultation != null) data['consultation'] = consultation!.toJson();
+    if (dispute != null) data['dispute'] = dispute!.toJson();
 
     // /// ðŸ†• Title list ko JSON me convert karo
     // if (titleList != null) {
@@ -495,6 +503,70 @@ class ConsultationSlot {
   Map<String, dynamic> toJson() => {
         if (start != null) 'start': start,
         if (durationMinutes != null) 'durationMinutes': durationMinutes,
+      };
+}
+
+/// Refund / Dispute (Phase 1.10).
+/// State: submitted → under_review → resolved (approved | rejected) | cancelled
+/// The customer opens it; the lawyer can respond once; the admin makes the
+/// final call. Actual gateway refund happens out-of-band (when AdminDecision
+/// is 'approved' the admin/automation calls the relevant payment provider).
+class Dispute {
+  /// 'submitted' | 'under_review' | 'approved' | 'rejected' | 'cancelled'
+  String? status;
+  String? reason;
+  /// Amount the customer is disputing (in the case's currency).
+  double? amount;
+  List<String>? customerEvidenceUrls;
+  /// Lawyer's side of the story.
+  String? lawyerResponse;
+  Timestamp? lawyerResponseAt;
+  /// Admin's decision body / explanation.
+  String? adminNote;
+  Timestamp? createdAt;
+  Timestamp? resolvedAt;
+
+  Dispute({
+    this.status,
+    this.reason,
+    this.amount,
+    this.customerEvidenceUrls,
+    this.lawyerResponse,
+    this.lawyerResponseAt,
+    this.adminNote,
+    this.createdAt,
+    this.resolvedAt,
+  });
+
+  Dispute.fromJson(Map<String, dynamic> json) {
+    status = json['status'] as String?;
+    reason = json['reason'] as String?;
+    amount = json['amount'] != null
+        ? double.tryParse(json['amount'].toString())
+        : null;
+    if (json['customerEvidenceUrls'] is List) {
+      customerEvidenceUrls = (json['customerEvidenceUrls'] as List)
+          .map((e) => e.toString())
+          .toList();
+    }
+    lawyerResponse = json['lawyerResponse'] as String?;
+    lawyerResponseAt = json['lawyerResponseAt'] as Timestamp?;
+    adminNote = json['adminNote'] as String?;
+    createdAt = json['createdAt'] as Timestamp?;
+    resolvedAt = json['resolvedAt'] as Timestamp?;
+  }
+
+  Map<String, dynamic> toJson() => {
+        if (status != null) 'status': status,
+        if (reason != null) 'reason': reason,
+        if (amount != null) 'amount': amount,
+        if (customerEvidenceUrls != null)
+          'customerEvidenceUrls': customerEvidenceUrls,
+        if (lawyerResponse != null) 'lawyerResponse': lawyerResponse,
+        if (lawyerResponseAt != null) 'lawyerResponseAt': lawyerResponseAt,
+        if (adminNote != null) 'adminNote': adminNote,
+        if (createdAt != null) 'createdAt': createdAt,
+        if (resolvedAt != null) 'resolvedAt': resolvedAt,
       };
 }
 
