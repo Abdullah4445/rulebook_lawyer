@@ -81,6 +81,9 @@ class OrderModel {
   /// ─── Wakalatnama digital signing (Phase 1.6) ───
   Wakalatnama? wakalatnama;
 
+  /// ─── Consultation booking (Phase 1.7) ───
+  Consultation? consultation;
+
   /// ðŸ†• List of titles (like en, ar, fr)
   // List<TitleItem>? titleList;
 
@@ -230,6 +233,10 @@ class OrderModel {
       wakalatnama = Wakalatnama.fromJson(
           Map<String, dynamic>.from(json['wakalatnama'] as Map));
     }
+    if (json['consultation'] is Map) {
+      consultation = Consultation.fromJson(
+          Map<String, dynamic>.from(json['consultation'] as Map));
+    }
 
     // /// ðŸ†• Title list parse karo
     // if (json['title'] != null) {
@@ -316,6 +323,7 @@ class OrderModel {
       data['caseDocuments'] = caseDocuments!.map((d) => d.toJson()).toList();
     }
     if (wakalatnama != null) data['wakalatnama'] = wakalatnama!.toJson();
+    if (consultation != null) data['consultation'] = consultation!.toJson();
 
     // /// ðŸ†• Title list ko JSON me convert karo
     // if (titleList != null) {
@@ -417,6 +425,76 @@ class Wakalatnama {
         if (sentAt != null) 'sentAt': sentAt,
         if (signatureUrl != null) 'signatureUrl': signatureUrl,
         if (signedAt != null) 'signedAt': signedAt,
+      };
+}
+
+/// Consultation booking — lawyer proposes 1-3 slots, customer picks one.
+/// State machine: not_set → proposed → confirmed → completed / cancelled.
+class Consultation {
+  String? status; // 'proposed' | 'confirmed' | 'completed' | 'cancelled'
+  /// Lawyer-proposed slots (each: start Timestamp + durationMinutes).
+  List<ConsultationSlot>? proposedSlots;
+  /// The single slot the customer chose. Same shape as proposed.
+  ConsultationSlot? confirmedSlot;
+  /// Optional join URL (Zoom / Google Meet) the lawyer can attach.
+  String? joinUrl;
+  Timestamp? proposedAt;
+  Timestamp? confirmedAt;
+
+  Consultation({
+    this.status,
+    this.proposedSlots,
+    this.confirmedSlot,
+    this.joinUrl,
+    this.proposedAt,
+    this.confirmedAt,
+  });
+
+  Consultation.fromJson(Map<String, dynamic> json) {
+    status = json['status'] as String?;
+    if (json['proposedSlots'] is List) {
+      proposedSlots = (json['proposedSlots'] as List)
+          .whereType<Map>()
+          .map((m) =>
+              ConsultationSlot.fromJson(Map<String, dynamic>.from(m)))
+          .toList();
+    }
+    if (json['confirmedSlot'] is Map) {
+      confirmedSlot = ConsultationSlot.fromJson(
+          Map<String, dynamic>.from(json['confirmedSlot'] as Map));
+    }
+    joinUrl = json['joinUrl'] as String?;
+    proposedAt = json['proposedAt'] as Timestamp?;
+    confirmedAt = json['confirmedAt'] as Timestamp?;
+  }
+
+  Map<String, dynamic> toJson() => {
+        if (status != null) 'status': status,
+        if (proposedSlots != null)
+          'proposedSlots': proposedSlots!.map((s) => s.toJson()).toList(),
+        if (confirmedSlot != null) 'confirmedSlot': confirmedSlot!.toJson(),
+        if (joinUrl != null) 'joinUrl': joinUrl,
+        if (proposedAt != null) 'proposedAt': proposedAt,
+        if (confirmedAt != null) 'confirmedAt': confirmedAt,
+      };
+}
+
+class ConsultationSlot {
+  Timestamp? start;
+  int? durationMinutes;
+
+  ConsultationSlot({this.start, this.durationMinutes});
+
+  ConsultationSlot.fromJson(Map<String, dynamic> json) {
+    start = json['start'] as Timestamp?;
+    final dm = json['durationMinutes'];
+    durationMinutes =
+        dm is int ? dm : (dm == null ? null : int.tryParse(dm.toString()));
+  }
+
+  Map<String, dynamic> toJson() => {
+        if (start != null) 'start': start,
+        if (durationMinutes != null) 'durationMinutes': durationMinutes,
       };
 }
 
