@@ -87,6 +87,9 @@ class OrderModel {
   /// ─── Refund / Dispute (Phase 1.10) ───
   Dispute? dispute;
 
+  /// ─── Hearing calendar (Phase 2.1) ───
+  List<Hearing>? hearings;
+
   /// ðŸ†• List of titles (like en, ar, fr)
   // List<TitleItem>? titleList;
 
@@ -244,6 +247,12 @@ class OrderModel {
       dispute =
           Dispute.fromJson(Map<String, dynamic>.from(json['dispute'] as Map));
     }
+    if (json['hearings'] is List) {
+      hearings = (json['hearings'] as List)
+          .whereType<Map>()
+          .map((m) => Hearing.fromJson(Map<String, dynamic>.from(m)))
+          .toList();
+    }
 
     // /// ðŸ†• Title list parse karo
     // if (json['title'] != null) {
@@ -332,6 +341,9 @@ class OrderModel {
     if (wakalatnama != null) data['wakalatnama'] = wakalatnama!.toJson();
     if (consultation != null) data['consultation'] = consultation!.toJson();
     if (dispute != null) data['dispute'] = dispute!.toJson();
+    if (hearings != null) {
+      data['hearings'] = hearings!.map((h) => h.toJson()).toList();
+    }
 
     // /// ðŸ†• Title list ko JSON me convert karo
     // if (titleList != null) {
@@ -567,6 +579,45 @@ class Dispute {
         if (adminNote != null) 'adminNote': adminNote,
         if (createdAt != null) 'createdAt': createdAt,
         if (resolvedAt != null) 'resolvedAt': resolvedAt,
+      };
+}
+
+/// A single court hearing for a case (Phase 2.1).
+class Hearing {
+  String? id;
+  Timestamp? dateTime;
+  String? courtName;
+  /// What the hearing is for — e.g. "Arguments", "Evidence", "Framing of charge"
+  String? purpose;
+  String? note;
+  /// 'scheduled' | 'completed' | 'adjourned'
+  String? status;
+
+  Hearing({
+    this.id,
+    this.dateTime,
+    this.courtName,
+    this.purpose,
+    this.note,
+    this.status,
+  });
+
+  Hearing.fromJson(Map<String, dynamic> json) {
+    id = json['id'] as String?;
+    dateTime = json['dateTime'] as Timestamp?;
+    courtName = json['courtName'] as String?;
+    purpose = json['purpose'] as String?;
+    note = json['note'] as String?;
+    status = json['status'] as String?;
+  }
+
+  Map<String, dynamic> toJson() => {
+        if (id != null) 'id': id,
+        if (dateTime != null) 'dateTime': dateTime,
+        if (courtName != null) 'courtName': courtName,
+        if (purpose != null) 'purpose': purpose,
+        if (note != null) 'note': note,
+        if (status != null) 'status': status,
       };
 }
 

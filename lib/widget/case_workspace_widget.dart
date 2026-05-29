@@ -40,6 +40,7 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
   Wakalatnama? _wakalatnama;
   Consultation? _consultation;
   Dispute? _dispute;
+  List<Hearing> _hearings = const [];
 
   DocumentReference<Map<String, dynamic>> get _orderDoc => FirebaseFirestore
       .instance
@@ -66,6 +67,7 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
       _wakalatnama = model.wakalatnama;
       _consultation = model.consultation;
       _dispute = model.dispute;
+      _hearings = model.hearings ?? const [];
     } catch (_) {
       // Non-fatal — render with whatever we have.
     } finally {
@@ -252,6 +254,8 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
           _disputeBanner(theme, isDark),
           const SizedBox(height: 14),
         ],
+        _hearingsSection(theme, isDark),
+        const SizedBox(height: 14),
         _consultationSection(theme, isDark),
         const SizedBox(height: 14),
         _wakalatnamaSection(theme, isDark),
@@ -463,6 +467,442 @@ class _LawyerCaseWorkspaceState extends State<LawyerCaseWorkspace> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ─────────────────────── HEARINGS (Phase 2.1) ───────────────────────
+  Hearing? get _nextHearing {
+    final now = DateTime.now();
+    final upcoming = _hearings
+        .where((h) =>
+            h.status != 'completed' &&
+            h.dateTime != null &&
+            h.dateTime!.toDate().isAfter(now))
+        .toList()
+      ..sort((a, b) => a.dateTime!.toDate().compareTo(b.dateTime!.toDate()));
+    return upcoming.isEmpty ? null : upcoming.first;
+  }
+
+  Widget _hearingsSection(ThemeData theme, bool isDark) {
+    final next = _nextHearing;
+    final fmt = DateFormat('EEE, MMM d · h:mm a');
+    final sorted = [..._hearings]..sort((a, b) {
+        final da = a.dateTime?.toDate();
+        final db = b.dateTime?.toDate();
+        if (da == null || db == null) return 0;
+        return db.compareTo(da); // newest first
+      });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _sectionHeader(theme, isDark, Icons.event_note_rounded,
+                  'Hearings'.tr, 'Court date schedule'.tr),
+            ),
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.brandGold,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                minimumSize: const Size(0, 32),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(9)),
+              ),
+              onPressed: () => _addOrEditHearing(),
+              icon: const Icon(Icons.add_rounded, size: 14),
+              label: Text('Add'.tr,
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600, fontSize: 12)),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        if (next != null) _nextHearingBanner(theme, next, fmt),
+        if (next != null) const SizedBox(height: 8),
+        if (sorted.isEmpty)
+          _emptyHearings(theme)
+        else
+          ...sorted.map((h) => _hearingTile(theme, isDark, h, fmt)),
+      ],
+    );
+  }
+
+  Widget _nextHearingBanner(ThemeData theme, Hearing h, DateFormat fmt) {
+    final dt = h.dateTime!.toDate();
+    final days = dt.difference(DateTime.now()).inDays;
+    final countdown = days <= 0
+        ? 'Today'.tr
+        : days == 1
+            ? 'Tomorrow'.tr
+            : 'in $days ${"days".tr}';
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        gradient: AppColors.goldGradient,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.notifications_active_rounded,
+              color: Colors.white, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Next hearing · $countdown',
+                    style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.5)),
+                const SizedBox(height: 2),
+                Text('${fmt.format(dt)}${(h.courtName ?? '').isNotEmpty ? " · ${h.courtName}" : ""}',
+                    style: GoogleFonts.poppins(
+                        color: Colors.white.withValues(alpha: 0.95),
+                        fontSize: 11.5)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _emptyHearings(ThemeData theme) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.event_busy_rounded,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              size: 26),
+          const SizedBox(height: 6),
+          Text('No hearings scheduled'.tr,
+              style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  color:
+                      theme.colorScheme.onSurface.withValues(alpha: 0.55))),
+        ],
+      ),
+    );
+  }
+
+  Widget _hearingTile(
+      ThemeData theme, bool isDark, Hearing h, DateFormat fmt) {
+    final dt = h.dateTime?.toDate();
+    final status = h.status ?? 'scheduled';
+    Color sc;
+    switch (status) {
+      case 'completed':
+        sc = const Color(0xFF1D7A3A);
+        break;
+      case 'adjourned':
+        sc = const Color(0xFFB07F00);
+        break;
+      default:
+        sc = AppColors.brandGoldDeep;
+    }
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppColors.darkContainerBackground
+            : AppColors.containerBackground,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+            color: isDark
+                ? AppColors.darkContainerBorder
+                : AppColors.containerBorder,
+            width: 0.8),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              color: sc.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(Icons.gavel_rounded, color: sc, size: 16),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(dt != null ? fmt.format(dt) : '—',
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12.5,
+                        color: theme.colorScheme.onSurface)),
+                if ((h.purpose ?? '').isNotEmpty || (h.courtName ?? '').isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: Text(
+                      [h.courtName, h.purpose]
+                          .where((e) => (e ?? '').isNotEmpty)
+                          .join(' · '),
+                      style: GoogleFonts.poppins(
+                          fontSize: 11,
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.6)),
+                    ),
+                  ),
+                const SizedBox(height: 3),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: sc.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text(
+                    status[0].toUpperCase() + status.substring(1),
+                    style: GoogleFonts.poppins(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w600,
+                        color: sc),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert_rounded,
+                size: 18,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+            onSelected: (v) {
+              if (v == 'edit') _addOrEditHearing(existing: h);
+              if (v == 'done') _setHearingStatus(h, 'completed');
+              if (v == 'adjourn') _setHearingStatus(h, 'adjourned');
+              if (v == 'delete') _deleteHearing(h);
+            },
+            itemBuilder: (_) => [
+              PopupMenuItem(value: 'edit', child: Text('Edit'.tr)),
+              if (status != 'completed')
+                PopupMenuItem(value: 'done', child: Text('Mark completed'.tr)),
+              if (status != 'adjourned')
+                PopupMenuItem(value: 'adjourn', child: Text('Mark adjourned'.tr)),
+              PopupMenuItem(
+                  value: 'delete',
+                  child: Text('Delete'.tr,
+                      style: const TextStyle(color: Colors.redAccent))),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _persistHearings() async {
+    await _orderDoc.set(
+      {'hearings': _hearings.map((h) => h.toJson()).toList()},
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<void> _setHearingStatus(Hearing h, String status) async {
+    final idx = _hearings.indexWhere((x) => x.id == h.id);
+    if (idx < 0) return;
+    _hearings[idx].status = status;
+    try {
+      await _persistHearings();
+      ShowToastDialog.showToast('Hearing updated.'.tr);
+      await _hydrate();
+    } catch (_) {
+      ShowToastDialog.showToast('Could not update.'.tr);
+    }
+  }
+
+  Future<void> _deleteHearing(Hearing h) async {
+    _hearings = _hearings.where((x) => x.id != h.id).toList();
+    try {
+      await _persistHearings();
+      ShowToastDialog.showToast('Hearing removed.'.tr);
+      await _hydrate();
+    } catch (_) {
+      ShowToastDialog.showToast('Could not remove.'.tr);
+    }
+  }
+
+  Future<void> _addOrEditHearing({Hearing? existing}) async {
+    final courtCtrl =
+        TextEditingController(text: existing?.courtName ?? '');
+    final purposeCtrl =
+        TextEditingController(text: existing?.purpose ?? '');
+    final noteCtrl = TextEditingController(text: existing?.note ?? '');
+    DateTime selected =
+        existing?.dateTime?.toDate() ?? DateTime.now().add(const Duration(days: 1));
+
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final fmt = DateFormat('EEE, MMM d · h:mm a');
+
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(builder: (ctx, setLocal) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14)),
+            title: Text(existing == null ? 'Add hearing'.tr : 'Edit hearing'.tr,
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w700, fontSize: 15)),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      final d = await showDatePicker(
+                        context: ctx,
+                        initialDate: selected,
+                        firstDate: DateTime.now()
+                            .subtract(const Duration(days: 365)),
+                        lastDate:
+                            DateTime.now().add(const Duration(days: 730)),
+                      );
+                      if (d == null) return;
+                      final t = await showTimePicker(
+                        context: ctx,
+                        initialTime: TimeOfDay.fromDateTime(selected),
+                      );
+                      if (t == null) return;
+                      setLocal(() {
+                        selected = DateTime(
+                            d.year, d.month, d.day, t.hour, t.minute);
+                      });
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: AppColors.brandGold.withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                            color: AppColors.brandGold
+                                .withValues(alpha: 0.4)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.calendar_today_rounded,
+                              size: 16, color: AppColors.brandGoldDeep),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(fmt.format(selected),
+                                style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12.5)),
+                          ),
+                          Icon(Icons.edit_rounded,
+                              size: 14,
+                              color: theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.5)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  _hearingField(ctx, isDark, courtCtrl,
+                      'Court (e.g. District Court, Vehari)'.tr),
+                  const SizedBox(height: 8),
+                  _hearingField(ctx, isDark, purposeCtrl,
+                      'Purpose (e.g. Arguments, Evidence)'.tr),
+                  const SizedBox(height: 8),
+                  _hearingField(ctx, isDark, noteCtrl, 'Note (optional)'.tr,
+                      maxLines: 2),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text('Cancel'.tr)),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.brandGold),
+                child: Text('Save'.tr),
+              ),
+            ],
+          );
+        });
+      },
+    );
+
+    if (saved != true) return;
+    ShowToastDialog.showLoader('Saving...'.tr);
+    if (existing != null) {
+      final idx = _hearings.indexWhere((x) => x.id == existing.id);
+      if (idx >= 0) {
+        _hearings[idx]
+          ..dateTime = Timestamp.fromDate(selected)
+          ..courtName = courtCtrl.text.trim()
+          ..purpose = purposeCtrl.text.trim()
+          ..note = noteCtrl.text.trim();
+      }
+    } else {
+      _hearings = [
+        ..._hearings,
+        Hearing(
+          id: const Uuid().v4(),
+          dateTime: Timestamp.fromDate(selected),
+          courtName: courtCtrl.text.trim(),
+          purpose: purposeCtrl.text.trim(),
+          note: noteCtrl.text.trim(),
+          status: 'scheduled',
+        ),
+      ];
+    }
+    try {
+      await _persistHearings();
+      ShowToastDialog.closeLoader();
+      ShowToastDialog.showToast('Hearing saved.'.tr);
+      await _hydrate();
+    } catch (_) {
+      ShowToastDialog.closeLoader();
+      ShowToastDialog.showToast('Could not save hearing.'.tr);
+    }
+  }
+
+  Widget _hearingField(BuildContext ctx, bool isDark,
+      TextEditingController controller, String hint,
+      {int maxLines = 1}) {
+    final theme = Theme.of(ctx);
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      style:
+          GoogleFonts.poppins(fontSize: 13, color: theme.colorScheme.onSurface),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: GoogleFonts.poppins(
+            fontSize: 12,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+        isDense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(
+                color: theme.dividerColor.withValues(alpha: 0.4))),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide:
+                const BorderSide(color: AppColors.brandGold, width: 1.3)),
       ),
     );
   }
