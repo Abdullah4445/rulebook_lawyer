@@ -4,6 +4,7 @@ import 'package:lawyer/ui/auth_screen/login_screen.dart';
 import 'package:lawyer/ui/bank_details/bank_details_screen.dart';
 import 'package:lawyer/ui/chat_screen/inbox_screen.dart';
 import 'package:lawyer/ui/fee_management/fee_management_screen.dart';
+import 'package:lawyer/ui/my_reviews/my_reviews_screen.dart';
 import 'package:lawyer/ui/reply_templates/reply_templates_screen.dart';
 import 'package:lawyer/ui/home_screens/home_screen.dart';
 import 'package:lawyer/ui/profile_screen/profile_screen.dart';
@@ -67,18 +68,20 @@ class DashBoardController extends GetxController {
         case 7:
           return const ReplyTemplatesScreen();
         case 8:
-          return const SettingScreen();
+          return const MyReviewsScreen();
         case 9:
-          return const AiChatScreen();
+          return const SettingScreen();
         case 10:
-          return const SubscriptionListScreen();
+          return const AiChatScreen();
         case 11:
-          return const SubscriptionHistory();
+          return const SubscriptionListScreen();
         case 12:
+          return const SubscriptionHistory();
+        case 13:
           return const TermsAndConditionScreen(
             type: 'terms',
           );
-        case 13:
+        case 14:
           return const TermsAndConditionScreen(
             type: 'privacy',
           );
@@ -104,16 +107,18 @@ class DashBoardController extends GetxController {
         case 7:
           return const ReplyTemplatesScreen();
         case 8:
-          return const SettingScreen();
+          return const MyReviewsScreen();
         case 9:
-          return const AiChatScreen();
+          return const SettingScreen();
         case 10:
-          return const SubscriptionHistory();
+          return const AiChatScreen();
         case 11:
+          return const SubscriptionHistory();
+        case 12:
           return const TermsAndConditionScreen(
             type: 'terms',
           );
-        case 12:
+        case 13:
           return const TermsAndConditionScreen(
             type: 'privacy',
           );
@@ -215,6 +220,11 @@ class DashBoardController extends GetxController {
           subtitle: 'Canned chat replies for fast responses',
         ),
         const DrawerItem(
+          'My Reviews',
+          "assets/icons/ic_subscription_history.svg",
+          subtitle: 'Read and reply to client feedback',
+        ),
+        const DrawerItem(
           'Settings',
           "assets/icons/ic_settings.svg",
           subtitle: 'Preferences, language and notifications',
@@ -292,6 +302,11 @@ class DashBoardController extends GetxController {
           'Reply Templates',
           "assets/icons/ic_inbox.svg",
           subtitle: 'Canned chat replies for fast responses',
+        ),
+        const DrawerItem(
+          'My Reviews',
+          "assets/icons/ic_subscription_history.svg",
+          subtitle: 'Read and reply to client feedback',
         ),
         const DrawerItem(
           'Settings',
