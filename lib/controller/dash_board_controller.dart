@@ -4,6 +4,7 @@ import 'package:lawyer/ui/auth_screen/login_screen.dart';
 import 'package:lawyer/ui/bank_details/bank_details_screen.dart';
 import 'package:lawyer/ui/chat_screen/inbox_screen.dart';
 import 'package:lawyer/ui/fee_management/fee_management_screen.dart';
+import 'package:lawyer/ui/reply_templates/reply_templates_screen.dart';
 import 'package:lawyer/ui/home_screens/home_screen.dart';
 import 'package:lawyer/ui/profile_screen/profile_screen.dart';
 import 'package:lawyer/ui/settings_screen/setting_screen.dart';
@@ -64,18 +65,20 @@ class DashBoardController extends GetxController {
         case 6:
           return const FeeManagementScreen();
         case 7:
-          return const SettingScreen();
+          return const ReplyTemplatesScreen();
         case 8:
-          return const AiChatScreen();
+          return const SettingScreen();
         case 9:
-          return const SubscriptionListScreen();
+          return const AiChatScreen();
         case 10:
-          return const SubscriptionHistory();
+          return const SubscriptionListScreen();
         case 11:
+          return const SubscriptionHistory();
+        case 12:
           return const TermsAndConditionScreen(
             type: 'terms',
           );
-        case 12:
+        case 13:
           return const TermsAndConditionScreen(
             type: 'privacy',
           );
@@ -99,16 +102,18 @@ class DashBoardController extends GetxController {
         case 6:
           return const FeeManagementScreen();
         case 7:
-          return const SettingScreen();
+          return const ReplyTemplatesScreen();
         case 8:
-          return const AiChatScreen();
+          return const SettingScreen();
         case 9:
-          return const SubscriptionHistory();
+          return const AiChatScreen();
         case 10:
+          return const SubscriptionHistory();
+        case 11:
           return const TermsAndConditionScreen(
             type: 'terms',
           );
-        case 11:
+        case 12:
           return const TermsAndConditionScreen(
             type: 'privacy',
           );
@@ -205,6 +210,11 @@ class DashBoardController extends GetxController {
           subtitle: 'Set consultation fee, hourly rate and packages',
         ),
         const DrawerItem(
+          'Reply Templates',
+          "assets/icons/ic_inbox.svg",
+          subtitle: 'Canned chat replies for fast responses',
+        ),
+        const DrawerItem(
           'Settings',
           "assets/icons/ic_settings.svg",
           subtitle: 'Preferences, language and notifications',
@@ -277,6 +287,11 @@ class DashBoardController extends GetxController {
           'Fee Management',
           "assets/icons/ic_wallet.svg",
           subtitle: 'Set consultation fee, hourly rate and packages',
+        ),
+        const DrawerItem(
+          'Reply Templates',
+          "assets/icons/ic_inbox.svg",
+          subtitle: 'Canned chat replies for fast responses',
         ),
         const DrawerItem(
           'Settings',

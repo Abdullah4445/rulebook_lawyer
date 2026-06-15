@@ -10,7 +10,9 @@ import 'package:lawyer/constant/show_toast_dialog.dart';
 import 'package:lawyer/model/ChatVideoContainer.dart';
 import 'package:lawyer/model/conversation_model.dart';
 import 'package:lawyer/model/inbox_model.dart';
+import 'package:lawyer/controller/reply_templates_controller.dart';
 import 'package:lawyer/themes/app_colors.dart';
+import 'package:lawyer/ui/reply_templates/reply_templates_screen.dart';
 import 'package:lawyer/ui/chat_screen/FullScreenImageViewer.dart';
 import 'package:lawyer/ui/chat_screen/FullScreenVideoViewer.dart';
 import 'package:lawyer/utils/DarkThemeProvider.dart';
@@ -101,11 +103,45 @@ class _ChatScreensState extends State<ChatScreens> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: 50,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: TextField(
+              child: Row(
+                children: [
+                  // Quick-insert reply template button (Phase 2.6).
+                  Container(
+                    margin: const EdgeInsets.only(right: 4),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.goldGradient,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      tooltip: 'Reply templates'.tr,
+                      icon: const Icon(Icons.bolt_rounded,
+                          color: Colors.white, size: 20),
+                      onPressed: () async {
+                        final templates = await
+                            ReplyTemplatesController.loadForCurrentLawyer();
+                        if (!mounted) return;
+                        final body = await showReplyTemplatePicker(
+                            context, templates);
+                        if (body != null && body.isNotEmpty) {
+                          final cur = _messageController.text;
+                          _messageController.text = cur.isEmpty
+                              ? body
+                              : '$cur\n$body';
+                          _messageController.selection =
+                              TextSelection.fromPosition(TextPosition(
+                                  offset:
+                                      _messageController.text.length));
+                          setState(() {});
+                        }
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(
+                  height: 50,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: TextField(
                     textInputAction: TextInputAction.send,
                     keyboardType: TextInputType.text,
                     textCapitalization: TextCapitalization.sentences,
@@ -161,8 +197,11 @@ class _ChatScreensState extends State<ChatScreens> {
                         setState(() {});
                       }
                     },
+                    ),
                   ),
                 ),
+                  ),
+                ],
               ),
             ),
           ],

@@ -70,6 +70,8 @@ class DriverUserModel {
   double? hourlyRate;
   /// Pre-set service packages (e.g. "Divorce Khula — Rs 50,000")
   List<FeePackage>? feePackages;
+  /// Saved canned chat replies for fast responses (Phase 2.6).
+  List<ReplyTemplate>? replyTemplates;
 
   // ─── Identity verification documents (Firebase Storage URLs) ───
   String? cnicFrontUrl;
@@ -111,6 +113,7 @@ class DriverUserModel {
       this.consultationFee,
       this.hourlyRate,
       this.feePackages,
+      this.replyTemplates,
       this.cnicFrontUrl,
       this.cnicBackUrl,
       this.barCardFrontUrl,
@@ -209,6 +212,12 @@ class DriverUserModel {
           .map((m) => FeePackage.fromJson(Map<String, dynamic>.from(m)))
           .toList();
     }
+    if (json['replyTemplates'] is List) {
+      replyTemplates = (json['replyTemplates'] as List)
+          .whereType<Map>()
+          .map((m) => ReplyTemplate.fromJson(Map<String, dynamic>.from(m)))
+          .toList();
+    }
 
     // Identity documents
     cnicFrontUrl = json['cnicFrontUrl'] as String?;
@@ -278,6 +287,10 @@ class DriverUserModel {
     if (feePackages != null) {
       data['feePackages'] = feePackages!.map((p) => p.toJson()).toList();
     }
+    if (replyTemplates != null) {
+      data['replyTemplates'] =
+          replyTemplates!.map((r) => r.toJson()).toList();
+    }
 
     // Identity documents
     if (cnicFrontUrl != null) data['cnicFrontUrl'] = cnicFrontUrl;
@@ -290,6 +303,29 @@ class DriverUserModel {
     if (documentsSubmittedAt != null) data['documentsSubmittedAt'] = documentsSubmittedAt;
     return data;
   }
+}
+
+/// A saved canned chat reply the lawyer can tap to insert (Phase 2.6).
+class ReplyTemplate {
+  String? id;
+  /// Short label shown in the picker (e.g. "Send document list").
+  String? label;
+  /// The actual message body that gets inserted into the chat input.
+  String? body;
+
+  ReplyTemplate({this.id, this.label, this.body});
+
+  ReplyTemplate.fromJson(Map<String, dynamic> json) {
+    id = json['id'] as String?;
+    label = json['label'] as String?;
+    body = json['body'] as String?;
+  }
+
+  Map<String, dynamic> toJson() => {
+        if (id != null) 'id': id,
+        if (label != null) 'label': label,
+        if (body != null) 'body': body,
+      };
 }
 
 /// Pre-set service package a lawyer offers (e.g. "Divorce Khula — Rs 50,000").
