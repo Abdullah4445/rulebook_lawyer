@@ -13,6 +13,7 @@ import 'package:lawyer/model/inbox_model.dart';
 import 'package:lawyer/controller/reply_templates_controller.dart';
 import 'package:lawyer/themes/app_colors.dart';
 import 'package:lawyer/ui/reply_templates/reply_templates_screen.dart';
+import 'package:lawyer/widget/voice_recorder_button.dart';
 import 'package:lawyer/ui/chat_screen/FullScreenImageViewer.dart';
 import 'package:lawyer/ui/chat_screen/FullScreenVideoViewer.dart';
 import 'package:lawyer/utils/DarkThemeProvider.dart';
@@ -105,6 +106,21 @@ class _ChatScreensState extends State<ChatScreens> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
+                  // Voice note recorder (Phase 2.3).
+                  VoiceRecorderButton(
+                    onRecorded: (file, dur) async {
+                      try {
+                        final url = await Constant.uploadUserImageToFireStorage(
+                          file,
+                          'chat/voice',
+                          '${DateTime.now().millisecondsSinceEpoch}.m4a',
+                        );
+                        _sendMessage('', Url(mime: 'audio/m4a', url: url), '', 'audio');
+                      } catch (_) {
+                        ShowToastDialog.showToast('Could not send voice note.'.tr);
+                      }
+                    },
+                  ),
                   // Quick-insert reply template button (Phase 2.6).
                   Container(
                     margin: const EdgeInsets.only(right: 4),
@@ -238,7 +254,20 @@ class _ChatScreensState extends State<ChatScreens> {
                                     : Colors.black),
                           ),
                         )
-                      : data.messageType == "image"
+                      : data.messageType == "audio"
+                          ? Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                              decoration: BoxDecoration(
+                                gradient: AppColors.goldGradient,
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10)),
+                              ),
+                              child: VoiceMessageBubble(url: data.url!.url),
+                            )
+                          : data.messageType == "image"
                           ? ConstrainedBox(
                               constraints: const BoxConstraints(
                                 minWidth: 50,
@@ -310,7 +339,20 @@ class _ChatScreensState extends State<ChatScreens> {
                               style: GoogleFonts.poppins(color: data.senderId == FireStoreUtils.getCurrentUid() ? Colors.white : Colors.black),
                             ),
                           )
-                        : data.messageType == "image"
+                        : data.messageType == "audio"
+                            ? Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.brandNavy,
+                                  borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10),
+                                      bottomRight: Radius.circular(10)),
+                                ),
+                                child: VoiceMessageBubble(url: data.url!.url),
+                              )
+                            : data.messageType == "image"
                             ? ConstrainedBox(
                                 constraints: const BoxConstraints(
                                   minWidth: 50,
