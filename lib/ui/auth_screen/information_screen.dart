@@ -747,9 +747,11 @@ class InformationScreen extends StatelessWidget {
         Text(
           title,
           style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             fontSize: 15,
-            color: isDark ? Colors.white : const Color(0xFF0F172A),
+            // High-contrast on both backgrounds. Theme's onSurface flips
+            // automatically and is opaque so dark-mode text stays visible.
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(width: 8),

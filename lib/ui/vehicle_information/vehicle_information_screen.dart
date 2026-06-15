@@ -628,7 +628,11 @@ class VehicleInformationScreen extends StatelessWidget {
                                   );
                                 }),
                                 const SizedBox(height: 18),
-                                // ─── Professional Credentials ───
+                                // ─── Professional Credentials (read-only summary) ───
+                                // License Type / Bar Association / Qualification /
+                                // Office Address are captured during signup and
+                                // editable via Profile → "Edit Lawyer Information".
+                                // Showing them here as a read-only badge only.
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 6),
                                   child: Row(
@@ -653,52 +657,6 @@ class VehicleInformationScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 10),
-                                // License Type dropdown
-                                Obx(() => DropdownButtonFormField<String>(
-                                  decoration: _jurisdictionInputDecoration(themeChange.getThem()),
-                                  isExpanded: true,
-                                  value: controller.licenseType.value.isEmpty ? null : controller.licenseType.value,
-                                  hint: Text('Select License Type'.tr),
-                                  style: GoogleFonts.poppins(
-                                    color: themeChange.getThem() ? Colors.white : AppColors.brandNavy,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  items: VehicleInformationController.licenseOptions.map((opt) => DropdownMenuItem(
-                                    value: opt['value'],
-                                    child: Text(opt['label']!),
-                                  )).toList(),
-                                  onChanged: (value) {
-                                    if (value != null) controller.licenseType.value = value;
-                                  },
-                                )),
-                                const SizedBox(height: 10),
-                                // Bar Association dropdown
-                                Obx(() => DropdownButtonFormField<String>(
-                                  decoration: _jurisdictionInputDecoration(themeChange.getThem()),
-                                  isExpanded: true,
-                                  value: controller.barAssociation.value.isEmpty ? null : controller.barAssociation.value,
-                                  hint: Text('Select Bar Association'.tr),
-                                  style: GoogleFonts.poppins(
-                                    color: themeChange.getThem() ? Colors.white : AppColors.brandNavy,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  items: VehicleInformationController.barAssociations.map((name) => DropdownMenuItem(
-                                    value: name,
-                                    child: Text(name),
-                                  )).toList(),
-                                  onChanged: (value) {
-                                    if (value != null) controller.barAssociation.value = value;
-                                  },
-                                )),
-                                const SizedBox(height: 10),
-                                TextFieldThem.buildTextFiled(context,
-                                    hintText: 'Qualification (e.g. LLB, LLM)'.tr,
-                                    controller: controller.qualificationController.value),
-                                const SizedBox(height: 10),
-                                TextFieldThem.buildTextFiled(context,
-                                    hintText: 'Office / Chamber Address'.tr,
-                                    controller: controller.officeAddressController.value),
                                 const SizedBox(height: 16),
 
                                 // ─── Enrollment Certificate Upload ───

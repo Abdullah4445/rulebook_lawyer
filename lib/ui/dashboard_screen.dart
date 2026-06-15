@@ -165,10 +165,15 @@ class DashBoardScreen extends StatelessWidget {
             TextButton(
               child: Text('Yes'.tr),
               onPressed: () {
+                // Drawer order after Phase 2 additions: Profile (4),
+                // Lawyer Information (5), Fee Management (6), Reply Templates
+                // (7), My Reviews (8), Earnings (9). Both branches need
+                // Lawyer Information at index 5 — that screen carries
+                // specialties + jurisdiction + documents preview.
                 if (type == "document") {
-                  controllerDashBoard.onSelectItem(5); // Index update kiya
+                  controllerDashBoard.onSelectItem(4); // Profile (verification status)
                 } else {
-                  controllerDashBoard.onSelectItem(6); // Index update kiya
+                  controllerDashBoard.onSelectItem(5); // Lawyer Information
                 }
               },
             ),
