@@ -8,32 +8,32 @@ class AppColors {
   // BRAND CORE
   // ───────────────────────────────────────────────────
   /// Primary ink (text + dark UI elements in light mode)
-  static const Color primary = Color(0xFF0B1120);
+  static const Color primary = Color(0xFF002147);
 
   /// In dark mode, primary swaps to gold
-  static const Color darkModePrimary = Color(0xFFD4AF37);
+  static const Color darkModePrimary = Color(0xFFC5A059);
 
-  /// Signature antique gold — used as the hero accent on every screen
-  static const Color brandGold = Color(0xFFC9A227);
-  static const Color brandGoldLight = Color(0xFFFFF6D9);
-  static const Color brandGoldDeep = Color(0xFF8C6E0F);
-  static const Color brandGoldGlow = Color(0x33C9A227); // 20% gold for glows
+  /// Signature muted gold — legal-authority accent (per design spec).
+  static const Color brandGold = Color(0xFFC5A059);
+  static const Color brandGoldLight = Color(0xFFE8DCC0);
+  static const Color brandGoldDeep = Color(0xFF8F7440);
+  static const Color brandGoldGlow = Color(0x33C5A059); // 20% gold for glows
 
-  /// Deep brand navy (used for headers, ink text)
-  static const Color brandNavy = Color(0xFF0B1120);
-  static const Color brandNavyDeep = Color(0xFF050810);
+  /// Deep brand navy — per "Rulebook" design spec.
+  static const Color brandNavy = Color(0xFF002147);
+  static const Color brandNavyDeep = Color(0xFF001638);
 
   // ───────────────────────────────────────────────────
-  // SURFACES — Light mode (predominantly white)
+  // SURFACES — Light mode (clean white + subtle grey-blue)
   // ───────────────────────────────────────────────────
-  /// Scaffold background — almost-white with the tiniest warm tint
-  static const Color brandSurface = Color(0xFFFDFCF7);
+  /// Scaffold background — soft light grey/white per spec (#F4F7F9).
+  static const Color brandSurface = Color(0xFFF4F7F9);
   /// Pure white card / dialog / sheet surface
   static const Color containerBackground = Color(0xFFFFFFFF);
-  /// Very soft cream — used for hover/highlight zones in light mode
-  static const Color surfaceTint = Color(0xFFFAF5E6);
-  /// Subtle hairline divider in light mode
-  static const Color containerBorder = Color(0xFFEAE8E1);
+  /// Soft tint for hover/highlight zones — pale gold tone.
+  static const Color surfaceTint = Color(0xFFF1EADB);
+  /// Subtle hairline divider — cool grey-blue.
+  static const Color containerBorder = Color(0xFFE2E6EC);
 
   // ───────────────────────────────────────────────────
   // SURFACES — Dark mode (predominantly black)
@@ -53,32 +53,33 @@ class AppColors {
   // ───────────────────────────────────────────────────
   // GRADIENT STOPS (used by ui surfaces)
   // ───────────────────────────────────────────────────
-  static const Color gradientStart = Color(0xFF0B1120);
-  static const Color gradientEnd = Color(0xFF1A2236);
+  static const Color gradientStart = Color(0xFF002147);
+  static const Color gradientEnd = Color(0xFF001638);
 
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF0B1120), Color(0xFF1A2236)],
+    colors: [Color(0xFF002147), Color(0xFF001638)],
   );
 
+  /// Premium gold gradient — muted authentic gold instead of bright yellow.
   static const LinearGradient goldGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFE6C04F), Color(0xFFC9A227), Color(0xFF8C6E0F)],
+    colors: [Color(0xFFD8C291), Color(0xFFC5A059), Color(0xFF8F7440)],
     stops: [0.0, 0.55, 1.0],
   );
 
   static const LinearGradient lightSurfaceGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFFFFFFFF), Color(0xFFFDFCF7)],
+    colors: [Color(0xFFFFFFFF), Color(0xFFF4F7F9)],
   );
 
   static const LinearGradient darkSurfaceGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFF0B1120), Color(0xFF06080F)],
+    colors: [Color(0xFF002147), Color(0xFF001638)],
   );
 
   static const LinearGradient accentGradient = LinearGradient(
@@ -99,18 +100,23 @@ class AppColors {
   // DRAWER
   // ───────────────────────────────────────────────────
   static const Color drawerIcon = Color(0xFF94A3B8);
-  static const Color drawerActive = Color(0xFF0B1120);
-  static const Color drawerActiveDark = Color(0xFFD4AF37);
+  static const Color drawerActive = Color(0xFF002147);
+  static const Color drawerActiveDark = Color(0xFFC5A059);
 
   // ───────────────────────────────────────────────────
   // SEMANTIC / UTILITY
   // ───────────────────────────────────────────────────
-  static const Color lightGray = Color(0xFFF4F1E8);
-  static const Color ratingColour = Color(0xFFC9A227);
+  static const Color lightGray = Color(0xFFEDEFF3);
+  static const Color ratingColour = Color(0xFFC5A059);
   static const Color dottedDivider = Color(0xFFCBD5E1);
   static const Color subTitleColor = Color(0xFF64748B);
 
-  static const Color success = Color(0xFF059669);
+  /// Body text per spec — charcoal grey (#333333).
+  static const Color bodyText = Color(0xFF333333);
+  /// Explicit success / "case won" / "payment received" green per spec.
+  static const Color successAction = Color(0xFF28A745);
+
+  static const Color success = Color(0xFF28A745);
   static const Color successLight = Color(0xFFD1FAE5);
   static const Color info = Color(0xFF1E40AF);
   static const Color infoLight = Color(0xFFDBEAFE);
@@ -152,8 +158,8 @@ class AppColors {
   // ───────────────────────────────────────────────────
   // TEXT FIELDS
   // ───────────────────────────────────────────────────
-  static const Color textField = Color(0xFFFAF7EE);
-  static const Color textFieldBorder = Color(0xFFEAE8E1);
+  static const Color textField = Color(0xFFF7F9FB);
+  static const Color textFieldBorder = Color(0xFFE2E6EC);
   static const Color darkTextField = Color(0xFF111726);
   static const Color darkTextFieldBorder = Color(0xFF1F2A40);
 
@@ -162,10 +168,10 @@ class AppColors {
   // ───────────────────────────────────────────────────
   static const Color darkInvite = Color(0xFF1A2236);
   static const Color darkService = Color(0xFF111726);
-  static const Color onBoarding = Color(0xFFFDFCF7);
+  static const Color onBoarding = Color(0xFFF4F7F9);
 
   // Service category tint colors (legal theme)
-  static const Color serviceColor1 = Color(0xFFFFF6D9); // Gold tint
+  static const Color serviceColor1 = Color(0xFFE8DCC0); // Muted gold tint
   static const Color serviceColor2 = Color(0xFFE7EEFE); // Royal blue tint
   static const Color serviceColor3 = Color(0xFFD7F5E5); // Emerald tint
   static const Color serviceColor4 = Color(0xFFEDE0FF); // Royal purple tint
