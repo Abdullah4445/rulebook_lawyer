@@ -26,7 +26,7 @@ class _MyReviewsScreenState extends State<MyReviewsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = Provider.of<DarkThemeProvider>(context).getThem();
+    final isDark = theme.brightness == Brightness.dark;
     final uid = FireStoreUtils.getCurrentUid();
 
     return Scaffold(

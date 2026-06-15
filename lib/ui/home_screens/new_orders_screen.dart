@@ -498,7 +498,7 @@ class _DiagnosticPanel extends StatelessWidget {
         margin: const EdgeInsets.fromLTRB(12, 10, 12, 4),
         padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
         decoration: BoxDecoration(
-          color: themeChange.getThem()
+          color: Theme.of(context).brightness == Brightness.dark
               ? AppColors.darkContainerBackground
               : AppColors.containerBackground,
           borderRadius: BorderRadius.circular(14),

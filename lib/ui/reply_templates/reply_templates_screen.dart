@@ -21,8 +21,9 @@ class ReplyTemplatesScreen extends StatelessWidget {
       init: ReplyTemplatesController(),
       builder: (controller) {
         if (controller.isLoading.value) return Constant.loader(context);
-        final isDark = themeChange.getThem();
         final theme = Theme.of(context);
+        // Follow ThemeMode.system, not just the user's in-app toggle.
+        final isDark = theme.brightness == Brightness.dark;
 
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
@@ -257,9 +258,9 @@ class ReplyTemplatesScreen extends StatelessWidget {
         const SizedBox(width: 10),
         Text(title,
             style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 fontSize: 15,
-                color: isDark ? Colors.white : const Color(0xFF002147))),
+                color: Theme.of(context).colorScheme.onSurface)),
       ],
     );
   }

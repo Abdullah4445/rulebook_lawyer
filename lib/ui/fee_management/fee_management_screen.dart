@@ -23,8 +23,11 @@ class FeeManagementScreen extends StatelessWidget {
         if (controller.isLoading.value) {
           return Constant.loader(context);
         }
-        final isDark = themeChange.getThem();
         final theme = Theme.of(context);
+        // Follow the *active* theme (which respects ThemeMode.system) for
+        // text + surface decisions — `themeChange.getThem()` only reflects
+        // the user's in-app toggle and goes out of sync with the OS theme.
+        final isDark = theme.brightness == Brightness.dark;
         final symbol = Constant.currencyModel?.symbol ?? 'PKR';
 
         return Scaffold(
@@ -364,9 +367,9 @@ class FeeManagementScreen extends StatelessWidget {
           child: Text(
             title,
             style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               fontSize: 15,
-              color: isDark ? Colors.white : const Color(0xFF0F172A),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),

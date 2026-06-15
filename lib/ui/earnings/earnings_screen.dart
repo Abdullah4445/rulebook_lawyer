@@ -21,7 +21,9 @@ class EarningsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = Provider.of<DarkThemeProvider>(context).getThem();
+    // Drive card / text colors from the active theme so OS dark mode is honoured
+    // even when the in-app toggle hasn't been flipped.
+    final isDark = theme.brightness == Brightness.dark;
     final uid = FireStoreUtils.getCurrentUid();
     final symbol = Constant.currencyModel?.symbol ?? 'PKR';
 

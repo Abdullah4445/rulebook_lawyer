@@ -73,26 +73,32 @@ class SubscriptionHistory extends StatelessWidget {
                                               child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    children: [
-                                                      NetworkImageWidget(
-                                                        imageUrl: subscriptionHistoryModel.subscriptionPlan?.image ?? '',
-                                                        fit: BoxFit.cover,
-                                                        width: 45,
-                                                        height: 45,
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      Text(
-                                                        subscriptionHistoryModel.subscriptionPlan?.name ?? '',
-                                                        textAlign: TextAlign.start,
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.normal,
-                                                          fontSize: 16,
-                                                          color: themeChange.getThem() ? AppColors.grey50 : AppColors.grey900,
+                                                  Expanded(
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      children: [
+                                                        NetworkImageWidget(
+                                                          imageUrl: subscriptionHistoryModel.subscriptionPlan?.image ?? '',
+                                                          fit: BoxFit.cover,
+                                                          width: 45,
+                                                          height: 45,
                                                         ),
-                                                      ),
-                                                    ],
+                                                        const SizedBox(width: 10),
+                                                        Flexible(
+                                                          child: Text(
+                                                            subscriptionHistoryModel.subscriptionPlan?.name ?? '',
+                                                            textAlign: TextAlign.start,
+                                                            maxLines: 2,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                              fontWeight: FontWeight.normal,
+                                                              fontSize: 16,
+                                                              color: Theme.of(context).colorScheme.onSurface,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                   if (index == 0)
                                                     const Row(
