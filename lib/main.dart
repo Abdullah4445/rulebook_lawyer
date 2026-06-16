@@ -14,6 +14,7 @@ import 'controller/global_setting_conroller.dart';
 import 'firebase_options.dart';
 import 'services/localization_service.dart';
 import 'themes/Styles.dart';
+import 'themes/app_theme.dart';
 import 'utils/Preferences.dart';
 // not working
 
@@ -77,17 +78,28 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       create: (_) => themeChangeProvider,
       child: Consumer<DarkThemeProvider>(
         builder: (context, value, child) {
+          // ─── New Material 3 theme system (Phase A) ───
+          // theme/darkTheme/themeMode let Flutter handle the OS-level
+          // brightness swap. Legacy screens that still pull from AppColors
+          // continue to work; new screens should use Theme.of(context).
+          final ThemeMode mode;
+          switch (themeChangeProvider.darkTheme) {
+            case 1:
+              mode = ThemeMode.light;
+              break;
+            case 2:
+              mode = ThemeMode.dark;
+              break;
+            case 0:
+            default:
+              mode = ThemeMode.system;
+          }
           return GetMaterialApp(
             title: 'Rulebook Lawyer',
             debugShowCheckedModeBanner: false,
-            theme: Styles.themeData(
-              themeChangeProvider.darkTheme == 0
-                  ? true
-                  : themeChangeProvider.darkTheme == 1
-                      ? false
-                      : themeChangeProvider.getSystemThem(),
-              context,
-            ),
+            theme: AppTheme.light(),
+            darkTheme: AppTheme.dark(),
+            themeMode: mode,
             localizationsDelegates: const [
               CountryLocalizations.delegate,
             ],
