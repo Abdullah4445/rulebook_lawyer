@@ -50,7 +50,12 @@ class JurisdictionService {
   Future<List<JurisdictionCountry>?> _fetchFromNetwork() async {
     try {
       final uri = Uri.parse('${Constant.globalUrl}api/jurisdictions');
-      final resp = await http.get(uri).timeout(_networkTimeout);
+      // Bypass ngrok-free's HTML interstitial — without it ngrok returns a
+      // "Visit Site" page with status 200, jsonDecode throws and the catch
+      // below kills the whole load. Production servers ignore this header.
+      final resp = await http
+          .get(uri, headers: {'ngrok-skip-browser-warning': 'true'})
+          .timeout(_networkTimeout);
       if (resp.statusCode != 200) return null;
 
       final body = jsonDecode(resp.body) as Map<String, dynamic>;

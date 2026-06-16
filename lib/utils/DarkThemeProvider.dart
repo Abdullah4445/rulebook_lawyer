@@ -14,12 +14,27 @@ class DarkThemeProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Returns true when the app should render in dark mode.
+  ///
+  /// Convention used for the persisted [_darkTheme] int:
+  ///   * 0  = follow the OS / system theme (default, what new users see)
+  ///   * 1  = forced light
+  ///   * 2  = forced dark
+  ///
+  /// Previously this always returned the stored toggle and ignored the OS
+  /// brightness, which left widgets that read `getThem()` rendering in
+  /// light-mode colors even when the system (and scaffold) were dark — so
+  /// text-fields and section labels looked invisible.
   bool getThem() {
-    return darkTheme == 0
-        ? true
-        : darkTheme == 1
-            ? false
-            : false;
+    switch (_darkTheme) {
+      case 1:
+        return false;
+      case 2:
+        return true;
+      case 0:
+      default:
+        return getSystemThem();
+    }
   }
 
   bool getSystemThem() {
