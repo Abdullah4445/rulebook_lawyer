@@ -511,14 +511,17 @@ class FireStoreUtils {
 
     Stream<QuerySnapshot<Map<String, dynamic>>> stream = query.snapshots();
 
-    // ─── Zone filter (informational only) ───
-    // Server-side strict serviceId match already filters by lawyer's selected
-    // categories. The location/zone vocabulary mismatch between legacy zone
-    // polygons (case.cityName = "Pakistan", case.zoneId = polygon UUID) and
-    // the new city picker (lawyer.cityIds = ["Vehari"]) means a hard zone
-    // filter excluded every test case. For now we log the mismatch but DO NOT
-    // block — once new cases all carry reverse-geocoded `cityName` + `province`,
-    // we can re-tighten this safely.
+    // ─── Geographic jurisdiction filter (HARD) ───
+    // Pakistan legal system: only Supreme Court advocates can practice
+    // nationwide. District + High Court advocates are restricted to their
+    // province / selected cities. We honour that here so a Karachi-based
+    // family lawyer never sees a Lahore case clogging their feed.
+    //
+    // Defensive opt-outs (do NOT filter when any of these is true) so that
+    // existing test data + first-time lawyers keep seeing cases:
+    //   1. Lawyer's licenseType is `advocate_sc` → all-Pakistan jurisdiction
+    //   2. Lawyer has neither cityIds NOR province set yet → onboarding
+    //   3. Case carries no geographic data (legacy reverse-geocode failure)
     final List<String> lawyerCities =
         driverUserModel.cityIds != null && driverUserModel.cityIds!.isNotEmpty
             ? List<String>.from(driverUserModel.cityIds!)
@@ -527,6 +530,12 @@ class FireStoreUtils {
         driverUserModel.zoneIds != null && driverUserModel.zoneIds!.isNotEmpty
             ? driverUserModel.zoneIds!.map((e) => e.toString()).toList()
             : <String>[];
+    final String lawyerProvince = (driverUserModel.province ?? '').trim();
+    final bool isSupremeCourtAdvocate =
+        (driverUserModel.licenseType ?? '') == 'advocate_sc';
+    final bool hasGeographicScope =
+        !isSupremeCourtAdvocate &&
+            (lawyerCities.isNotEmpty || lawyerProvince.isNotEmpty);
 
     stream.listen((snapshot) {
       print("My doc list length: ${snapshot.docs.length}");
@@ -535,19 +544,26 @@ class FireStoreUtils {
         final data = document.data();
         OrderModel orderModel = OrderModel.fromJson(data);
 
-        // Soft zone log — helps surface mismatches in logcat without blocking.
-        final caseCity = orderModel.cityName ?? '';
-        final caseZone = orderModel.zoneId ?? '';
-        final caseProv = orderModel.province ?? '';
-        if ((lawyerCities.isNotEmpty || lawyerZones.isNotEmpty) &&
-            (caseCity.isNotEmpty || caseZone.isNotEmpty || caseProv.isNotEmpty)) {
-          final matchCity = lawyerCities.contains(caseCity);
-          final matchZone = lawyerZones.contains(caseZone);
+        final caseCity = (orderModel.cityName ?? '').trim();
+        final caseZone = (orderModel.zoneId ?? '').trim();
+        final caseProv = (orderModel.province ?? '').trim();
+        final bool caseHasGeoData =
+            caseCity.isNotEmpty || caseProv.isNotEmpty || caseZone.isNotEmpty;
+
+        // Apply hard filter only when BOTH sides have geographic data AND
+        // the lawyer isn't a Supreme Court advocate (national jurisdiction).
+        if (hasGeographicScope && caseHasGeoData) {
+          final matchCity =
+              caseCity.isNotEmpty && lawyerCities.contains(caseCity);
+          final matchZone =
+              caseZone.isNotEmpty && lawyerZones.contains(caseZone);
           final matchProv = caseProv.isNotEmpty &&
-              (driverUserModel.province ?? '') == caseProv;
+              lawyerProvince.isNotEmpty &&
+              lawyerProvince == caseProv;
           if (!matchCity && !matchZone && !matchProv) {
             print(
-                "ℹ️ Soft zone mismatch (not blocking): case city=$caseCity zone=$caseZone province=$caseProv vs lawyer cities=$lawyerCities zones=$lawyerZones province=${driverUserModel.province}");
+                "🚫 Filtered (out of jurisdiction): case city=$caseCity zone=$caseZone province=$caseProv vs lawyer cities=$lawyerCities zones=$lawyerZones province=$lawyerProvince");
+            continue;
           }
         }
 
