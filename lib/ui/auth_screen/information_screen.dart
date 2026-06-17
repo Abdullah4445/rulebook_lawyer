@@ -178,7 +178,51 @@ class InformationScreen extends StatelessWidget {
                             if (val != null) controller.licenseType.value = val;
                           },
                         ),
-                        const SizedBox(height: 10),
+                        // Reactive coverage hint — explains to the lawyer
+                        // exactly what their selected license unlocks in terms
+                        // of court tier + geographic jurisdiction.
+                        Obx(() {
+                          final hint = _licenseCoverageHint(
+                              controller.licenseType.value);
+                          if (hint == null) {
+                            return const SizedBox(height: 10);
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 6, bottom: 10),
+                            child: Container(
+                              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                              decoration: BoxDecoration(
+                                color: AppColors.brandGold.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: AppColors.brandGold.withValues(alpha: 0.35),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.info_outline_rounded,
+                                      size: 15, color: AppColors.brandGold),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      hint,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 11.5,
+                                        height: 1.35,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.78),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }),
 
                         // Bar Council Enrollment Number
                         TextFieldThem.buildTextFiled(
@@ -728,6 +772,28 @@ class InformationScreen extends StatelessWidget {
       }
     } else {
       Get.offAll(const DashBoardScreen());
+    }
+  }
+
+  /// Maps the licenseType enum to a plain-language description of which
+  /// courts and geographic area the lawyer is licensed to practice in.
+  /// Returns null when no license is selected so the UI hides the hint card.
+  String? _licenseCoverageHint(String licenseType) {
+    switch (licenseType) {
+      case 'advocate':
+        return 'District Advocate — practise in District/Session, Civil, '
+            'Family and Magistrate courts within ONE province. Pick the '
+            'province + the specific cities you can actually travel to.';
+      case 'advocate_hc':
+        return 'High Court Advocate — practise in ONE provincial High Court '
+            '(LHC / SHC / PHC / BHC / IHC) plus every lower court within '
+            'that province. Cities can be any city in your selected province.';
+      case 'advocate_sc':
+        return 'Supreme Court Advocate — practise across ALL of Pakistan '
+            '(Supreme Court + every High Court + every lower court). Pick '
+            'cities anywhere clients should be able to find you.';
+      default:
+        return null;
     }
   }
 
