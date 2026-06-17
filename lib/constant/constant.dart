@@ -470,6 +470,53 @@ class Constant {
     return Url(mime: metaData.contentType ?? 'image', url: downloadUrl.toString());
   }
 
+  /// Uploads an arbitrary document (PDF, DOC, XLSX, etc.) from the chat
+  /// composer to Firebase Storage and returns a [Url] whose `mime` field
+  /// is encoded as `{realMime}|{filename}` so the receiver can restore
+  /// the original filename without a schema change.
+  Future<Url> uploadChatDocumentToFireStorage(
+      File document, String displayName) async {
+    ShowToastDialog.showLoader('Uploading document...');
+    final uniqueID = const Uuid().v4();
+    final safeName =
+        displayName.replaceAll(RegExp(r'[^A-Za-z0-9._-]'), '_');
+    final ext = displayName.contains('.')
+        ? displayName.split('.').last.toLowerCase()
+        : 'bin';
+    final mime = _mimeForExt(ext);
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('chat/documents/${uniqueID}_$safeName');
+    final task = ref.putFile(
+      document,
+      SettableMetadata(contentType: mime),
+    );
+    final snapshot = await task.whenComplete(() {});
+    final downloadUrl = await snapshot.ref.getDownloadURL();
+    ShowToastDialog.closeLoader();
+    return Url(mime: '$mime|$displayName', url: downloadUrl);
+  }
+
+  String _mimeForExt(String ext) {
+    switch (ext) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'doc':
+      case 'docx':
+        return 'application/msword';
+      case 'xls':
+      case 'xlsx':
+        return 'application/vnd.ms-excel';
+      case 'ppt':
+      case 'pptx':
+        return 'application/vnd.ms-powerpoint';
+      case 'txt':
+        return 'text/plain';
+      default:
+        return 'application/octet-stream';
+    }
+  }
+
   Future<ChatVideoContainer?> uploadChatVideoToFireStorage(File video) async {
     try {
       ShowToastDialog.showLoader("Uploading video...");

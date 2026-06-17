@@ -20,12 +20,14 @@ import 'package:lawyer/utils/DarkThemeProvider.dart';
 import 'package:lawyer/utils/fire_store_utils.dart';
 import 'package:lawyer/widget/firebase_pagination/src/firestore_pagination.dart';
 import 'package:lawyer/widget/firebase_pagination/src/models/view_type.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 
 class ChatScreens extends StatefulWidget {
@@ -293,7 +295,8 @@ class _ChatScreensState extends State<ChatScreens> {
                                   ),
                                 ]),
                               ))
-                          : FloatingActionButton(
+                          : data.messageType == "video"
+                          ? FloatingActionButton(
                               mini: true,
                               heroTag: data.id,
                               onPressed: () {
@@ -306,7 +309,8 @@ class _ChatScreensState extends State<ChatScreens> {
                                 Icons.play_arrow,
                                 color: Colors.white,
                               ),
-                            ),
+                            )
+                          : _docMessageBubble(data, isMe: true),
                   const SizedBox(
                     height: 2,
                   ),
@@ -378,7 +382,8 @@ class _ChatScreensState extends State<ChatScreens> {
                                     ),
                                   ]),
                                 ))
-                            : FloatingActionButton(
+                            : data.messageType == "video"
+                            ? FloatingActionButton(
                                 mini: true,
                                 heroTag: data.id,
                                 onPressed: () {
@@ -390,7 +395,8 @@ class _ChatScreensState extends State<ChatScreens> {
                                 child: const Icon(
                                   Icons.play_arrow,
                                 ),
-                              ),
+                              )
+                            : _docMessageBubble(data, isMe: false),
                   ],
                 ),
                 const SizedBox(
@@ -440,6 +446,11 @@ class _ChatScreensState extends State<ChatScreens> {
         conversationModel.message = "sent an image";
       } else if (url.mime.contains('video')) {
         conversationModel.message = "sent an Video";
+      } else if (messageType == 'file') {
+        final fname = url.mime.contains('|')
+            ? url.mime.split('|').last
+            : 'a document';
+        conversationModel.message = 'sent $fname';
       } else if (url.mime.contains('audio')) {
         conversationModel.message = "Sent a voice message";
       }
@@ -459,6 +470,115 @@ class _ChatScreensState extends State<ChatScreens> {
         body: conversationModel.message.toString(),
         token: widget.token.toString(),
         payload: playLoad);
+  }
+
+  /// Doc bubble for `messageType == 'file'`. The original filename was
+  /// encoded into `data.url.mime` as `{realMime}|{filename}` on send.
+  Widget _docMessageBubble(ConversationModel data, {required bool isMe}) {
+    final raw = data.url?.mime ?? '';
+    final parts = raw.split('|');
+    final realMime = parts.isNotEmpty ? parts[0] : 'application/octet-stream';
+    final filename = parts.length > 1 && parts[1].trim().isNotEmpty
+        ? parts[1]
+        : 'Document';
+    IconData icon;
+    if (realMime.contains('pdf')) {
+      icon = Icons.picture_as_pdf_rounded;
+    } else if (realMime.contains('msword') ||
+        realMime.contains('officedocument')) {
+      icon = Icons.description_rounded;
+    } else if (realMime.contains('excel') || realMime.contains('sheet')) {
+      icon = Icons.table_chart_rounded;
+    } else if (realMime.contains('powerpoint') ||
+        realMime.contains('presentation')) {
+      icon = Icons.slideshow_rounded;
+    } else if (realMime.startsWith('text/')) {
+      icon = Icons.notes_rounded;
+    } else {
+      icon = Icons.insert_drive_file_rounded;
+    }
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 180, maxWidth: 240),
+      child: InkWell(
+        onTap: () async {
+          final url = data.url?.url ?? '';
+          if (url.isEmpty) return;
+          final uri = Uri.tryParse(url);
+          if (uri == null) {
+            ShowToastDialog.showToast('Invalid document link.'.tr);
+            return;
+          }
+          final ok =
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+          if (!ok) ShowToastDialog.showToast('Could not open document.'.tr);
+        },
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            gradient: isMe ? AppColors.goldGradient : null,
+            color: isMe ? null : Colors.grey.shade300,
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(10),
+              topRight: const Radius.circular(10),
+              bottomLeft:
+                  isMe ? const Radius.circular(10) : Radius.zero,
+              bottomRight:
+                  isMe ? Radius.zero : const Radius.circular(10),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.40),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: Icon(icon,
+                    size: 18, color: isMe ? Colors.white : Colors.black),
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      filename,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: isMe ? Colors.white : Colors.black87,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      'Tap to open'.tr,
+                      style: GoogleFonts.poppins(
+                        fontSize: 10.5,
+                        color: isMe
+                            ? Colors.white.withValues(alpha: 0.85)
+                            : Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 6),
+              Icon(Icons.open_in_new_rounded,
+                  size: 14,
+                  color: isMe ? Colors.white : Colors.black54),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   final ImagePicker _imagePicker = ImagePicker();
@@ -525,7 +645,38 @@ class _ChatScreensState extends State<ChatScreens> {
             }
           },
           child:  Text("Record video".tr),
-        )
+        ),
+        // Phase 2.5 — PDF / document sharing for lawyers (court orders,
+        // case files, judgements). Mirrors the customer-side option.
+        CupertinoActionSheetAction(
+          isDestructiveAction: false,
+          onPressed: () async {
+            Navigator.pop(context);
+            final picked = await FilePicker.platform.pickFiles(
+              type: FileType.custom,
+              allowedExtensions: const [
+                'pdf',
+                'doc',
+                'docx',
+                'xls',
+                'xlsx',
+                'ppt',
+                'pptx',
+                'txt',
+              ],
+              withData: false,
+            );
+            if (picked == null || picked.files.isEmpty) return;
+            final f = picked.files.first;
+            if (f.path == null) return;
+            final url = await Constant().uploadChatDocumentToFireStorage(
+              File(f.path!),
+              f.name,
+            );
+            _sendMessage('', url, '', 'file');
+          },
+          child: Text("Send a document (PDF / DOC)".tr),
+        ),
       ],
       cancelButton: CupertinoActionSheetAction(
         child:  Text(
