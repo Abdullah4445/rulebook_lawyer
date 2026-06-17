@@ -511,17 +511,27 @@ class FireStoreUtils {
 
     Stream<QuerySnapshot<Map<String, dynamic>>> stream = query.snapshots();
 
-    // ─── Geographic jurisdiction filter (HARD) ───
-    // Pakistan legal system: only Supreme Court advocates can practice
-    // nationwide. District + High Court advocates are restricted to their
-    // province / selected cities. We honour that here so a Karachi-based
-    // family lawyer never sees a Lahore case clogging their feed.
+    // ─── Geographic jurisdiction filter (TIER-AWARE) ───
+    // Pakistan legal system maps directly onto our 3 license tiers:
     //
-    // Defensive opt-outs (do NOT filter when any of these is true) so that
-    // existing test data + first-time lawyers keep seeing cases:
-    //   1. Lawyer's licenseType is `advocate_sc` → all-Pakistan jurisdiction
-    //   2. Lawyer has neither cityIds NOR province set yet → onboarding
-    //   3. Case carries no geographic data (legacy reverse-geocode failure)
+    //   advocate_sc (Supreme Court)  → no filter (all-Pakistan jurisdiction)
+    //   advocate_hc (High Court)     → city match OR province match
+    //                                  (HC licence is province-wide)
+    //   advocate    (District)       → STRICT cityIds match only — district
+    //                                  advocates can legally practise across
+    //                                  their whole province, but they can
+    //                                  only PHYSICALLY appear in the cities
+    //                                  they themselves selected.
+    //
+    // Soft fallback for district advocates who haven't picked any cities yet:
+    // we drop back to province match so a brand-new onboarded lawyer's feed
+    // isn't empty. As soon as they pick at least one city, strict mode kicks
+    // in automatically.
+    //
+    // Defensive opt-outs (do NOT filter when any of these is true):
+    //   1. Lawyer is advocate_sc                          → national licence
+    //   2. Lawyer has neither cityIds NOR province set    → onboarding state
+    //   3. Case has no cityName / province / zoneId       → legacy/test data
     final List<String> lawyerCities =
         driverUserModel.cityIds != null && driverUserModel.cityIds!.isNotEmpty
             ? List<String>.from(driverUserModel.cityIds!)
@@ -531,11 +541,16 @@ class FireStoreUtils {
             ? driverUserModel.zoneIds!.map((e) => e.toString()).toList()
             : <String>[];
     final String lawyerProvince = (driverUserModel.province ?? '').trim();
-    final bool isSupremeCourtAdvocate =
-        (driverUserModel.licenseType ?? '') == 'advocate_sc';
+    final String licenseType = (driverUserModel.licenseType ?? '').trim();
+    final bool isSupremeCourtAdvocate = licenseType == 'advocate_sc';
+    final bool isDistrictAdvocate = licenseType == 'advocate';
     final bool hasGeographicScope =
         !isSupremeCourtAdvocate &&
             (lawyerCities.isNotEmpty || lawyerProvince.isNotEmpty);
+    // District advocate WITH cities picked → strict cityIds-only mode.
+    // District advocate WITHOUT cities → fall back to province (soft default).
+    final bool districtStrictMode =
+        isDistrictAdvocate && lawyerCities.isNotEmpty;
 
     stream.listen((snapshot) {
       print("My doc list length: ${snapshot.docs.length}");
@@ -560,9 +575,16 @@ class FireStoreUtils {
           final matchProv = caseProv.isNotEmpty &&
               lawyerProvince.isNotEmpty &&
               lawyerProvince == caseProv;
-          if (!matchCity && !matchZone && !matchProv) {
+
+          // District advocates with picked cities: ONLY exact city/zone match.
+          // HC advocates (and district-without-cities): allow province fallback.
+          final bool passes = districtStrictMode
+              ? (matchCity || matchZone)
+              : (matchCity || matchZone || matchProv);
+
+          if (!passes) {
             print(
-                "🚫 Filtered (out of jurisdiction): case city=$caseCity zone=$caseZone province=$caseProv vs lawyer cities=$lawyerCities zones=$lawyerZones province=$lawyerProvince");
+                "🚫 Filtered (tier=$licenseType strict=$districtStrictMode): case city=$caseCity zone=$caseZone province=$caseProv vs lawyer cities=$lawyerCities zones=$lawyerZones province=$lawyerProvince");
             continue;
           }
         }
