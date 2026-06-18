@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Lawyer-app theme system.
+/// RoolBook Lawyer theme — Professional Lawyer Workspace.
 ///
 /// Material 3 ColorScheme-driven. Use this everywhere instead of hard-coded
 /// hex colours, `Colors.white`, etc. so that:
@@ -11,59 +11,70 @@ import 'package:google_fonts/google_fonts.dart';
 ///   * `Theme.of(context).colorScheme.*` is the only colour API screens
 ///     need to know about.
 ///
-/// Lawyer palette (authority-forward, distinct from the customer app):
-///   * Primary   — Deep Navy   #0B1B3D
-///   * Secondary — Muted Gold  #C5A059
-///   * Surface   — clean white / charcoal navy
-///   * Body text — charcoal / soft white
+/// Brand palette (Charcoal + Refined Gold — focused workspace feel):
+///   * Primary    — Charcoal     #111827
+///   * Secondary  — Slate-700    #374151
+///   * Accent     — Refined Gold #C9A227
+///   * Background — Gray-50      #F9FAFB
+///   * Cards      — Pure White
 class AppTheme {
   AppTheme._();
 
   // ─────────────────────────────────────────────────────────
-  // Brand seed colours
+  // Brand seed colours — RoolBook Lawyer
   // ─────────────────────────────────────────────────────────
-  static const Color primary = Color(0xFF0B1B3D); // Deep Navy
-  static const Color primaryDark = Color(0xFF06122B);
-  static const Color primaryLight = Color(0xFFD9DEE8);
-  static const Color secondary = Color(0xFFC5A059); // Muted Gold
-  static const Color secondaryDark = Color(0xFF8F7440);
-  static const Color secondaryLight = Color(0xFFE8DCC0);
+  static const Color primary = Color(0xFF111827); // Charcoal Gray-900
+  static const Color primaryDark = Color(0xFF030712); // Gray-950
+  static const Color primaryLight = Color(0xFFE5E7EB); // Gray-200 tint
+  static const Color secondary = Color(0xFF374151); // Slate Gray-700
+  static const Color accent = Color(0xFFC9A227); // Refined Gold
+  static const Color accentDark = Color(0xFF9C7E1B);
+  static const Color accentLight = Color(0xFFEEDD9C);
+  // Aliases kept so existing screens that reference `secondary` for the
+  // accent during migration keep their visual gold semantics.
+  static const Color secondaryDark = accentDark;
+  static const Color secondaryLight = accentLight;
 
-  static const Color success = Color(0xFF28A745);
+  static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFE0A800);
   static const Color danger = Color(0xFFDC2626);
 
-  // Neutral surfaces — light theme
-  static const Color lightScaffold = Color(0xFFF4F7F9);
-  static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightOnSurface = Color(0xFF0F172A);
-  static const Color lightSubtle = Color(0xFF64748B);
-  static const Color lightBorder = Color(0xFFE2E6EC);
+  // Neutral surfaces — light theme (gallery-white workspace)
+  static const Color lightScaffold = Color(0xFFF9FAFB); // Gray-50
+  static const Color lightSurface = Color(0xFFFFFFFF); // Pure White cards
+  static const Color lightOnSurface = Color(0xFF111827); // Charcoal text
+  static const Color lightSubtle = Color(0xFF6B7280); // Gray-500
+  static const Color lightBorder = Color(0xFFE5E7EB); // Gray-200
 
-  // Neutral surfaces — dark theme
-  static const Color darkScaffold = Color(0xFF050B17);
-  static const Color darkSurface = Color(0xFF0F1A2E);
-  static const Color darkSurfaceHigh = Color(0xFF18253D);
-  static const Color darkOnSurface = Color(0xFFF1F5F9);
-  static const Color darkSubtle = Color(0xFF94A3B8);
-  static const Color darkBorder = Color(0xFF22304A);
+  // Neutral surfaces — dark theme (premium night workspace)
+  static const Color darkScaffold = Color(0xFF030712); // Gray-950
+  static const Color darkSurface = Color(0xFF111827); // Charcoal cards
+  static const Color darkSurfaceHigh = Color(0xFF1F2937); // Gray-800
+  static const Color darkOnSurface = Color(0xFFF9FAFB); // Gray-50
+  static const Color darkSubtle = Color(0xFF9CA3AF); // Gray-400
+  static const Color darkBorder = Color(0xFF374151); // Gray-700
 
   // ─────────────────────────────────────────────────────────
-  // Gradients (premium feel — hero cards, CTAs)
+  // Gradients (premium feel — hero cards, CTAs, splash)
   // ─────────────────────────────────────────────────────────
+  /// Charcoal gradient — primary CTAs, headers, splash background.
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF1E3672), Color(0xFF0B1B3D), Color(0xFF06122B)],
+    colors: [Color(0xFF374151), Color(0xFF111827), Color(0xFF030712)],
     stops: [0.0, 0.55, 1.0],
   );
 
+  /// Refined Gold gradient — verified badges, premium accents, CTAs.
   static const LinearGradient secondaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFD8C291), Color(0xFFC5A059), Color(0xFF8F7440)],
+    colors: [Color(0xFFEEDD9C), Color(0xFFC9A227), Color(0xFF9C7E1B)],
     stops: [0.0, 0.55, 1.0],
   );
+
+  /// Alias for the gold gradient — semantically clearer at call sites.
+  static const LinearGradient accentGradient = secondaryGradient;
 
   // ─────────────────────────────────────────────────────────
   // Shape / motion tokens
@@ -90,13 +101,15 @@ class AppTheme {
       brightness: brightness,
       primary: primary,
       onPrimary: Colors.white,
-      primaryContainer: isDark ? primaryDark : primaryLight,
-      onPrimaryContainer: isDark ? Colors.white : primaryDark,
-      secondary: secondary,
-      onSecondary: Colors.white,
-      secondaryContainer: isDark ? secondaryDark : secondaryLight,
-      onSecondaryContainer: isDark ? Colors.white : secondaryDark,
-      tertiary: const Color(0xFF8B5CF6),
+      primaryContainer: isDark ? secondary : primaryLight,
+      onPrimaryContainer: isDark ? Colors.white : primary,
+      // M3 maps `secondary` to "accent" semantics — use gold so all
+      // surface theming (buttons, badges, highlights) picks up brand gold.
+      secondary: accent,
+      onSecondary: const Color(0xFF1A1208),
+      secondaryContainer: isDark ? accentDark : accentLight,
+      onSecondaryContainer: const Color(0xFF1A1208),
+      tertiary: secondary, // Slate Gray-700 — for darker container surfaces
       onTertiary: Colors.white,
       error: danger,
       onError: Colors.white,

@@ -1,85 +1,88 @@
 import 'package:flutter/material.dart';
 
-/// Lawyer App — Premium Legal Color System
-/// Light mode: pure-white surfaces with warm cream scaffold and rich gold accents.
-/// Dark mode: deep ink-black with vivid antique-gold accents.
+/// RoolBook Lawyer — Professional Workspace Color System.
+/// Charcoal + Refined Gold palette: focused, authoritative, premium.
+/// Light mode: gray-50 scaffold, pure-white cards, charcoal ink.
+/// Dark mode: near-black charcoal with bright refined-gold accents.
 class AppColors {
   // ───────────────────────────────────────────────────
-  // BRAND CORE
+  // BRAND CORE — RoolBook Lawyer
   // ───────────────────────────────────────────────────
-  /// Primary ink (text + dark UI elements in light mode)
-  static const Color primary = Color(0xFF002147);
+  /// Primary ink (text + dark UI elements in light mode) — Charcoal.
+  static const Color primary = Color(0xFF111827);
 
-  /// In dark mode, primary swaps to gold
-  static const Color darkModePrimary = Color(0xFFC5A059);
+  /// In dark mode, primary swaps to gold for contrast.
+  static const Color darkModePrimary = Color(0xFFC9A227);
 
-  /// Signature muted gold — legal-authority accent (per design spec).
-  static const Color brandGold = Color(0xFFC5A059);
-  static const Color brandGoldLight = Color(0xFFE8DCC0);
-  static const Color brandGoldDeep = Color(0xFF8F7440);
-  static const Color brandGoldGlow = Color(0x33C5A059); // 20% gold for glows
+  /// Signature Refined Gold — RoolBook lawyer brand accent.
+  static const Color brandGold = Color(0xFFC9A227);
+  static const Color brandGoldLight = Color(0xFFEEDD9C);
+  static const Color brandGoldDeep = Color(0xFF9C7E1B);
+  static const Color brandGoldGlow = Color(0x33C9A227); // 20% gold for glows
 
-  /// Deep brand navy — per "Rulebook" design spec.
-  static const Color brandNavy = Color(0xFF002147);
-  static const Color brandNavyDeep = Color(0xFF001638);
+  /// Deep brand charcoal — RoolBook lawyer primary.
+  static const Color brandNavy = Color(0xFF111827);
+  static const Color brandNavyDeep = Color(0xFF030712);
 
   // ───────────────────────────────────────────────────
-  // SURFACES — Light mode (clean white + subtle grey-blue)
+  // SURFACES — Light mode (gray-50 + pure white per spec)
   // ───────────────────────────────────────────────────
-  /// Scaffold background — soft light grey/white per spec (#F4F7F9).
-  static const Color brandSurface = Color(0xFFF4F7F9);
-  /// Pure white card / dialog / sheet surface
+  /// Scaffold background — Gray-50 per RoolBook lawyer spec.
+  static const Color brandSurface = Color(0xFFF9FAFB);
+  /// Pure white card / dialog / sheet surface.
   static const Color containerBackground = Color(0xFFFFFFFF);
   /// Soft tint for hover/highlight zones — pale gold tone.
-  static const Color surfaceTint = Color(0xFFF1EADB);
-  /// Subtle hairline divider — cool grey-blue.
-  static const Color containerBorder = Color(0xFFE2E6EC);
+  static const Color surfaceTint = Color(0xFFFAF3D9);
+  /// Subtle hairline divider — gray-200.
+  static const Color containerBorder = Color(0xFFE5E7EB);
 
   // ───────────────────────────────────────────────────
-  // SURFACES — Dark mode (predominantly black)
+  // SURFACES — Dark mode (charcoal gray-950)
   // ───────────────────────────────────────────────────
-  /// Deep ink scaffold — almost black with a hint of midnight blue
-  static const Color brandSurfaceDark = Color(0xFF06080F);
-  /// Card / elevated surface in dark mode
-  static const Color darkContainerBackground = Color(0xFF111726);
-  /// Slightly elevated dark surface for nested content
-  static const Color darkSurfaceElevated = Color(0xFF1A2236);
-  /// Hairline divider in dark mode
-  static const Color darkContainerBorder = Color(0xFF1F2A40);
+  /// Deep charcoal scaffold — RoolBook lawyer dark mode.
+  static const Color brandSurfaceDark = Color(0xFF030712);
+  /// Card / elevated surface in dark mode — Charcoal cards.
+  static const Color darkContainerBackground = Color(0xFF111827);
+  /// Slightly elevated dark surface for nested content — Gray-800.
+  static const Color darkSurfaceElevated = Color(0xFF1F2937);
+  /// Hairline divider in dark mode — Gray-700.
+  static const Color darkContainerBorder = Color(0xFF374151);
 
   static const Color background = Color(0xFFFFFFFF);
-  static const Color darkBackground = Color(0xFF06080F);
+  static const Color darkBackground = Color(0xFF030712);
 
   // ───────────────────────────────────────────────────
-  // GRADIENT STOPS (used by ui surfaces)
+  // GRADIENT STOPS
   // ───────────────────────────────────────────────────
-  static const Color gradientStart = Color(0xFF002147);
-  static const Color gradientEnd = Color(0xFF001638);
+  static const Color gradientStart = Color(0xFF111827);
+  static const Color gradientEnd = Color(0xFF030712);
 
+  /// Charcoal primary gradient — splash, hero cards, primary CTAs.
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF002147), Color(0xFF001638)],
+    colors: [Color(0xFF374151), Color(0xFF111827), Color(0xFF030712)],
+    stops: [0.0, 0.55, 1.0],
   );
 
-  /// Premium gold gradient — muted authentic gold instead of bright yellow.
+  /// Refined Gold gradient — verified badges, premium accents, CTAs.
   static const LinearGradient goldGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFD8C291), Color(0xFFC5A059), Color(0xFF8F7440)],
+    colors: [Color(0xFFEEDD9C), Color(0xFFC9A227), Color(0xFF9C7E1B)],
     stops: [0.0, 0.55, 1.0],
   );
 
   static const LinearGradient lightSurfaceGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFFFFFFFF), Color(0xFFF4F7F9)],
+    colors: [Color(0xFFFFFFFF), Color(0xFFF9FAFB)],
   );
 
   static const LinearGradient darkSurfaceGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFF002147), Color(0xFF001638)],
+    colors: [Color(0xFF111827), Color(0xFF030712)],
   );
 
   static const LinearGradient accentGradient = LinearGradient(
@@ -99,27 +102,27 @@ class AppColors {
   // ───────────────────────────────────────────────────
   // DRAWER
   // ───────────────────────────────────────────────────
-  static const Color drawerIcon = Color(0xFF94A3B8);
-  static const Color drawerActive = Color(0xFF002147);
-  static const Color drawerActiveDark = Color(0xFFC5A059);
+  static const Color drawerIcon = Color(0xFF9CA3AF); // Gray-400
+  static const Color drawerActive = Color(0xFF111827); // Charcoal
+  static const Color drawerActiveDark = Color(0xFFC9A227); // Refined Gold
 
   // ───────────────────────────────────────────────────
   // SEMANTIC / UTILITY
   // ───────────────────────────────────────────────────
-  static const Color lightGray = Color(0xFFEDEFF3);
-  static const Color ratingColour = Color(0xFFC5A059);
-  static const Color dottedDivider = Color(0xFFCBD5E1);
-  static const Color subTitleColor = Color(0xFF64748B);
+  static const Color lightGray = Color(0xFFF3F4F6); // Gray-100
+  static const Color ratingColour = Color(0xFFC9A227); // Refined Gold
+  static const Color dottedDivider = Color(0xFFD1D5DB); // Gray-300
+  static const Color subTitleColor = Color(0xFF6B7280); // Gray-500
 
-  /// Body text per spec — charcoal grey (#333333).
-  static const Color bodyText = Color(0xFF333333);
+  /// Body text per spec — Charcoal (matches primary).
+  static const Color bodyText = Color(0xFF111827);
   /// Explicit success / "case won" / "payment received" green per spec.
-  static const Color successAction = Color(0xFF28A745);
+  static const Color successAction = Color(0xFF10B981);
 
-  static const Color success = Color(0xFF28A745);
+  static const Color success = Color(0xFF10B981);
   static const Color successLight = Color(0xFFD1FAE5);
-  static const Color info = Color(0xFF1E40AF);
-  static const Color infoLight = Color(0xFFDBEAFE);
+  static const Color info = Color(0xFF111827); // Charcoal for info
+  static const Color infoLight = Color(0xFFE5E7EB);
   static const Color warning = Color(0xFFD97706);
   static const Color warningLight = Color(0xFFFEF3C7);
   static const Color error = Color(0xFFDC2626);
