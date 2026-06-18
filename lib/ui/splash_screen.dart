@@ -325,23 +325,34 @@ class _SplashScreenState extends State<SplashScreen>
                             ),
                             const SizedBox(height: 20),
                             Text(
-                              'Rulebook Lawyer',
+                              'ROOLBOOK',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                color: AppColors.brandGold,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 6,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Lawyer Workspace',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
                                 color: Colors.white,
-                                fontSize: 30,
+                                fontSize: 28,
                                 fontWeight: FontWeight.w700,
-                                letterSpacing: 1.0,
+                                letterSpacing: 0.5,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 10),
                             Text(
-                              'Professional legal services,\ncase management & client support',
+                              'Professional Legal Workspace\nCase management · Client trust',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
-                                color: AppColors.brandGold.withOpacity(0.8),
+                                color: Colors.white.withOpacity(0.65),
                                 fontSize: 13,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w300,
                                 height: 1.6,
                                 letterSpacing: 0.3,
                               ),
@@ -378,7 +389,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                       const SizedBox(height: 16),
                       Text(
-                        'Preparing your legal dashboard...',
+                        'Preparing your workspace…',
                         style: GoogleFonts.poppins(
                           color: Colors.white38,
                           fontSize: 12,

@@ -132,8 +132,123 @@ class DashBoardScreen extends StatelessWidget {
                   child: controller.getDrawerItemWidget(
                       controller.selectedDrawerIndex.value),
                 )),
+            bottomNavigationBar:
+                _buildRoolBookBottomBar(context, controller),
           );
         });
+  }
+
+  /// RoolBook Lawyer premium bottom navigation — 5 primary tabs.
+  /// Charcoal bar, Refined Gold active indicator + label.
+  ///
+  /// Tab → existing screen mapping (preserves all functionality, drawer
+  /// keeps everything else like wallet, bank, settings, AI chat, etc.):
+  ///   Dashboard (0)     → HomeScreen
+  ///   Clients (8)       → MyReviewsScreen (client engagement view)
+  ///   Appointments (9)  → EarningsScreen (engagement history with dates)
+  ///   Messages (3)      → InboxScreen
+  ///   Profile (4)       → ProfileScreen
+  Widget _buildRoolBookBottomBar(
+      BuildContext context, DashBoardController controller) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    const tabs = <_BottomTab>[
+      _BottomTab(0, Icons.dashboard_outlined, Icons.dashboard_rounded,
+          'Dashboard'),
+      _BottomTab(8, Icons.groups_outlined, Icons.groups_rounded, 'Clients'),
+      _BottomTab(9, Icons.event_note_outlined, Icons.event_note_rounded,
+          'Appointments'),
+      _BottomTab(3, Icons.chat_bubble_outline_rounded,
+          Icons.chat_bubble_rounded, 'Messages'),
+      _BottomTab(4, Icons.person_outline_rounded, Icons.person_rounded,
+          'Profile'),
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.brandSurfaceDark : AppColors.brandNavy,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.40 : 0.10),
+            blurRadius: 18,
+            offset: const Offset(0, -3),
+          ),
+        ],
+        border: Border(
+          top: BorderSide(
+            color: AppColors.brandGold.withValues(alpha: 0.18),
+            width: 0.6,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: tabs.map((tab) {
+              final isSelected =
+                  controller.selectedDrawerIndex.value == tab.index;
+              return Expanded(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () =>
+                      controller.selectedDrawerIndex.value = tab.index,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    curve: Curves.easeOut,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 6, vertical: 8),
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.brandGold.withValues(alpha: 0.18)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 180),
+                          child: Icon(
+                            isSelected ? tab.activeIcon : tab.icon,
+                            key: ValueKey(isSelected),
+                            size: 22,
+                            color: isSelected
+                                ? AppColors.brandGold
+                                : Colors.white.withValues(alpha: 0.70),
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          tab.label.tr,
+                          style: GoogleFonts.poppins(
+                            color: isSelected
+                                ? AppColors.brandGold
+                                : Colors.white.withValues(alpha: 0.70),
+                            fontWeight: isSelected
+                                ? FontWeight.w700
+                                : FontWeight.w500,
+                            fontSize: 10.5,
+                            letterSpacing: 0.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _showAlertDialog(BuildContext context, String type) async {
@@ -150,7 +265,7 @@ class DashBoardScreen extends StatelessWidget {
             child: ListBody(
               children: <Widget>[
                 Text(
-                    'To start earning with Rulebook Lawyer you need to fill in your personal information'
+                    'To start engaging clients on RoolBook Lawyer you need to fill in your professional information'
                         .tr),
               ],
             ),
@@ -376,7 +491,7 @@ class DashBoardScreen extends StatelessWidget {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Rulebook Lawyer'.tr,
+                                            'RoolBook · Lawyer'.tr,
                                             style: GoogleFonts.poppins(
                                               color: AppColors.brandGold,
                                               fontSize: 12,
@@ -611,4 +726,12 @@ class _AvailabilityToggle extends StatelessWidget {
       ),
     );
   }
+}
+
+class _BottomTab {
+  final int index;
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  const _BottomTab(this.index, this.icon, this.activeIcon, this.label);
 }
