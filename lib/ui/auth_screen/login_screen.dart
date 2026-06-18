@@ -70,7 +70,7 @@ class LoginScreen extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.only(top: 6, bottom: 4),
                             child: Text(
-                              "Welcome Back! We are happy to have you back".tr,
+                              "Welcome back, Counsel. Your clients are waiting.".tr,
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 14,
@@ -475,29 +475,36 @@ class _LawyerAuthHero extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Rulebook',
+                    'RoolBook',
                     style: GoogleFonts.poppins(
-                      fontSize: 26,
+                      fontSize: 28,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.0,
                       color: isDark ? Colors.white : AppColors.brandNavy,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 4),
+                        horizontal: 14, vertical: 5),
                     decoration: BoxDecoration(
-                      color: AppColors.brandGold.withOpacity(isDark ? 0.18 : 0.14),
+                      gradient: AppColors.goldGradient,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.brandGold.withOpacity(0.30),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Text(
-                      'For Lawyers',
+                      'PROFESSIONAL LAWYER WORKSPACE',
                       style: GoogleFonts.poppins(
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        letterSpacing: 1.4,
-                        color: AppColors.brandGold,
+                        letterSpacing: 1.6,
+                        color: Colors.white,
                       ),
                     ),
                   ),
